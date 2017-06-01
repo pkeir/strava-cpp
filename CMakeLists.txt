@@ -15,7 +15,7 @@ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_MACOSX_RPATH 1)
 set(ENABLE_SAMPLES true)
-set(ENABLE_TESTS true)
+set(ENABLE_TESTS false)
 
 # Project Options
 option(ENABLE_SAMPLES "Enable Samples" ON)
@@ -34,8 +34,8 @@ if(ENABLE_SAMPLES)
 endif(ENABLE_SAMPLES)
 
 # Add Tests
-#if(ENABLE_TESTS)
-#    include(CTest)
-#    add_subdirectory(test)
-#    message(STATUS "Including Tests")
-#endif(ENABLE_TESTS)
+if(ENABLE_TESTS)
+    include(CTest)
+    add_subdirectory(test)
+    message(STATUS "Including Tests")
+endif(ENABLE_TESTS)
