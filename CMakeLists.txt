@@ -23,6 +23,7 @@ option(ENABLE_TESTS "Enable Tests" ON)
 
 # External projects
 add_subdirectory(external/lest)
+add_subdirectory(external/poco)
 
 # Our Targets
 add_subdirectory(source)
