@@ -7,7 +7,7 @@ const std::string message = "Hello, World!";
 
 namespace strava {
     namespace athletes {
-
+        void current();
     }
 
     namespace activities {

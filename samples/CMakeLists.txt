@@ -22,3 +22,5 @@ target_link_libraries(strava-app strava)
 target_link_libraries(strava-app ${OPENSSL_LIBRARIES})
 target_link_libraries(strava-app ${OPENSSL_SSL_LIBRARY})
 target_link_libraries(strava-app ${OPENSSL_CRYPTO_LIBRARY})
+
+add_dependencies(strava-app POCO LEST)
