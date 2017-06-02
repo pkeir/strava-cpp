@@ -5,9 +5,9 @@ cmake_minimum_required (VERSION 3.8 FATAL_ERROR)
 project (strava-cpp)
 
 # Setting output dirs
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 # Set values
 set(CMAKE_SUPPRESS_REGENERATION true)
@@ -19,7 +19,10 @@ set(ENABLE_TESTS false)
 
 # Project Options
 option(ENABLE_SAMPLES "Enable Samples" ON)
-option(ENABLE_TESTS "Enable Tests" ON)
+option(ENABLE_TESTS "Enable Tests" OFF)
+
+# Dependencies
+find_package(OpenSSL REQUIRED)
 
 # External projects
 add_subdirectory(external/lest)
@@ -29,14 +32,14 @@ add_subdirectory(external/poco)
 add_subdirectory(source)
 
 # Add Samples
-if(ENABLE_SAMPLES)
+if(true)
     add_subdirectory(samples)
     message(STATUS "Including Samples")
-endif(ENABLE_SAMPLES)
+endif()
 
 # Add Tests
-if(ENABLE_TESTS)
+if(false)
     include(CTest)
     add_subdirectory(test)
     message(STATUS "Including Tests")
-endif(ENABLE_TESTS)
+endif()
