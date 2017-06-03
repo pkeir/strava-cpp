@@ -27,7 +27,6 @@ find_package(OpenSSL REQUIRED)
 # External projects
 add_subdirectory(external/lest)
 #add_subdirectory(external/poco)
-add_subdirectory(external/cpr)
 
 # Our Targets
 add_subdirectory(source)
