@@ -2,7 +2,7 @@
 cmake_minimum_required (VERSION 3.8 FATAL_ERROR)
 
 # Set project name
-project (strava-cpp)
+project (Strava)
 
 # Setting output dirs
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -26,7 +26,8 @@ find_package(OpenSSL REQUIRED)
 
 # External projects
 add_subdirectory(external/lest)
-add_subdirectory(external/poco)
+#add_subdirectory(external/poco)
+add_subdirectory(external/cpr)
 
 # Our Targets
 add_subdirectory(source)
