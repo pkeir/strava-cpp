@@ -27,7 +27,7 @@ find_package(OpenSSL REQUIRED)
 # External projects
 add_subdirectory(external/lest)
 add_subdirectory(external/json)
-#add_subdirectory(external/poco)
+add_subdirectory(external/rest)
 
 # Our Targets
 add_subdirectory(source)

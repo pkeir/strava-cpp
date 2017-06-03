@@ -6,7 +6,6 @@ ExternalProject_Add(JSON
     GIT_REPOSITORY "https://github.com/nlohmann/json"
     GIT_TAG "master"
     INSTALL_COMMAND ""
-    BUILD_COMMAND ""
 )
 
 ExternalProject_Get_Property(JSON install_dir)

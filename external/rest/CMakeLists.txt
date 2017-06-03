@@ -11,4 +11,4 @@ ExternalProject_Add(REST
 ExternalProject_Get_Property(REST install_dir)
 ExternalProject_Get_Property(REST source_dir)
 
-set(REST_INCLUDE ${source_dir}/include/json CACHE INTERNAL "")
+set(REST_INCLUDE ${source_dir}/include/rest CACHE INTERNAL "")
