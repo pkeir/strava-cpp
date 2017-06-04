@@ -3,25 +3,18 @@ include_directories(../include)
 include_directories(${OPENSSL_INCLUDE_DIR})
 include_directories(${JSON_INCLUDE})
 
-
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
-# Json Example
+# JSON Example
 add_executable(json-sample json/main.cpp)
-
-target_link_libraries(json-sample strava)
-target_link_libraries(json-sample ${OPENSSL_LIBRARIES})
-target_link_libraries(json-sample ${OPENSSL_SSL_LIBRARY})
-target_link_libraries(json-sample ${OPENSSL_CRYPTO_LIBRARY})
-
 add_dependencies(json-sample JSON)
 
-# Http Example
-add_executable(http-sample https/main.cpp)
+# CURL Example
+add_executable(curl-sample curls/main.cpp)
 
-target_link_libraries(http-sample strava)
-target_link_libraries(http-sample ${OPENSSL_LIBRARIES})
-target_link_libraries(http-sample ${OPENSSL_SSL_LIBRARY})
-target_link_libraries(http-sample ${OPENSSL_CRYPTO_LIBRARY})
+target_link_libraries(curl-sample strava)
+target_link_libraries(curl-sample ${OPENSSL_LIBRARIES})
+target_link_libraries(curl-sample ${OPENSSL_SSL_LIBRARY})
+target_link_libraries(curl-sample ${OPENSSL_CRYPTO_LIBRARY})
 
-add_dependencies(http-sample JSON)
+add_dependencies(curl-sample JSON)
