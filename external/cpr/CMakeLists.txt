@@ -5,5 +5,4 @@ ExternalProject_Add(CPR
     GIT_REPOSITORY "https://github.com/whoshuu/cpr"
     GIT_TAG "master"
     INSTALL_COMMAND ""
-    BUILD_COMMAND ""
 )
