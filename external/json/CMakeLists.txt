@@ -12,4 +12,5 @@ ExternalProject_Add(JSON
 ExternalProject_Get_Property(JSON install_dir)
 ExternalProject_Get_Property(JSON source_dir)
 
-set(JSON_INCLUDE ${source_dir}/include/json CACHE INTERNAL "")
+# Header only library
+set(JSON_INCLUDE ${source_dir}/include CACHE INTERNAL "")

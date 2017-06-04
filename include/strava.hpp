@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <rapidjson/rapidjson.h>
 #include <string>
 
 const std::string message = "Hello, World!";

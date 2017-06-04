@@ -1,6 +1,7 @@
 
 include_directories(../include)
 include_directories(${OPENSSL_INCLUDE_DIR})
+include_directories(${JSON_INCLUDE})
 
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
