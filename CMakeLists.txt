@@ -4,6 +4,9 @@ cmake_minimum_required (VERSION 3.8 FATAL_ERROR)
 # Set project name
 project (Strava)
 
+# Dependencies
+find_package(OpenSSL REQUIRED)
+
 # Setting output dirs
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -21,13 +24,11 @@ set(ENABLE_TESTS false)
 option(ENABLE_SAMPLES "Enable Samples" ON)
 option(ENABLE_TESTS "Enable Tests" OFF)
 
-# Dependencies
-find_package(OpenSSL REQUIRED)
-
 # External projects
 add_subdirectory(external/lest)
-add_subdirectory(external/json)
 add_subdirectory(external/rest)
+#add_subdirectory(external/json)
+
 
 # Our Targets
 add_subdirectory(source)
