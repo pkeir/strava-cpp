@@ -41,6 +41,6 @@ endif()
 # Add Tests
 if(false)
     include(CTest)
-    add_subdirectory(test)
+    add_subdirectory(tests)
     message(STATUS "Including Tests")
 endif()
