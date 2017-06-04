@@ -2,14 +2,29 @@
 include_directories(../include)
 include_directories(${OPENSSL_INCLUDE_DIR})
 include_directories(${JSON_INCLUDE})
+include_directories(${REST_INCLUDE})
 
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
-add_executable(helloworld helloworld/main.cpp)
+# Json Example
+add_executable(json-sample json/main.cpp)
 
-target_link_libraries(helloworld strava)
-target_link_libraries(helloworld ${OPENSSL_LIBRARIES})
-target_link_libraries(helloworld ${OPENSSL_SSL_LIBRARY})
-target_link_libraries(helloworld ${OPENSSL_CRYPTO_LIBRARY})
+target_link_libraries(json-sample strava)
+target_link_libraries(json-sample ${OPENSSL_LIBRARIES})
+target_link_libraries(json-sample ${OPENSSL_SSL_LIBRARY})
+target_link_libraries(json-sample ${OPENSSL_CRYPTO_LIBRARY})
 
-add_dependencies(helloworld LEST)
+add_dependencies(json-sample JSON)
+add_dependencies(json-sample REST)
+
+# Http Example
+add_executable(http-sample https/main.cpp)
+
+target_link_libraries(http-sample strava)
+target_link_libraries(http-sample ${OPENSSL_LIBRARIES})
+target_link_libraries(http-sample ${OPENSSL_SSL_LIBRARY})
+target_link_libraries(http-sample ${OPENSSL_CRYPTO_LIBRARY})
+target_link_libraries(http-sample ${REST_LIBRARIES})
+
+add_dependencies(http-sample JSON)
+add_dependencies(http-sample REST)
