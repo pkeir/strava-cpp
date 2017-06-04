@@ -1,5 +1,11 @@
 # Analysing Athlete Data using the Strava V3 API
 
+## Libraries
+
+* RapidJson = JSON parsing
+* Curl = HTTPS requests
+* Lest = Unit testing
+
 ## Glossary
 
 ### Strava Segment
@@ -104,14 +110,8 @@ default route options between points on the map. Does the Strava API allow
 routes to be generated which pass through certain named locations? Can routes
 be generated which include particular segments?
 
-# Proposed Task Sequence
+## License
 
-* A cross-platform C++ library wrapping the functionality of the Strava API 
-
-* In realising ideas from the section above, each should become a separate
-program; ideally a single cpp file. A GUI would be nice, but takes time;
-for now we are looking to demonstrate the concept.
-
-* The repository will be private for now - a license will be decided later
+To be decided later
 
 
