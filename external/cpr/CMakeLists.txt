@@ -10,7 +10,6 @@ ExternalProject_Add(CPR
 ExternalProject_Get_Property(CPR install_dir)
 ExternalProject_Get_Property(CPR source_dir)
 
-set(LIB_PATH ${install_dir}/src/CPR-build/lib/Debug/)
-# Header only library
+set(CBR_LIB_PATH ${install_dir}/src/CPR-build/lib/Debug/)
 set(CPR_INCLUDE ${source_dir}/include CACHE INTERNAL "")
-set(CPR_LIBRARIES ${LIB_PATH}cpr.lib ${LIB_PATH}libcurl_imp.lib CACHE INTERNAL "")
+set(CPR_LIBRARIES ${CBR_LIB_PATH}cpr.lib ${CBR_LIB_PATH}libcurl_imp.lib CACHE INTERNAL "")
