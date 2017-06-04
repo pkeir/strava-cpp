@@ -3,9 +3,10 @@ include (ExternalProject)
 
 ExternalProject_Add(JSON
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/json 
-    GIT_REPOSITORY "https://github.com/nlohmann/json"
+    GIT_REPOSITORY "https://github.com/miloyip/rapidjson/"
     GIT_TAG "master"
     INSTALL_COMMAND ""
+    BUILD_COMMAND ""
 )
 
 ExternalProject_Get_Property(JSON install_dir)
