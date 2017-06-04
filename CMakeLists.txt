@@ -27,7 +27,7 @@ option(ENABLE_TESTS "Enable Tests" OFF)
 # External projects
 add_subdirectory(external/lest)
 add_subdirectory(external/json)
-add_subdirectory(external/cpr)
+add_subdirectory(external/curl)
 
 # Our Targets
 add_subdirectory(source)
