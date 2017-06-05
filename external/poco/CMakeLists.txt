@@ -5,7 +5,7 @@ ExternalProject_Add(POCO
     GIT_REPOSITORY "https://github.com/pocoproject/poco"
     GIT_TAG "master"
     INSTALL_COMMAND ""
-    CMAKE_ARGS -DENABLE_NETSSL=ON
+    CMAKE_ARGS -DENABLE_NETSSL=ON -DPOCO_STATIC=ON
 )
 
 ExternalProject_Get_Property(POCO install_dir)

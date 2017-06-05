@@ -6,7 +6,6 @@ project (Strava)
 
 # Dependencies
 find_package(OpenSSL REQUIRED)
-find_package(CURL REQUIRED)
 
 # Setting output dirs
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -27,21 +26,20 @@ option(ENABLE_TESTS "Enable Tests" OFF)
 
 # External projects
 add_subdirectory(external/lest)
-add_subdirectory(external/json)
-add_subdirectory(external/curl)
+add_subdirectory(external/poco)
 
 # Our Targets
 add_subdirectory(source)
 
 # Add Samples
-if(true)
+if(ENABLE_SAMPLES)
     add_subdirectory(samples)
     message(STATUS "Including Samples")
-endif()
+endif(ENABLE_SAMPLES)
 
 # Add Tests
-if(false)
+if(ENABLE_TESTS)
     include(CTest)
     add_subdirectory(tests)
     message(STATUS "Including Tests")
-endif()
+endif(ENABLE_TESTS)
