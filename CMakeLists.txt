@@ -6,6 +6,7 @@ project (Strava)
 
 # Dependencies
 find_package(OpenSSL REQUIRED)
+find_package(CURL REQUIRED)
 
 # Setting output dirs
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
