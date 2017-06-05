@@ -6,7 +6,7 @@ ExternalProject_Add(CURL
     GIT_REPOSITORY "https://github.com/curl/curl"
     GIT_TAG "master"
     INSTALL_COMMAND ""
-    BUILD_COMMAND ""
+    CMAKE_ARGS -DCURL_STATICLIB=ON
 )
 
 ExternalProject_Get_Property(CURL install_dir)
