@@ -13,10 +13,8 @@ C++ API bindings to v3 of the Strava API.
 
 ## Dependencies
 
-Rapid JSON is header only JSON parsing library. It is used to parse HTTPS request responses into domain access objects that represent the key concepts in the Strava v3 API. For HTTP/HTTPS requests libcurl is used which is what the Curl CLI tool is built on top of.
-
-* [Rapidjson](https://github.com/miloyip/rapidjson)
-* [Curl](https://github.com/curl/curl)  
+* [Poco](https://github.com/pocoproject/poco)
+* [Lest](https://github.com/martinmoene/lest)  
 
 ## Docs
 
