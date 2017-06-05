@@ -4,4 +4,4 @@ include_directories(${JSON_INCLUDE})
 
 set(SOURCE strava.cpp)
 
-add_library(strava ${SOURCE})
+add_library(STRAVA ${SOURCE})

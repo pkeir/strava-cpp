@@ -1,20 +1,28 @@
 
+# Lib Header
 include_directories(../include)
+
+# OpenSSL
 include_directories(${OPENSSL_INCLUDE_DIR})
-include_directories(${JSON_INCLUDE})
+
+# Poco
+include_directories(${POCO_INCLUDE}/Util/include)
+include_directories(${POCO_INCLUDE}/Net/include)
+include_directories(${POCO_INCLUDE}/NetSSL_OpenSSL/include)
+include_directories(${POCO_INCLUDE}/Crypto/include)
+include_directories(${POCO_INCLUDE}/JSON/include)
+include_directories(${POCO_INCLUDE}/Foundation/include)
 
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+link_directories(${POCO_LIB})
 
-# JSON Example
-add_executable(json-sample json/main.cpp)
-add_dependencies(json-sample JSON)
+add_executable(helloworld helloworld/main.cpp)
 
-# CURL Example
-add_executable(curl-sample curl/main.cpp)
+target_link_libraries(helloworld STRAVA)
+target_link_libraries(helloworld ${OPENSSL_LIBRARIES})
+target_link_libraries(helloworld ${OPENSSL_SSL_LIBRARY})
+target_link_libraries(helloworld ${OPENSSL_CRYPTO_LIBRARY})
 
-target_link_libraries(curl-sample strava)
-target_link_libraries(curl-sample ${OPENSSL_LIBRARIES})
-target_link_libraries(curl-sample ${OPENSSL_SSL_LIBRARY})
-target_link_libraries(curl-sample ${OPENSSL_CRYPTO_LIBRARY})
-
-add_dependencies(curl-sample JSON)
+add_dependencies(helloworld STRAVA)
+add_dependencies(helloworld POCO)
+add_dependencies(helloworld LEST)
