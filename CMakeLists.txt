@@ -7,6 +7,8 @@ project (Strava)
 # Dependencies
 find_package(OpenSSL REQUIRED)
 
+message(STATUS ${CMAKE_BUILD_TYPE})
+
 # Setting output dirs
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})

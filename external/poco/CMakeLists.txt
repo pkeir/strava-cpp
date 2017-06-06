@@ -5,6 +5,7 @@ ExternalProject_Add(POCO
     GIT_REPOSITORY "https://github.com/pocoproject/poco"
     GIT_TAG "master"
     INSTALL_COMMAND ""
+    UPDATE_COMMAND ""
     CMAKE_ARGS -DENABLE_NETSSL=ON
 )
 
