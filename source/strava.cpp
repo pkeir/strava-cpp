@@ -1,10 +1,33 @@
 
-#include <iostream>
-#include <exception>
+#include <Poco/Net/HTTPClientSession.h>
+#include <Poco/Net/NetSSL.h>
+#include <Poco/Net/InvalidCertificateHandler.h>
+#include <Poco/Net/AcceptCertificateHandler.h>
+#include <Poco/Net/HTTPSClientSession.h>
+#include <Poco/Net/SSLManager.h>
+#include <Poco/Net/HTTPRequest.h>
+#include <Poco/Net/HTTPResponse.h>
+#include <Poco/Net/SSLException.h>
+
+#include <Poco/SharedPtr.h>
+#include <Poco/StreamCopier.h>
+#include <Poco/FileStream.h>
+#include <Poco/JSON/Parser.h>
+#include <Poco/Dynamic/Var.h>
+#include <Poco/JSON/JSON.h>
+#include <Poco/URI.h>
 #include <strava.hpp>
+
+#include <algorithm>
+#include <exception>
+#include <iostream>
+#include <sstream>
 
 using namespace Poco;
 using namespace Poco::Net;
+
+strava::auth_info authentication;
+strava::session client_session;
 
 class not_implemented : public std::logic_error
 {
@@ -43,10 +66,6 @@ void https(Context::Ptr context, std::string url, std::string token, std::ostrea
         std::cerr << e.what() << ": " << e.message() << std::endl;
     }
 }
-
-
-strava::auth_info authentication;
-strava::session client_session;
 
 void strava::athletes::current(strava::athelete& athelete)
 {
