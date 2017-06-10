@@ -13,14 +13,14 @@ namespace strava
         std::string client_id;
     };
 
-    struct athelete
+    struct athlete
     {
         std::string name;
     };
 
-    namespace atheletes
+    namespace athletes
     {
-        void current(athelete& out);
+        void current(athlete& out);
     }
 
     void authenticate(oauth&& info, bool skip_init = false);

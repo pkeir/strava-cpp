@@ -27,15 +27,10 @@ using namespace Poco;
 using namespace Poco::Net;
 
 Poco::Net::Context::Ptr session = nullptr;
+
 strava::oauth authentication;
 
-class not_implemented : public std::logic_error
-{
-public:
-    not_implemented() : std::logic_error("Function not yet implemented") { };
-};
-
-void https(Context::Ptr context, std::string url, std::string token, std::ostream& out, std::string body = "")
+void request(Context::Ptr context, std::string url, std::string token, std::ostream& out, std::string body = "")
 {
     URI uri("https://www.strava.com");
 
@@ -67,13 +62,13 @@ void https(Context::Ptr context, std::string url, std::string token, std::ostrea
     }
 }
 
-void strava::atheletes::current(strava::athelete& athelete)
+void strava::athletes::current(strava::athlete& athlete)
 {
     std::stringstream response;
-    https(session, "/api/v3/athlete", authentication.access_token, response);
+    request(session, "/api/v3/athlete", authentication.access_token, response);
 
-    athelete = {};
-    athelete.name = response.str();
+    athlete = {};
+    athlete.name = response.str();
 }
 
 void strava::authenticate(strava::oauth&& autho, bool skip_init)
