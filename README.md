@@ -24,7 +24,6 @@ int main(int argc, char*argv[])
     strava::athletes::current(me);
 
     std::cout << me.name << std::endl;
-    std::cin.get();
 }
 ```
 
