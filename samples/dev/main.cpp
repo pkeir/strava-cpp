@@ -4,12 +4,11 @@
 
 int main(int argc, char*argv[])
 {
-    // starts session and authenticates
     strava::authenticate({
-        "",
-        "",
-        "",
-        ""
+        "<access_token>",
+        "<redirect_url>",
+        "<client_secret>",
+        "<client_id>"
     });
     
     strava::athelete me;
