@@ -1,20 +1,14 @@
 
 #pragma once
 
-#include <Poco/Net/Context.h>
 #include <string>
 
 namespace strava
 {
-    struct session
+    struct oauth
     {
-        Poco::Net::Context::Ptr context;
-    };
-
-    struct auth_info
-    {
-        std::string redirect_url;
         std::string access_token;
+        std::string redirect_url;
         std::string client_secret;
         std::string client_id;
     };
@@ -24,11 +18,10 @@ namespace strava
         std::string name;
     };
 
-    namespace athletes
+    namespace atheletes
     {
         void current(athelete& out);
     }
 
-    void authenticate(std::string token);
-    void setupSession();
+    void authenticate(oauth&& info, bool skip_init = false);
 }

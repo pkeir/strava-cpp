@@ -26,8 +26,8 @@
 using namespace Poco;
 using namespace Poco::Net;
 
-strava::auth_info authentication;
-strava::session client_session;
+Poco::Net::Context::Ptr session = nullptr;
+strava::oauth authentication;
 
 class not_implemented : public std::logic_error
 {
@@ -67,24 +67,24 @@ void https(Context::Ptr context, std::string url, std::string token, std::ostrea
     }
 }
 
-void strava::athletes::current(strava::athelete& athelete)
+void strava::atheletes::current(strava::athelete& athelete)
 {
     std::stringstream response;
-    https(client_session.context, "/api/v3/athlete", authentication.access_token, response);
+    https(session, "/api/v3/athlete", authentication.access_token, response);
 
     athelete = {};
     athelete.name = response.str();
 }
 
-void strava::setupSession()
+void strava::authenticate(strava::oauth&& autho, bool skip_init)
 {
-    client_session.context = Context::Ptr(new Context(Context::CLIENT_USE, ""));
+    authentication = autho;
 
-    SSLManager::InvalidCertificateHandlerPtr handler(new AcceptCertificateHandler(false));
-    SSLManager::instance().initializeClient(0, handler, client_session.context);
-}
+    if(!skip_init && session.isNull())
+    {
+        session = Context::Ptr(new Context(Context::CLIENT_USE, ""));
 
-void strava::authenticate(std::string token)
-{
-    authentication.access_token = token;
+        SSLManager::InvalidCertificateHandlerPtr handler(new AcceptCertificateHandler(false));
+        SSLManager::instance().initializeClient(0, handler, session);
+    }
 }
