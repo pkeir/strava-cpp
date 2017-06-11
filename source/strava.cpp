@@ -22,15 +22,41 @@
 #include <exception>
 #include <iostream>
 #include <sstream>
+#include <iomanip>
+#include <sstream>
 
 using namespace Poco;
 using namespace Poco::Net;
+using namespace Poco::JSON;
 
 Poco::Net::Context::Ptr session = nullptr;
 
 strava::oauth authentication;
 
-void request(Context::Ptr context, std::string url, std::ostream& out, std::string body = "")
+time_t to_time_t(std::string timestring, std::string format) 
+{
+    tm time;
+    std::istringstream input(timestring);
+    input.imbue(std::locale(setlocale(LC_ALL, nullptr)));
+    input >> std::get_time(&time, format.c_str());
+
+    if (input.fail()) 
+    {
+        return 0;
+    }
+
+    return mktime(&time);
+}
+
+std::string pretty_time_t(time_t time)
+{
+    const int bufferSize = 20;
+    char timeBuffer[bufferSize];
+    strftime(timeBuffer, bufferSize, "%Y-%m-%d %H:%M:%S", localtime(&time));
+    return timeBuffer;
+}
+
+JSON::Object::Ptr request(Context::Ptr context, std::string url, std::string body = "")
 {
     URI uri("https://www.strava.com");
 
@@ -39,6 +65,7 @@ void request(Context::Ptr context, std::string url, std::ostream& out, std::stri
         HTTPSClientSession session(uri.getHost(), uri.getPort(), context);
         HTTPResponse response;
         HTTPRequest request;
+        Parser parser;
 
         request.setMethod(body.empty() ? HTTPRequest::HTTP_GET : HTTPRequest::HTTP_POST);
         request.set("Authorization", "Bearer " + authentication.access_token);
@@ -48,13 +75,16 @@ void request(Context::Ptr context, std::string url, std::ostream& out, std::stri
         session.setTimeout(Timespan(10L, 0L));
 
         auto& os = session.sendRequest(request);
+        auto ss = std::stringstream();
 
         if (request.getMethod() == HTTPRequest::HTTP_POST)
         {
             os << body;
         }
+        
+        StreamCopier::copyStream(session.receiveResponse(response), ss);
 
-        StreamCopier::copyStream(session.receiveResponse(response), out);
+        return parser.parse(ss.str()).extract<Object::Ptr>();
     }
     catch (const SSLException& e)
     {
@@ -62,43 +92,51 @@ void request(Context::Ptr context, std::string url, std::ostream& out, std::stri
     }
 }
 
-JSON::Object::Ptr parse(std::stringstream& response) 
+std::string str(JSON::Object::Ptr object, std::string key)
 {
-    Poco::JSON::Parser parser;
-    auto tree = parser.parse(response.str());
-    return tree.extract<JSON::Object::Ptr>();
+    auto value = object->get(key);
+    
+    if (value.isEmpty())
+    {
+        return strava::null;
+    }
+
+    auto v = std::string("");
+    value.convert(v);
+    return v;
 }
 
 void strava::athletes::current(strava::athlete& athlete)
 {
-    std::stringstream response;
-    request(session, "/api/v3/athlete", response);
+    auto json = request(session, "/api/v3/athlete");
 
-    auto root = parse(response);
+    athlete = {0};
+    athlete.firstname = str(json, "firstname");
+    athlete.lastname = str(json, "lastname");
+    athlete.profile = str(json, "profile");
+    athlete.profile_medium = str(json, "profile_medium");
+    athlete.city = str(json, "city");
+    athlete.state = str(json, "state");
+    athlete.country = str(json, "country");
+    athlete.sex = str(json, "sex");
+    athlete.is_friend =  str(json, "friend");
+    athlete.follower = str(json, "follower");
+    athlete.date_preference = str(json, "date_preference");
+    athlete.measurement_preference = str(json, "measurement_preference");
+    athlete.email = str(json, "email");
 
-    std::map<std::string, std::string*> bindings 
-    {
-        {"firstname", &athlete.firstname },
-        {"lastname", &athlete.lastname }
-    };
+    auto created_timestamp = str(json, "created_at");
+    auto updated_timestamp = str(json, "created_at");
 
-    for (auto& e : *root)
-    {
-        auto key = e.first;
-        auto value = e.second;
-
-        if (bindings.count(key) != 0)
-        {
-            *bindings[key] = value.toString();
-        }
-    }
+    athlete.created_at = to_time_t(created_timestamp, "%Y-%m-%dT%H:%M:%SZ");
+    athlete.updated_at = to_time_t(updated_timestamp, "%Y-%m-%dT%H:%M:%SZ");
 }
 
 void strava::authenticate(strava::oauth&& autho, bool skip_init)
 {
     authentication = autho;
 
-    if(!skip_init && session.isNull())
+    if (!skip_init && session.isNull())
     {
         session = Context::Ptr(new Context(Context::CLIENT_USE, ""));
 

@@ -3,9 +3,12 @@
 
 #include <string>
 #include <vector>
+#include <time.h>
 
 namespace strava
 {
+    const std::string null = "null";
+
     struct oauth
     {
         std::string access_token;
@@ -17,8 +20,9 @@ namespace strava
     struct bike
     {
         std::string id;
-        bool primary;
         std::string name;
+
+        bool primary;
         double distance;
         int resource_state;
     };
@@ -27,6 +31,8 @@ namespace strava
     {
         int id;
         int resource_state;
+        int member_count;
+
         std::string name;
         std::string profile_medium;
         std::string profile;
@@ -36,17 +42,18 @@ namespace strava
         std::string city;
         std::string state;
         std::string country;
-        bool is_private;
-        int member_count;
-        bool featured;
         std::string url;
+
+        bool is_private;
+        bool featured;       
     };
 
     struct shoe
     {
         std::string id;
-        bool primary;
         std::string name;
+
+        bool primary;
         double distance;
         int resource_state;
     };
@@ -55,6 +62,13 @@ namespace strava
     {
         int id;
         int resource_state;
+        int follower_count;
+        int friend_count;
+        int mutual_friend_count;
+        int athlete_type;
+        int ftp;
+        int weight;
+
         std::string firstname;
         std::string lastname;
         std::string profile_medium;
@@ -65,22 +79,18 @@ namespace strava
         std::string sex;
         std::string is_friend;
         std::string follower;
-        bool premium;
-        time_t created_at;
-        time_t updated_at;
-        int follower_count;
-        int friend_count;
-        int mutual_friend_count;
-        int athlete_type;
         std::string date_preference;
         std::string measurement_preference;
         std::string email;
-        int ftp;
-        int weight;
+
+        time_t created_at;
+        time_t updated_at;
 
         std::vector<club> clubs;
         std::vector<bike> bikes;
         std::vector<shoe> shoes;
+
+        bool premium;
     };
 
     namespace athletes
