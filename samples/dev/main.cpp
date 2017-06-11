@@ -2,7 +2,7 @@
 #include <strava.hpp>
 #include <iostream>
 
-int main(int argc, char*argv[])
+int main(int argc, char* argv[])
 {
     strava::authenticate({
         "1fbc8877efd758b7744774a1217bab6e864e251b",  // access_token
