@@ -15,7 +15,12 @@ namespace strava
 
     struct athlete
     {
-        std::string name;
+        int id;
+        int resource_state;
+        std::string firstname;
+        std::string lastname;
+        std::string profile_medium;
+        std::string profile;
     };
 
     namespace athletes

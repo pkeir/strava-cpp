@@ -30,7 +30,7 @@ Poco::Net::Context::Ptr session = nullptr;
 
 strava::oauth authentication;
 
-void request(Context::Ptr context, std::string url, std::string token, std::ostream& out, std::string body = "")
+void request(Context::Ptr context, std::string url, std::ostream& out, std::string body = "")
 {
     URI uri("https://www.strava.com");
 
@@ -41,7 +41,7 @@ void request(Context::Ptr context, std::string url, std::string token, std::ostr
         HTTPRequest request;
 
         request.setMethod(body.empty() ? HTTPRequest::HTTP_GET : HTTPRequest::HTTP_POST);
-        request.set("Authorization", "Bearer " + token);
+        request.set("Authorization", "Bearer " + authentication.access_token);
         request.setURI(url);
 
         session.setPort(443);
@@ -62,13 +62,36 @@ void request(Context::Ptr context, std::string url, std::string token, std::ostr
     }
 }
 
+JSON::Object::Ptr parse(std::stringstream& response) 
+{
+    Poco::JSON::Parser parser;
+    auto tree = parser.parse(response.str());
+    return tree.extract<JSON::Object::Ptr>();
+}
+
 void strava::athletes::current(strava::athlete& athlete)
 {
     std::stringstream response;
-    request(session, "/api/v3/athlete", authentication.access_token, response);
+    request(session, "/api/v3/athlete", response);
 
-    athlete = {};
-    athlete.name = response.str();
+    auto root = parse(response);
+
+    std::map<std::string, std::string*> bindings 
+    {
+        {"firstname", &athlete.firstname },
+        {"lastname", &athlete.lastname }
+    };
+
+    for (auto& e : *root)
+    {
+        auto key = e.first;
+        auto value = e.second;
+
+        if (bindings.count(key) != 0)
+        {
+            *bindings[key] = value.toString();
+        }
+    }
 }
 
 void strava::authenticate(strava::oauth&& autho, bool skip_init)
