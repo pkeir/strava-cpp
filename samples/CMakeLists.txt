@@ -16,13 +16,6 @@ include_directories(${POCO_INCLUDE}/Foundation/include)
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 link_directories(${POCO_LIB})
 
-add_executable(helloworld helloworld/main.cpp helloworld/main.hpp)
-
-target_link_libraries(helloworld STRAVA)
-target_link_libraries(helloworld ${OPENSSL_LIBRARIES})
-target_link_libraries(helloworld ${OPENSSL_SSL_LIBRARY})
-target_link_libraries(helloworld ${OPENSSL_CRYPTO_LIBRARY})
-
 add_executable(dev dev/main.cpp)
 
 target_link_libraries(dev STRAVA)
