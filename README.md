@@ -35,6 +35,15 @@ You can build via CMake or use the prebuilt binaries available in each release. 
 * [Lest](https://github.com/martinmoene/lest)  
 * OpenSSL
 
+## Objectives
+
+* CI with travis + appveyor
+* Badges in README
+* Athlete functionality
+* Athlete tests
+
+TBD by Monday the 19th of June.
+
 ## Documentation
 
 * [Project Specification](SPECIFICATION.md)
