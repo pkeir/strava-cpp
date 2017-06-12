@@ -11,8 +11,8 @@ int main(int argc, char* argv[])
         "18035"                                      // client_id
     });
     
-    strava::athlete me;
-    strava::athletes::current(me);
+    strava::detailed::athlete me;
+    strava::athlete::current(me);
 
     std::cout << me.firstname << " ";
     std::cout << me.lastname << std::endl;
