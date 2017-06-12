@@ -20,7 +20,7 @@ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_MACOSX_RPATH 1)
 set(ENABLE_SAMPLES true)
-set(ENABLE_TESTS false)
+set(ENABLE_TESTS true)
 
 # Project Options
 option(ENABLE_SAMPLES "Enable Samples" ON)
