@@ -128,7 +128,7 @@ void StravaCpp::httpsRequest(Context::Ptr context, std::string url, std::ostream
 
     try
     {
-        HTTPSClientSession session(uri.getHost(), uri.getPort(), context);
+        HTTPSClientSession ssl_session(uri.getHost(), uri.getPort(), context);
         HTTPResponse response;
         HTTPRequest request;
 
@@ -136,17 +136,17 @@ void StravaCpp::httpsRequest(Context::Ptr context, std::string url, std::ostream
         request.set("Authorization", "Bearer " + accessToken);
         request.setURI(url);
 
-        session.setPort(443);
-        session.setTimeout(Timespan(10L, 0L));
+        ssl_session.setPort(443);
+        ssl_session.setTimeout(Timespan(10L, 0L));
 
-        auto& os = session.sendRequest(request);
+        auto& os = ssl_session.sendRequest(request);
 
         if (request.getMethod() == HTTPRequest::HTTP_POST)
         {
             os << body;
         }
 
-        StreamCopier::copyStream(session.receiveResponse(response), stringBuffer);
+        StreamCopier::copyStream(ssl_session.receiveResponse(response), stringBuffer);
     }
     catch (const SSLException& e)
     {

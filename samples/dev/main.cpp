@@ -16,5 +16,22 @@ int main(int argc, char* argv[])
 
     std::cout << me.firstname << " ";
     std::cout << me.lastname << std::endl;
+
+    for (auto club : me.clubs)
+    {
+        std::cout << club.id << std::endl;
+    }
+
+    for (auto bike : me.bikes)
+    {
+        std::cout << bike.id << std::endl;
+    }
+
+    for (auto shoe : me.shoes)
+    {
+        std::cout << shoe.id << std::endl;
+    }
+
+
     std::cin.get();
 }

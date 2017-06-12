@@ -7,8 +7,6 @@
 
 namespace strava
 {
-    const std::string null = "null";
-
     struct oauth
     {
         std::string access_token;
@@ -19,12 +17,11 @@ namespace strava
 
     struct bike
     {
-        std::string id;
-        std::string name;
-
         bool primary;
         double distance;
         int resource_state;
+        std::string id;
+        std::string name;
     };
 
     struct club
@@ -50,12 +47,11 @@ namespace strava
 
     struct shoe
     {
-        std::string id;
-        std::string name;
-
         bool primary;
         double distance;
         int resource_state;
+        std::string id;
+        std::string name;
     };
 
     struct athlete
