@@ -3,7 +3,7 @@
 
 # Strava Cpp
 
-C++ API bindings to v3 of the Strava API.
+C++ API bindings to v3 of the Strava API. Currently a work in progress.
 
 ## Example 
 
@@ -11,7 +11,7 @@ C++ API bindings to v3 of the Strava API.
 #include <strava.hpp>
 #include <iostream>
 
-int main(int argc, char*argv[])
+int main(int argc, char* argv[])
 {
     strava::authenticate({
         "<access_token>",
@@ -21,7 +21,7 @@ int main(int argc, char*argv[])
     });
     
     strava::athlete me;
-    strava::athletes::current(me);
+    strava::athlete::current(me);
 
     std::cout << me.name << std::endl;
 }
