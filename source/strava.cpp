@@ -25,25 +25,22 @@
 #include <sstream>
 #include <map>
 
-/// Refactor into class
-Poco::Net::Context::Ptr ssl_session = nullptr;
-
-///
-strava::oauth authentication;
-
 ///
 /// 
 ///
-namespace endpoints
-{
-    const std::string athlete_url = "/api/v3/athlete";
-    const std::string activities_url = "/api/v3/activities/";
-    const std::string clubs_url = "/api/v3/clubs/";
-    const std::string gear_url = "/api/v3/gear/";
-    const std::string routes_url = "/api/v3/clubs/";
-    const std::string segments_url = "/api/v3/segments/";
-    const std::string uploads_url = "/api/v3/uploads";
-};
+strava::client session;
+strava::oauth authentication;
+
+///
+/// Change to capital letters 
+///
+const std::string activities_url = "/api/v3/activities/";
+const std::string segments_url = "/api/v3/segments/";
+const std::string athlete_url = "/api/v3/athlete/";
+const std::string uploads_url = "/api/v3/uploads/";
+const std::string routes_url = "/api/v3/clubs/";
+const std::string clubs_url = "/api/v3/clubs/";
+const std::string gear_url = "/api/v3/gear/";
 
 ///
 /// 
@@ -79,15 +76,13 @@ std::string pretty_time_t(time_t time)
 ///
 /// 
 ///
-Poco::JSON::Object::Ptr request(Poco::Net::Context::Ptr context, std::string url, std::string body = "")
+Poco::JSON::Object::Ptr request(std::string url, std::string body = "")
 {
-    Poco::URI uri("https://www.strava.com");
     Poco::JSON::Parser parser;
     Poco::JSON::Object::Ptr value = {};
 
     try
     {
-        Poco::Net::HTTPSClientSession client(uri.getHost(), uri.getPort(), context);
         Poco::Net::HTTPResponse response;
         Poco::Net::HTTPRequest request;
 
@@ -95,10 +90,10 @@ Poco::JSON::Object::Ptr request(Poco::Net::Context::Ptr context, std::string url
         request.set("Authorization", "Bearer " + authentication.access_token);
         request.setURI(url);
 
-        client.setPort(443);
-        client.setTimeout(Poco::Timespan(10L, 0L));
+        session.session->setPort(443);
+        session.session->setTimeout(Poco::Timespan(10L, 0L));
 
-        auto& os = client.sendRequest(request);
+        auto& os = session.session->sendRequest(request);
         auto ss = std::stringstream();
 
         if (request.getMethod() == Poco::Net::HTTPRequest::HTTP_POST)
@@ -106,7 +101,7 @@ Poco::JSON::Object::Ptr request(Poco::Net::Context::Ptr context, std::string url
             os << body;
         }
 
-        Poco::StreamCopier::copyStream(client.receiveResponse(response), ss);
+        Poco::StreamCopier::copyStream(session.session->receiveResponse(response), ss);
         value = parser.parse(ss.str()).extract<Poco::JSON::Object::Ptr>();
     }
     catch (const Poco::Net::SSLException& e)
@@ -160,25 +155,13 @@ void club_from_json(Poco::JSON::Object::Ptr json, strava::summary::club& club)
 ///
 /// 
 ///
-void bike_from_json(Poco::JSON::Object::Ptr json, strava::summary::bike& bike)
+void gear_from_json(Poco::JSON::Object::Ptr json, strava::summary::gear& gear)
 {
-    bike.resource_state = cast<int>(json, "resource_state", 0);
-    bike.distance = cast<double>(json, "distance", 0.0);
-    bike.primary = cast<bool>(json, "primary", false);
-    bike.name = cast<std::string>(json, "name", "");
-    bike.id = cast<std::string>(json, "id", "");
-}
-
-///
-/// 
-///
-void shoe_from_json(Poco::JSON::Object::Ptr json, strava::summary::shoe& shoe)
-{
-    shoe.resource_state = cast<int>(json, "resource_state", 0);
-    shoe.distance = cast<double>(json, "distance", 0.0);
-    shoe.primary = cast<bool>(json, "primary", false);
-    shoe.name = cast<std::string>(json, "name", "");
-    shoe.id = cast<std::string>(json, "id", "");
+    gear.resource_state = cast<int>(json, "resource_state", 0);
+    gear.distance = cast<double>(json, "distance", 0.0);
+    gear.primary = cast<bool>(json, "primary", false);
+    gear.name = cast<std::string>(json, "name", "");
+    gear.id = cast<std::string>(json, "id", "");
 }
 
 ///
@@ -224,13 +207,6 @@ void athlete_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& 
     athlete.shoes.reserve(shoes->size());
     athlete.clubs.reserve(clubs->size());
 
-    for (auto& b : *bikes)
-    {
-        strava::summary::bike bike;
-        bike_from_json(b.extract<Poco::JSON::Object::Ptr>(), bike);
-        athlete.bikes.push_back(bike);
-    }
-
     for (auto& c : *clubs)
     {
         strava::summary::club club;
@@ -240,9 +216,16 @@ void athlete_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& 
 
     for (auto& s : *shoes)
     {
-        strava::summary::shoe shoe;
-        shoe_from_json(s.extract<Poco::JSON::Object::Ptr>(), shoe);
+        strava::summary::gear shoe;
+        gear_from_json(s.extract<Poco::JSON::Object::Ptr>(), shoe);
         athlete.shoes.push_back(shoe);
+    }
+
+    for (auto& b : *bikes)
+    {
+        strava::summary::gear bike;
+        gear_from_json(b.extract<Poco::JSON::Object::Ptr>(), bike);
+        athlete.bikes.push_back(bike);
     }
 }
 
@@ -253,14 +236,17 @@ void strava::authenticate(strava::oauth&& autho, bool skip_init)
 {
     authentication = autho;
 
-    if (!skip_init && ssl_session.isNull())
+    if (!skip_init && session.context.isNull())
     {
         using namespace Poco::Net;
 
-        ssl_session = Context::Ptr(new Context(Context::CLIENT_USE, ""));
+        Poco::URI uri("https://www.strava.com");
+
+        session.context = Context::Ptr(new Context(Context::CLIENT_USE, ""));
+        session.session = new HTTPSClientSession(uri.getHost(), uri.getPort(), session.context);
 
         SSLManager::InvalidCertificateHandlerPtr handler(new AcceptCertificateHandler(false));
-        SSLManager::instance().initializeClient(0, handler, ssl_session);
+        SSLManager::instance().initializeClient(0, handler, session.context);
     }
 }
 
@@ -269,7 +255,7 @@ void strava::authenticate(strava::oauth&& autho, bool skip_init)
 ///
 void strava::athlete::retrieve(int id, summary::athlete& out)
 {
-    auto response = request(ssl_session, endpoints::athlete_url);
+    auto response = request(athlete_url);
 }
 
 ///
@@ -277,6 +263,47 @@ void strava::athlete::retrieve(int id, summary::athlete& out)
 ///
 void strava::athlete::current(detailed::athlete& out)
 {
-    auto response = request(ssl_session, endpoints::athlete_url);
+    auto response = request(athlete_url);
     athlete_from_json(response, out);
+}
+
+///
+/// 
+///
+void strava::gear::retrieve(int id, detailed::gear& out)
+{
+
+}
+
+///
+/// 
+///
+void strava::athlete::update(update::athlete update, detailed::athlete updated_out)
+{
+
+}
+
+///
+/// 
+///
+void strava::athlete::get_zones(athlete::zones& out)
+{
+
+}
+
+///
+/// 
+///
+void strava::athlete::get_stats(detailed::athlete& athlete, statistics& stats)
+{
+
+}
+
+
+///
+/// 
+///
+void strava::athlete::list_kqom_cr(detailed::athlete& athlete, kqom_c& out)
+{
+
 }

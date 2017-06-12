@@ -1,12 +1,49 @@
 
 #pragma once
 
+// Placeholder license (MIT) cough cough cough...
+//
+//  Copyright(c) <year> <copyright holders>
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files(the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions :
+//
+//  The above copyright notice and this permission notice shall be included in all
+//  copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
+
+#include <Poco/Net/HTTPSClientSession.h>
+#include <Poco/Net/NetSSL.h>
+#include <memory>
 #include <string>
 #include <vector>
 #include <time.h>
 
 namespace strava
 {
+    ///
+    /// Client struct which keeps
+    /// a Poco https session and the context
+    /// for SSL https server/client
+    ///
+    struct client
+    {
+        // Poco::AutoPtr = std::unqiue_ptr
+        Poco::AutoPtr<Poco::Net::HTTPSClientSession> session;
+        Poco::AutoPtr<Poco::Net::Context> context;
+    };
+
     ///
     /// Simple struct that sets out details
     /// needed for authentication.
@@ -18,7 +55,6 @@ namespace strava
         std::string client_secret;
         std::string client_id;
     };
-
 
     ///
     /// Authenticates and sets up the https client.
@@ -49,23 +85,48 @@ namespace strava
         ///
         struct club
         {
-
+            int id;
+            int resource_state;
+            std::string name;
         };
 
         ///
         ///
         ///
-        struct shoe
+        struct route
         {
-
+            int id;
+            int resource_state;
+            std::string name;
+            // map object??? http://strava.github.io/api/v3/routes/#maps
         };
 
         ///
+        /// Race metadata empty
         ///
-        ///
-        struct bike
+        struct race
         {
+        };
 
+        ///
+        /// Gear metadata empty
+        ///
+        struct gear
+        {
+        };
+
+        ///
+        /// Segment metadata empty
+        ///
+        struct segment
+        {
+        };
+
+        ///
+        /// Segment Effort metadata empty
+        ///
+        struct segment_effort
+        {
         };
     }
 
@@ -125,19 +186,7 @@ namespace strava
         ///
         ///
         ///
-        struct bike : public meta::bike
-        {
-            bool primary;
-            double distance;
-            int resource_state;
-            std::string id;
-            std::string name;
-        };
-
-        ///
-        ///
-        ///
-        struct shoe : public meta::shoe
+        struct gear : public meta::gear
         {
             bool primary;
             double distance;
@@ -171,8 +220,8 @@ namespace strava
             std::string email;
 
             std::vector<summary::club> clubs;
-            std::vector<summary::bike> bikes;
-            std::vector<summary::shoe> shoes;
+            std::vector<summary::gear> bikes;
+            std::vector<summary::gear> shoes;
         };
 
         ///
@@ -186,17 +235,21 @@ namespace strava
         ///
         ///
         ///
-        struct shoe : public summary::shoe
+        struct gear : public summary::gear
         {
 
         };
+    }
 
-        ///
-        ///
-        ///
-        struct bike : public summary::bike
+    namespace update
+    {
+        struct athlete
         {
-
+            float weight;
+            std::string city;
+            std::string state;
+            std::string country;
+            std::string sex;
         };
     }
 
@@ -206,6 +259,84 @@ namespace strava
     namespace athlete
     {
         ///
+        ///
+        ///
+        struct zones
+        {
+            ///
+            ///
+            ///
+            struct zone { int min, max; };
+
+            ///
+            ///
+            ///
+            struct heart_rate_struct
+            {
+                bool custom_zones;
+                std::vector<zone> zones;
+            };
+
+            ///
+            ///
+            ///
+            struct power_struct
+            {
+                std::vector<zone> zones;
+            };
+
+            heart_rate_struct heart_rate;
+            power_struct power;
+        };
+
+
+        ///
+        ///
+        ///
+        struct statistics
+        {
+            ///
+            ///
+            ///
+            struct total_no_ac
+            {
+                double distance;
+                double elevation_gain;
+
+                int count;
+                int moving_time;
+                int eleapsed_time;
+                int achievement_count;
+            };
+
+            ///
+            ///
+            ///
+            struct total : public total_no_ac
+            {
+                int achievement_count;
+            };
+
+            double biggest_ride_distance;
+            double biggest_climb_elevation_gain;
+
+            std::vector<total_no_ac> ytd_swim_totals;
+            std::vector<total_no_ac> ytd_ride_totals;
+            std::vector<total_no_ac> ytd_run_totals;
+            std::vector<total_no_ac> all_ride_totals;
+            std::vector<total_no_ac> all_swim_totals;
+            std::vector<total_no_ac> all_run_totals;
+            std::vector<total> recent_ride_totals;
+            std::vector<total> recent_swim_totals;
+            std::vector<total> recent_run_totals;
+        };
+
+        struct kqom_c
+        {
+            // Array of segment efforts http://strava.github.io/api/v3/efforts/
+        };
+
+        ///
         /// 
         ///
         void retrieve(int id, summary::athlete& out);
@@ -214,6 +345,26 @@ namespace strava
         /// 
         ///
         void current(detailed::athlete& out);
+
+        ///
+        /// 
+        ///
+        void update(update::athlete update, detailed::athlete updated_out);
+
+        ///
+        /// 
+        ///
+        void get_zones(zones& out);
+
+        ///
+        /// 
+        ///
+        void get_stats(detailed::athlete& athlete, statistics& stats);
+
+        ///
+        /// 
+        ///
+        void list_kqom_cr(detailed::athlete& athlete, kqom_c& out);
     }
 
     ///
@@ -233,11 +384,15 @@ namespace strava
     }
 
     ///
+    /// Gear functionality wrapped in the gear namespace
     ///
-    ///
-    namespace gear 
+    namespace gear
     {
-
+        ///
+        /// Retrieves a gear via id, representation
+        /// returned is detailed and not a summary.
+        ///
+        void retrieve(int id, detailed::gear& out);
     }
 
     ///
