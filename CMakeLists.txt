@@ -24,7 +24,7 @@ set(ENABLE_TESTS false)
 
 # Project Options
 option(ENABLE_SAMPLES "Enable Samples" ON)
-option(ENABLE_TESTS "Enable Tests" OFF)
+option(ENABLE_TESTS "Enable Tests" ON)
 
 # External projects
 add_subdirectory(external/lest)

@@ -1,6 +1,4 @@
 
-#pragma once
-
 // Placeholder license (MIT) cough cough cough...
 //
 //  Copyright(c) <year> <copyright holders>
@@ -23,8 +21,11 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
+#pragma once
+
 #include <Poco/Net/HTTPSClientSession.h>
 #include <Poco/Net/NetSSL.h>
+#include <Poco/SharedPtr.h>
 #include <memory>
 #include <string>
 #include <vector>
@@ -40,7 +41,7 @@ namespace strava
     struct client
     {
         // Poco::AutoPtr = std::unqiue_ptr
-        Poco::AutoPtr<Poco::Net::HTTPSClientSession> session;
+        Poco::SharedPtr<Poco::Net::HTTPSClientSession> session;
         Poco::AutoPtr<Poco::Net::Context> context;
     };
 

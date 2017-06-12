@@ -34,13 +34,13 @@ strava::oauth authentication;
 ///
 /// Change to capital letters 
 ///
-const std::string activities_url = "/api/v3/activities/";
-const std::string segments_url = "/api/v3/segments/";
-const std::string athlete_url = "/api/v3/athlete/";
-const std::string uploads_url = "/api/v3/uploads/";
-const std::string routes_url = "/api/v3/clubs/";
-const std::string clubs_url = "/api/v3/clubs/";
-const std::string gear_url = "/api/v3/gear/";
+const std::string activities_url = "/api/v3/activities";
+const std::string segments_url = "/api/v3/segments";
+const std::string athlete_url = "/api/v3/athlete";
+const std::string uploads_url = "/api/v3/uploads";
+const std::string routes_url = "/api/v3/routes";
+const std::string clubs_url = "/api/v3/clubs";
+const std::string gear_url = "/api/v3/gear";
 
 ///
 /// 
@@ -242,8 +242,8 @@ void strava::authenticate(strava::oauth&& autho, bool skip_init)
 
         Poco::URI uri("https://www.strava.com");
 
-        session.context = Context::Ptr(new Context(Context::CLIENT_USE, ""));
-        session.session = new HTTPSClientSession(uri.getHost(), uri.getPort(), session.context);
+        session.context = new Context(Context::CLIENT_USE, "");
+        session.session =  new HTTPSClientSession(uri.getHost(), uri.getPort(), session.context);
 
         SSLManager::InvalidCertificateHandlerPtr handler(new AcceptCertificateHandler(false));
         SSLManager::instance().initializeClient(0, handler, session.context);
