@@ -1,5 +1,16 @@
 
+include_directories(../include)
 include_directories(${LEST_INCLUDE})
+include_directories(${OPENSSL_INCLUDE_DIR})
+include_directories(${POCO_INCLUDE}/Util/include)
+include_directories(${POCO_INCLUDE}/Net/include)
+include_directories(${POCO_INCLUDE}/NetSSL_OpenSSL/include)
+include_directories(${POCO_INCLUDE}/Crypto/include)
+include_directories(${POCO_INCLUDE}/JSON/include)
+include_directories(${POCO_INCLUDE}/Foundation/include)
+
+link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+link_directories(${POCO_LIB})
 
 # Add tests written with lest
 add_executable(athlete-tests    athlete-tests/main.cpp)
@@ -12,6 +23,11 @@ add_executable(segment-tests    segment-tests/main.cpp)
 add_executable(stream-tests     stream-tests/main.cpp)
 add_executable(upload-tests     upload-tests/main.cpp)
 add_executable(webhook-tests    webhook-tests/main.cpp)
+
+target_link_libraries(athlete-tests STRAVA)
+target_link_libraries(athlete-tests ${OPENSSL_LIBRARIES})
+target_link_libraries(athlete-tests ${OPENSSL_SSL_LIBRARY})
+target_link_libraries(athlete-tests ${OPENSSL_CRYPTO_LIBRARY})
 
 # add to ctest
 add_test(NAME athlete-tests     COMMAND athlete-tests)
