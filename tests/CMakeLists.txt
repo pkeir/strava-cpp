@@ -24,10 +24,7 @@ add_executable(stream-tests     stream-tests/main.cpp)
 add_executable(upload-tests     upload-tests/main.cpp)
 add_executable(webhook-tests    webhook-tests/main.cpp)
 
-target_link_libraries(athlete-tests STRAVA)
-target_link_libraries(athlete-tests ${OPENSSL_LIBRARIES})
-target_link_libraries(athlete-tests ${OPENSSL_SSL_LIBRARY})
-target_link_libraries(athlete-tests ${OPENSSL_CRYPTO_LIBRARY})
+target_link_libraries(athlete-tests ${STRAVA_LIB})
 
 # add to ctest
 add_test(NAME athlete-tests     COMMAND athlete-tests)

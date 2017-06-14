@@ -18,7 +18,4 @@ link_directories(${POCO_LIB})
 
 add_executable(dev dev/main.cpp)
 
-target_link_libraries(dev STRAVA)
-target_link_libraries(dev ${OPENSSL_LIBRARIES})
-target_link_libraries(dev ${OPENSSL_SSL_LIBRARY})
-target_link_libraries(dev ${OPENSSL_CRYPTO_LIBRARY})
+target_link_libraries(dev ${STRAVA_LIB})
