@@ -9,7 +9,7 @@ include_directories(${POCO_INCLUDE}/JSON/include)
 include_directories(${POCO_INCLUDE}/Foundation/include)
 
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-link_directories(${POCO_LIB})
+link_directories(${POCO_LIB_DIR})
 
 set(STRAVA_SRC strava.cpp ../include/strava.hpp)
 

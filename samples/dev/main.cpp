@@ -1,5 +1,5 @@
 
-//#include <strava.hpp>
+#include <strava.hpp>
 #include <iostream>
 
 int main(int argc, char* argv[])

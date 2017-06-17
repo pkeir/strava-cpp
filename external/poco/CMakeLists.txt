@@ -32,5 +32,3 @@ set(POCO_LIBRARIES
     ${POCO_LIB_DIR}/${prefix}PocoXML${suffix}
     ${POCO_LIB_DIR}/${prefix}PocoFoundation${suffix}
 )
-
-message(${POCO_LIBRARIES})
