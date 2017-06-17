@@ -14,4 +14,23 @@ ExternalProject_Get_Property(POCO source_dir)
 ExternalProject_Get_Property(POCO binary_dir)
 
 set(POCO_INCLUDE ${source_dir} CACHE INTERNAL "")
-set(POCO_LIB ${binary_dir}/lib/Debug CACHE INTERNAL "")
+
+if(WIN32)
+  set(POCO_LIB_DIR "${binary_dir}/lib/Debug" CACHE INTERNAL "")
+  set(prefix "")
+  set(suffix ".lib")
+else()
+  set(POCO_LIB_DIR "${binary_dir}/lib" CACHE INTERNAL "")
+  set(prefix "lib")
+  set(suffix ".so")
+endif()
+
+set(POCO_LIBRARIES 
+    ${POCO_LIB_DIR}/${prefix}PocoNet${suffix}
+    ${POCO_LIB_DIR}/${prefix}PocoUtil${suffix}
+    ${POCO_LIB_DIR}/${prefix}PocoJSON${suffix}
+    ${POCO_LIB_DIR}/${prefix}PocoXML${suffix}
+    ${POCO_LIB_DIR}/${prefix}PocoFoundation${suffix}
+)
+
+message(${POCO_LIBRARIES})

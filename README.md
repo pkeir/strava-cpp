@@ -29,7 +29,17 @@ int main(int argc, char* argv[])
 
 ## Dependencies
 
-You can build via CMake or use the prebuilt binaries available in each release. You will also need OpenSSL for compiling Poco HTTPS code. You can install this on MacOS via brew, it should come preinstalled on Linux and you can download a Window installer [here]().
+You can build via CMake or use the prebuilt binaries available in each release. You will also need OpenSSL on your system so we can build Poco with HTTPS support which is a hard requirement of Strava. You can install it pretty easily though on MacOS and Linux. On Windows you can install via this [link](http://slproweb.com/products/Win32OpenSSL.html).
+
+**Linux**
+```
+sudo apt-get install libssl-dev
+```
+
+**MacOS**
+```
+brew install openssl
+```
 
 * [Poco](https://github.com/pocoproject/poco)
 * [Lest](https://github.com/martinmoene/lest)  
