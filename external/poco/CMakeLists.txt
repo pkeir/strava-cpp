@@ -19,16 +19,21 @@ if(WIN32)
   set(POCO_LIB_DIR "${binary_dir}/lib/Debug" CACHE INTERNAL "")
   set(prefix "")
   set(suffix ".lib")
+  set(POCO_LIBS "")
 else()
   set(POCO_LIB_DIR "${binary_dir}/lib" CACHE INTERNAL "")
   set(prefix "lib")
   set(suffix ".so")
+  set(POCO_LIBS 
+    ${prefix}PocoNetSSL${suffix}
+    ${prefix}PocoNet${suffix}
+    ${prefix}PocoUtil${suffix}
+    ${prefix}PocoJSON${suffix}
+    ${prefix}PocoXML${suffix}
+    ${prefix}PocoFoundation${suffix}
+    CACHE INTERNAL ""
+)
+
+    
 endif()
 
-set(POCO_LIBRARIES 
-    ${POCO_LIB_DIR}/${prefix}PocoNet${suffix}
-    ${POCO_LIB_DIR}/${prefix}PocoUtil${suffix}
-    ${POCO_LIB_DIR}/${prefix}PocoJSON${suffix}
-    ${POCO_LIB_DIR}/${prefix}PocoXML${suffix}
-    ${POCO_LIB_DIR}/${prefix}PocoFoundation${suffix}
-)
