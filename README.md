@@ -29,7 +29,13 @@ int main(int argc, char* argv[])
 
 ## Dependencies
 
-You can build via CMake or use the prebuilt binaries available in each release. You will also need OpenSSL on your system so we can build Poco with HTTPS support which is a hard requirement of Strava. You can install it pretty easily though on MacOS and Linux. On Windows you can install via this [link](http://slproweb.com/products/Win32OpenSSL.html).
+You can build via CMake or use the prebuilt binaries available in each release. The library relies on Poco for HTTPS support, Lest for unit testing and OpenSSL because it is required when building Poco with HTTPS support.
+
+* [Poco](https://github.com/pocoproject/poco)
+* [Lest](https://github.com/martinmoene/lest)  
+* OpenSSL
+
+We have to use HTTPS for requests to Strava so the OpenSSL dependency is not optional. You can install it pretty easily though on MacOS and Linux. On Windows you can install via these [installers](http://slproweb.com/products/Win32OpenSSL.html).
 
 **Linux**
 ```
@@ -41,18 +47,12 @@ sudo apt-get install libssl-dev
 brew install openssl
 ```
 
-* [Poco](https://github.com/pocoproject/poco)
-* [Lest](https://github.com/martinmoene/lest)  
-* OpenSSL
-
 ## Objectives
 
-* CI with travis + appveyor
-* Badges in README
+TBD by Monday the 19th of June.
+
 * Athlete functionality
 * Athlete tests
-
-TBD by Monday the 19th of June.
 
 ## Documentation
 

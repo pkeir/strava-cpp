@@ -2,7 +2,7 @@
 include_directories(${STRAVA_INC})
 
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-link_directories(${POCO_LIB})
+link_directories(${POCO_LIB_DIR})
 
 # Add tests written with lest
 add_executable(athlete-tests    athlete-tests/main.cpp)
