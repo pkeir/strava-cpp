@@ -38,9 +38,8 @@ if(ENABLE_TESTS)
     message(STATUS "Including Tests")
 endif(ENABLE_TESTS)
 
-
 # For development only!
-include_directories(${STRAVA_INC})
+include_directories(include ${STRAVA_INC})
 
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 link_directories(${POCO_LIB_DIR})
