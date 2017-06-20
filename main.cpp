@@ -17,5 +17,13 @@ int main(int argc, char* argv[])
     auto more_friends = strava::athlete::list_athlete_friends(me);
     auto friends = strava::athlete::list_athlete_friends();
 
+    auto more_followers = strava::athlete::list_athlete_followers(me);
+    auto followers = strava::athlete::list_athlete_followers();
+
+    auto both_following = strava::athlete::list_both_following(me);
+
+    strava::detailed::athlete updated_me;
+    strava::athlete::update(me, updated_me);
+
     std::cin.get();
 }
