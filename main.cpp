@@ -14,11 +14,8 @@ int main(int argc, char* argv[])
     strava::detailed::athlete me;
     strava::athlete::current(me);
 
-    for (auto bike : me.bikes)
-    {
-        strava::detailed::gear gear;
-        strava::gear::retrieve(bike.id, gear);
-    }
+    auto more_friends = strava::athlete::list_athlete_friends(me);
+    auto friends = strava::athlete::list_athlete_friends();
 
     std::cin.get();
 }

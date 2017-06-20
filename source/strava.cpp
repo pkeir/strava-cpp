@@ -76,10 +76,11 @@ std::string pretty_time_t(time_t time)
 ///
 /// 
 ///
-Poco::JSON::Object::Ptr request(std::string url, std::string body = "")
+template<typename T>
+T request(std::string url, std::string body = "")
 {
     Poco::JSON::Parser parser;
-    Poco::JSON::Object::Ptr value = {};
+    T value = {};
 
     try
     {
@@ -99,7 +100,7 @@ Poco::JSON::Object::Ptr request(std::string url, std::string body = "")
         }
 
         Poco::StreamCopier::copyStream(session.session->receiveResponse(response), ss);
-        value = parser.parse(ss.str()).extract<Poco::JSON::Object::Ptr>();
+        value = parser.parse(ss.str()).extract<T>();
     }
     catch (const Poco::Net::SSLException& e)
     {
@@ -177,41 +178,60 @@ void gear_from_json(Poco::JSON::Object::Ptr json, strava::detailed::gear& gear)
 ///
 /// 
 ///
-void athlete_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& athlete)
+void athlete_from_json(Poco::JSON::Object::Ptr json, strava::meta::athlete& athlete)
 {
+    athlete.id = cast<int>(json, "id", 0);
+    athlete.resource_state = cast<int>(json, "resource_state", 0);
+}
+
+///
+/// 
+///
+void athlete_from_json(Poco::JSON::Object::Ptr json, strava::summary::athlete& athlete)
+{
+    athlete.firstname = cast<std::string>(json, "firstname", "");
+    athlete.lastname = cast<std::string>(json, "lastname", "");
+    athlete.profile_medium = cast<std::string>(json, "profile_medium", "");
+    athlete.profile = cast<std::string>(json, "profile", "");
+    athlete.city = cast<std::string>(json, "city", "");
+    athlete.state = cast<std::string>(json, "state", "");
+    athlete.country = cast<std::string>(json, "country", "");
+    athlete.sex = cast<std::string>(json, "sex", "");
+    athlete.follower = cast<std::string>(json, "follower", "");
+    athlete.is_friend = cast<std::string>(json, "friend", "");
+
+    athlete.premium = cast<bool>(json, "premium", false);
+
     auto created_timestamp = cast<std::string>(json, "created_at", "");
     auto updated_timestamp = cast<std::string>(json, "updated_at", "");
+
+    athlete.created_at = to_time_t(created_timestamp, "%Y-%m-%dT%H:%M:%SZ");
+    athlete.updated_at = to_time_t(updated_timestamp, "%Y-%m-%dT%H:%M:%SZ");
+}
+
+
+///
+/// 
+///
+void athlete_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& athlete)
+{
+    athlete_from_json(json, (strava::meta::athlete&)athlete);
+    athlete_from_json(json, (strava::summary::athlete&)athlete);
+
     auto clubs = json->getArray("clubs");
     auto bikes = json->getArray("bikes");
     auto shoes = json->getArray("shoes");
 
     athlete.measurement_preference = cast<std::string>(json, "measurement_preference", "");
     athlete.date_preference = cast<std::string>(json, "date_preference", "");
-    athlete.profile_medium = cast<std::string>(json, "profile_medium", "");
-    athlete.firstname = cast<std::string>(json, "firstname", "");
-    athlete.lastname = cast<std::string>(json, "lastname", "");
-    athlete.follower = cast<std::string>(json, "follower", "");
-    athlete.is_friend = cast<std::string>(json, "friend", "");
-    athlete.profile = cast<std::string>(json, "profile", "");
-    athlete.country = cast<std::string>(json, "country", "");
-    athlete.state = cast<std::string>(json, "state", "");
     athlete.email = cast<std::string>(json, "email", "");
-    athlete.city = cast<std::string>(json, "city", "");
-    athlete.sex = cast<std::string>(json, "sex", "");
-
-    athlete.created_at = to_time_t(created_timestamp, "%Y-%m-%dT%H:%M:%SZ");
-    athlete.updated_at = to_time_t(updated_timestamp, "%Y-%m-%dT%H:%M:%SZ");
 
     athlete.mutual_friend_count = cast<int>(json, "mutual_friend_count", 0);
-    athlete.resource_state = cast<int>(json, "resource_state", 0);
     athlete.follower_count = cast<int>(json, "follower_count", 0);
     athlete.friend_count = cast<int>(json, "friend_count", 0);
     athlete.athlete_type = cast<int>(json, "athlete_type", 0);
     athlete.weight = cast<int>(json, "weight", 0);
     athlete.ftp = cast<int>(json, "ftp", 0);
-    athlete.id = cast<int>(json, "id", 0);
-
-    athlete.premium = cast<bool>(json, "premium", false);
 
     athlete.bikes.reserve(bikes->size());
     athlete.shoes.reserve(shoes->size());
@@ -262,12 +282,77 @@ void strava::authenticate(strava::oauth&& autho, bool skip_init)
     }
 }
 
+std::vector<strava::summary::athlete> strava::athlete::list_athlete_friends(meta::athlete& athlete, int page, int per_page)
+{
+    auto url = std::string("/api/v3/athletes/" + std::to_string(athlete.id) + "/friends");
+    auto response = request<Poco::JSON::Array::Ptr>(url);
+   
+    std::vector<strava::summary::athlete> friends;
+    friends.reserve(response->size());
+
+    for (auto& f : *response)
+    {
+        summary::athlete athlete;
+        athlete_from_json(f.extract<Poco::JSON::Object::Ptr>(), athlete);
+        friends.push_back(athlete);
+    }
+
+    return friends;
+}
+
+std::vector<strava::summary::athlete> strava::athlete::list_athlete_friends(int page, int per_page)
+{
+    std::string url("/api/v3/athlete/friends");
+    auto response = request<Poco::JSON::Array::Ptr>(url);
+
+    std::vector<strava::summary::athlete> friends;
+    friends.reserve(response->size());
+
+    for (auto& f : *response)
+    {
+        summary::athlete athlete;
+        athlete_from_json(f.extract<Poco::JSON::Object::Ptr>(), athlete);
+        friends.push_back(athlete);
+    }
+
+    return friends;
+}
+
+std::vector<strava::summary::athlete> strava::athlete::list_athlete_followers(meta::athlete& athlete, int page, int per_page)
+{
+    std::vector<strava::summary::athlete> friends;
+
+
+    return friends;
+}
+
+std::vector<strava::summary::athlete> strava::athlete::list_athlete_followers(int page, int per_page)
+{
+    std::vector<strava::summary::athlete> friends;
+
+    return friends;
+}
+
+std::vector<strava::summary::athlete> strava::athlete::list_both_following(meta::athlete& athlete, int page, int per_page)
+{
+    std::vector<strava::summary::athlete> friends;
+
+    return friends;
+}
+
+std::vector<strava::summary::athlete> strava::athlete::list_both_following(int page, int per_page)
+{
+    std::vector<strava::summary::athlete> friends;
+
+    return friends;
+}
+
 ///
 /// 
 ///
 void strava::athlete::retrieve(int id, summary::athlete& out)
 {
-    auto response = request(athlete_url);
+    auto response = request<Poco::JSON::Object::Ptr>(athlete_url);
 }
 
 ///
@@ -275,7 +360,7 @@ void strava::athlete::retrieve(int id, summary::athlete& out)
 ///
 void strava::athlete::current(detailed::athlete& out)
 {
-    auto response = request(athlete_url);
+    auto response = request<Poco::JSON::Object::Ptr>(athlete_url);
     athlete_from_json(response, out);
 }
 
@@ -284,7 +369,7 @@ void strava::athlete::current(detailed::athlete& out)
 ///
 void strava::gear::retrieve(const std::string& id, detailed::gear& out)
 {
-    auto response = request(gear_url + "/" + id);
+    auto response = request<Poco::JSON::Object::Ptr>(gear_url + "/" + id);
     gear_from_json(response, out);
 }
 

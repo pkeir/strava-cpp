@@ -340,6 +340,13 @@ namespace strava
             // Array of segment efforts http://strava.github.io/api/v3/efforts/
         };
 
+        std::vector<summary::athlete> list_athlete_friends(meta::athlete& athlete, int page = -1, int per_page = 10);
+        std::vector<summary::athlete> list_athlete_friends(int page = -1, int per_page = 10);
+        std::vector<summary::athlete> list_athlete_followers(meta::athlete& athlete, int page = -1, int per_page = 10);
+        std::vector<summary::athlete> list_athlete_followers(int page = -1, int per_page = 10);
+        std::vector<summary::athlete> list_both_following(meta::athlete& athlete, int page = -1, int per_page = 10);
+        std::vector<summary::athlete> list_both_following(int page = -1, int per_page = 10);
+
         ///
         /// 
         ///
