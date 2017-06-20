@@ -4,6 +4,7 @@
 #include <Poco/Net/InvalidCertificateHandler.h>
 #include <Poco/Net/AcceptCertificateHandler.h>
 #include <Poco/Net/HTTPSClientSession.h>
+#include <Poco/Net/HTMLForm.h>
 #include <Poco/Net/SSLManager.h>
 #include <Poco/Net/HTTPRequest.h>
 #include <Poco/Net/HTTPResponse.h>
@@ -25,15 +26,9 @@
 #include <sstream>
 #include <map>
 
-///
-/// 
-///
 strava::client session;
 strava::oauth authentication;
 
-///
-/// Change to capital letters 
-///
 const std::string activities_url = "/api/v3/activities";
 const std::string segments_url = "/api/v3/segments";
 const std::string athlete_url = "/api/v3/athlete";
@@ -42,12 +37,9 @@ const std::string routes_url = "/api/v3/routes";
 const std::string clubs_url = "/api/v3/clubs";
 const std::string gear_url = "/api/v3/gear";
 
-///
-/// 
-///
-time_t to_time_t(std::string timestring, std::string format)
+std::time_t to_time_t(std::string timestring, std::string format)
 {
-    tm time;
+    std::tm time;
     std::istringstream input(timestring);
     input.imbue(std::locale(setlocale(LC_ALL, nullptr)));
     input >> std::get_time(&time, format.c_str());
@@ -60,9 +52,6 @@ time_t to_time_t(std::string timestring, std::string format)
     return mktime(&time);
 }
 
-///
-/// 
-///
 std::string pretty_time_t(time_t time)
 {
     const auto format = "%Y-%m-%d %H:%M:%S";
@@ -73,9 +62,6 @@ std::string pretty_time_t(time_t time)
     return buffer;
 }
 
-///
-/// 
-///
 template<typename T>
 T get(std::string url)
 {
@@ -105,11 +91,6 @@ T get(std::string url)
     return value;
 }
 
-#include <Poco/Net/HTMLForm.h>
-
-///
-/// 
-///
 template<typename T>
 T put(std::string url, std::map<std::string, std::string> form_entries)
 {
@@ -126,7 +107,6 @@ T put(std::string url, std::map<std::string, std::string> form_entries)
         request.setURI(url);
 
         Poco::Net::HTMLForm form;
-        //form.add("weight", "60.0");
         form.prepareSubmit(request);
 
         session.session->sendRequest(request);
@@ -141,9 +121,6 @@ T put(std::string url, std::map<std::string, std::string> form_entries)
     return value;
 }
 
-///
-/// 
-///
 template<typename T>
 T cast(Poco::JSON::Object::Ptr json, std::string key, T on_empty)
 {
@@ -159,9 +136,6 @@ T cast(Poco::JSON::Object::Ptr json, std::string key, T on_empty)
     return v;
 }
 
-///
-/// 
-///
 void club_from_json(Poco::JSON::Object::Ptr json, strava::summary::club& club)
 {
     club.id = cast<int>(json, "id", 0);
@@ -181,9 +155,6 @@ void club_from_json(Poco::JSON::Object::Ptr json, strava::summary::club& club)
     club.url = cast<std::string>(json, "url", "");
 }
 
-///
-/// 
-///
 void gear_from_json(Poco::JSON::Object::Ptr json, strava::summary::gear& gear)
 {
     gear.resource_state = cast<int>(json, "resource_state", 0);
@@ -193,9 +164,6 @@ void gear_from_json(Poco::JSON::Object::Ptr json, strava::summary::gear& gear)
     gear.id = cast<std::string>(json, "id", "");
 }
 
-///
-///
-///
 void gear_from_json(Poco::JSON::Object::Ptr json, strava::detailed::gear& gear)
 {
     gear_from_json(json, (strava::summary::gear&)gear); 
@@ -206,18 +174,12 @@ void gear_from_json(Poco::JSON::Object::Ptr json, strava::detailed::gear& gear)
     gear.description = cast<std::string>(json, "description", "");
 }
 
-///
-/// 
-///
 void athlete_from_json(Poco::JSON::Object::Ptr json, strava::meta::athlete& athlete)
 {
     athlete.id = cast<int>(json, "id", 0);
     athlete.resource_state = cast<int>(json, "resource_state", 0);
 }
 
-///
-/// 
-///
 void athlete_from_json(Poco::JSON::Object::Ptr json, strava::summary::athlete& athlete)
 {
     athlete.firstname = cast<std::string>(json, "firstname", "");
@@ -240,10 +202,6 @@ void athlete_from_json(Poco::JSON::Object::Ptr json, strava::summary::athlete& a
     athlete.updated_at = to_time_t(updated_timestamp, "%Y-%m-%dT%H:%M:%SZ");
 }
 
-
-///
-/// 
-///
 void athlete_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& athlete)
 {
     athlete_from_json(json, (strava::meta::athlete&)athlete);
@@ -290,9 +248,6 @@ void athlete_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& 
     }
 }
 
-///
-/// 
-///
 void strava::authenticate(strava::oauth&& autho, bool skip_init)
 {
     authentication = autho;
@@ -403,62 +358,56 @@ std::vector<strava::summary::athlete> strava::athlete::list_both_following(meta:
     return both_following;
 }
 
-///
-/// 
-///
 void strava::athlete::retrieve(int id, summary::athlete& out)
 {
     auto response = get<Poco::JSON::Object::Ptr>(athlete_url + "/" + std::to_string(id));
     athlete_from_json(response, out);
 }
 
-///
-/// 
-///
 void strava::athlete::current(detailed::athlete& out)
 {
     auto response = get<Poco::JSON::Object::Ptr>(athlete_url);
     athlete_from_json(response, out);
 }
 
-///
-/// 
-///
 void strava::gear::retrieve(const std::string& id, detailed::gear& out)
 {
     auto response = get<Poco::JSON::Object::Ptr>(gear_url + "/" + id);
     gear_from_json(response, out);
 }
 
-///
-/// 
-///
 void strava::athlete::update(detailed::athlete& update, detailed::athlete& updated_out)
 {
     auto response = put<Poco::JSON::Object::Ptr>(athlete_url, {});
 }
 
-///
-/// 
-///
+void heart_rate_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& out)
+{
+    // TODO:
+    //out.heart_rate
+}
+
+void power_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& out)
+{
+    // TODO:
+    //out.power
+}
+
 void strava::athlete::get_zones(athlete::zones& out)
 {
+    auto response = get<Poco::JSON::Object::Ptr>("api/v3/athlete/zones");
+    heart_rate_from_json(response->get("heart_rate"), out);
+    power_from_json(response->get("power"), out);
 
+    // TODO:
 }
 
-///
-/// 
-///
 void strava::athlete::get_stats(detailed::athlete& athlete, statistics& stats)
 {
-
+    // TODO:
 }
 
-
-///
-/// 
-///
 void strava::athlete::list_kqom_cr(detailed::athlete& athlete, kqom_c& out)
 {
-
+    // TODO:
 }
