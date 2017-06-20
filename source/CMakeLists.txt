@@ -25,6 +25,7 @@ set(STRAVA_LIB
 )
 
 set(STRAVA_INC 
+    ../include
     ${LEST_INCLUDE}
     ${OPENSSL_INCLUDE_DIR}
     ${POCO_INCLUDE}/Util/include

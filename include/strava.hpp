@@ -156,8 +156,8 @@ namespace strava
 
             bool premium;
 
-            time_t created_at;
-            time_t updated_at;
+            std::time_t created_at;
+            std::time_t updated_at;
         };
 
         ///
@@ -238,7 +238,10 @@ namespace strava
         ///
         struct gear : public summary::gear
         {
-
+            std::string brand_name;
+            std::string model_name;
+            std::string frame_type; // bike only
+            std::string description;
         };
     }
 
@@ -350,7 +353,7 @@ namespace strava
         ///
         /// 
         ///
-        void update(update::athlete update, detailed::athlete updated_out);
+        void update(update::athlete update, detailed::athlete& updated_out);
 
         ///
         /// 
@@ -393,7 +396,7 @@ namespace strava
         /// Retrieves a gear via id, representation
         /// returned is detailed and not a summary.
         ///
-        void retrieve(int id, detailed::gear& out);
+        void retrieve(const std::string& id, detailed::gear& out);
     }
 
     ///

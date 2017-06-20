@@ -90,9 +90,6 @@ Poco::JSON::Object::Ptr request(std::string url, std::string body = "")
         request.set("Authorization", "Bearer " + authentication.access_token);
         request.setURI(url);
 
-        session.session->setPort(443);
-        session.session->setTimeout(Poco::Timespan(10L, 0L));
-
         auto& os = session.session->sendRequest(request);
         auto ss = std::stringstream();
 
@@ -162,6 +159,19 @@ void gear_from_json(Poco::JSON::Object::Ptr json, strava::summary::gear& gear)
     gear.primary = cast<bool>(json, "primary", false);
     gear.name = cast<std::string>(json, "name", "");
     gear.id = cast<std::string>(json, "id", "");
+}
+
+///
+///
+///
+void gear_from_json(Poco::JSON::Object::Ptr json, strava::detailed::gear& gear)
+{
+    gear_from_json(json, (strava::summary::gear&)gear); 
+
+    gear.brand_name = cast<std::string>(json, "brand_name", "");
+    gear.model_name = cast<std::string>(json, "model_name", "");
+    gear.frame_type = cast<std::string>(json, "frame_type", "");
+    gear.description = cast<std::string>(json, "description", "");
 }
 
 ///
@@ -244,6 +254,8 @@ void strava::authenticate(strava::oauth&& autho, bool skip_init)
 
         session.context = new Context(Context::CLIENT_USE, "");
         session.session =  new HTTPSClientSession(uri.getHost(), uri.getPort(), session.context);
+        session.session->setPort(443);
+        session.session->setTimeout(Poco::Timespan(10L, 0L));
 
         SSLManager::InvalidCertificateHandlerPtr handler(new AcceptCertificateHandler(false));
         SSLManager::instance().initializeClient(0, handler, session.context);
@@ -270,15 +282,16 @@ void strava::athlete::current(detailed::athlete& out)
 ///
 /// 
 ///
-void strava::gear::retrieve(int id, detailed::gear& out)
+void strava::gear::retrieve(const std::string& id, detailed::gear& out)
 {
-
+    auto response = request(gear_url + "/" + id);
+    gear_from_json(response, out);
 }
 
 ///
 /// 
 ///
-void strava::athlete::update(update::athlete update, detailed::athlete updated_out)
+void strava::athlete::update(update::athlete update, detailed::athlete& updated_out)
 {
 
 }

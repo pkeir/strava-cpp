@@ -49,10 +49,9 @@ brew install openssl
 
 ## Objectives
 
-TBD by Monday the 19th of June.
-
 * Athlete functionality
 * Athlete tests
+* Athlete sample
 
 ## Documentation
 
