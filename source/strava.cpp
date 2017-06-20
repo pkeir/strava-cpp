@@ -136,6 +136,22 @@ T cast(Poco::JSON::Object::Ptr json, std::string key, T on_empty)
     return v;
 }
 
+template<typename T, typename F>
+std::vector<T> json_to_vector(Poco::JSON::Array::Ptr list, F functor)
+{
+    std::vector<T> elements;
+    elements.reserve(list->size());
+
+    for (auto& e : *list)
+    {
+        T data;
+        functor(e.extract<Poco::JSON::Object::Ptr>(), data);
+        elements.push_back(data);
+    }
+
+    return elements;
+}
+
 void club_from_json(Poco::JSON::Object::Ptr json, strava::summary::club& club)
 {
     club.id = cast<int>(json, "id", 0);
@@ -166,7 +182,7 @@ void gear_from_json(Poco::JSON::Object::Ptr json, strava::summary::gear& gear)
 
 void gear_from_json(Poco::JSON::Object::Ptr json, strava::detailed::gear& gear)
 {
-    gear_from_json(json, (strava::summary::gear&)gear); 
+    gear_from_json(json, (strava::summary::gear&)gear);
 
     gear.brand_name = cast<std::string>(json, "brand_name", "");
     gear.model_name = cast<std::string>(json, "model_name", "");
@@ -259,7 +275,7 @@ void strava::authenticate(strava::oauth&& autho, bool skip_init)
         Poco::URI uri("https://www.strava.com");
 
         session.context = new Context(Context::CLIENT_USE, "");
-        session.session =  new HTTPSClientSession(uri.getHost(), uri.getPort(), session.context);
+        session.session = new HTTPSClientSession(uri.getHost(), uri.getPort(), session.context);
         session.session->setPort(443);
         session.session->setTimeout(Poco::Timespan(10L, 0L));
 
@@ -272,90 +288,46 @@ std::vector<strava::summary::athlete> strava::athlete::list_athlete_friends(meta
 {
     auto url = std::string("/api/v3/athletes/" + std::to_string(athlete.id) + "/friends");
     auto response = get<Poco::JSON::Array::Ptr>(url);
-   
-    std::vector<strava::summary::athlete> friends;
-    friends.reserve(response->size());
+    auto filler = [](auto& json, auto& athlete) { athlete_from_json(json, athlete); };
 
-    for (auto& f : *response)
-    {
-        summary::athlete athlete;
-        athlete_from_json(f.extract<Poco::JSON::Object::Ptr>(), athlete);
-        friends.push_back(athlete);
-    }
-
-    return friends;
+    return json_to_vector<strava::summary::athlete>(response, filler);
 }
 
 std::vector<strava::summary::athlete> strava::athlete::list_athlete_friends(int page, int per_page)
 {
     auto url = std::string("/api/v3/athlete/friends");
     auto response = get<Poco::JSON::Array::Ptr>(url);
+    auto filler = [](auto& json, auto& athlete) { athlete_from_json(json, athlete); };
 
-    std::vector<strava::summary::athlete> friends;
-    friends.reserve(response->size());
-
-    for (auto& f : *response)
-    {
-        summary::athlete athlete;
-        athlete_from_json(f.extract<Poco::JSON::Object::Ptr>(), athlete);
-        friends.push_back(athlete);
-    }
-
-    return friends;
+    return json_to_vector<strava::summary::athlete>(response, filler);
 }
 
 std::vector<strava::summary::athlete> strava::athlete::list_athlete_followers(meta::athlete& athlete, int page, int per_page)
 {
     auto url = std::string("/api/v3/athletes/" + std::to_string(athlete.id) + "/followers");
     auto response = get<Poco::JSON::Array::Ptr>(url);
+    auto filler = [](auto& json, auto& athlete) { athlete_from_json(json, athlete); };
 
-    std::vector<strava::summary::athlete> friends;
-    friends.reserve(response->size());
+    return json_to_vector<strava::summary::athlete>(response, filler);
 
-    for (auto& f : *response)
-    {
-        summary::athlete athlete;
-        athlete_from_json(f.extract<Poco::JSON::Object::Ptr>(), athlete);
-        friends.push_back(athlete);
-    }
-
-    return friends;
 }
 
 std::vector<strava::summary::athlete> strava::athlete::list_athlete_followers(int page, int per_page)
 {
     auto url = std::string("/api/v3/athlete/followers");
     auto response = get<Poco::JSON::Array::Ptr>(url);
+    auto filler = [](auto& json, auto& athlete) { athlete_from_json(json, athlete); };
 
-    std::vector<strava::summary::athlete> followers;
-    followers.reserve(response->size());
-
-    for (auto& f : *response)
-    {
-        summary::athlete athlete;
-        athlete_from_json(f.extract<Poco::JSON::Object::Ptr>(), athlete);
-        followers.push_back(athlete);
-    }
-
-    return followers;
+    return json_to_vector<strava::summary::athlete>(response, filler);
 }
 
 std::vector<strava::summary::athlete> strava::athlete::list_both_following(meta::athlete& athlete, int page, int per_page)
 {
     auto url = std::string("/api/v3/athletes/" + std::to_string(athlete.id) + "/both-following");
     auto response = get<Poco::JSON::Array::Ptr>(url);
+    auto filler = [](auto& json, auto& athlete) { athlete_from_json(json, athlete); };
 
-    std::vector<strava::summary::athlete> both_following;
-    both_following.reserve(response->size());
-
-    for (auto& f : *response)
-    {
-        summary::athlete athlete;
-        athlete_from_json(f.extract<Poco::JSON::Object::Ptr>(), athlete);
-        both_following.push_back(athlete);
-    }
-
-    return both_following;
+    return json_to_vector<strava::summary::athlete>(response, filler);
 }
 
 void strava::athlete::retrieve(int id, summary::athlete& out)
@@ -396,10 +368,10 @@ void power_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& out)
 void strava::athlete::get_zones(athlete::zones& out)
 {
     auto response = get<Poco::JSON::Object::Ptr>("api/v3/athlete/zones");
-    heart_rate_from_json(response->get("heart_rate"), out);
-    power_from_json(response->get("power"), out);
-
     // TODO:
+    //heart_rate_from_json(response->get("heart_rate"), out);
+    //power_from_json(response->get("power"), out);
+
 }
 
 void strava::athlete::get_stats(detailed::athlete& athlete, statistics& stats)
