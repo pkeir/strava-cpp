@@ -397,7 +397,7 @@ namespace strava
         ///
         /// 
         ///
-        void update(detailed::athlete& update, detailed::athlete& updated_out);
+        detailed::athlete update(const oauth& auth_info, meta::athlete athlete, std::map<std::string, std::string> updates);
 
         ///
         ///

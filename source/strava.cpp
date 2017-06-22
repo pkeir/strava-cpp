@@ -539,29 +539,34 @@ strava::detailed::gear strava::gear::retrieve(const oauth& auth_info, const std:
     return out;
 }
 
-void strava::athlete::update(detailed::athlete& update, detailed::athlete& updated_out)
+strava::detailed::athlete strava::athlete::update(const oauth& auth_info, meta::athlete athlete, std::map<std::string, std::string> updates)
 {
-    auto response = throw_on_error(put(athlete_url, "", {}));
+    auto response = throw_on_error(put("/api/v3/athlete", auth_info.access_token, updates));
+    auto json = response.extract<Poco::JSON::Object::Ptr>();
+
+    detailed::athlete value;
+    athlete_from_json(json, value);
+    return value;
 }
 
 void heart_rate_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& out)
 {
     // TODO:
-    //out.heart_rate
+    // out.heart_rate
 }
 
 void power_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& out)
 {
     // TODO:
-    //out.power
+    // out.power
 }
 
 void strava::athlete::get_zones(athlete::zones& out)
 {
-    //auto response = get<Poco::JSON::Object::Ptr>("api/v3/athlete/zones");
+    // auto response = get<Poco::JSON::Object::Ptr>("api/v3/athlete/zones");
     // TODO:
-    //heart_rate_from_json(response->get("heart_rate"), out);
-    //power_from_json(response->get("power"), out);
+    // heart_rate_from_json(response->get("heart_rate"), out);
+    // power_from_json(response->get("power"), out);
 
 }
 
