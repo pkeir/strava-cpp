@@ -458,7 +458,7 @@ namespace strava
             std::vector<total> recent_run_totals;
         };
 
-        struct kqom_c
+        struct koms
         {
             // Array of segment efforts http://strava.github.io/api/v3/efforts/
         };
@@ -471,12 +471,12 @@ namespace strava
         ///
         /// 
         ///
-        void get_stats(detailed::athlete& athlete, stats& stats);
+        stats get_stats(const oauth& auth_info, int id);
 
         ///
         /// 
         ///
-        void list_kqom_cr(detailed::athlete& athlete, kqom_c& out);
+        koms get_koms(const oauth& auth_info, int id, int page = -1, int per_page = 10);
     }
 
     ///

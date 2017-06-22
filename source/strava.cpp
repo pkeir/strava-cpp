@@ -459,6 +459,16 @@ void power_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& out)
     }
 }
 
+void stats_from_json(Poco::JSON::Object::Ptr json, strava::athlete::stats& out)
+{
+    // TODO: Parse response
+}
+
+void koms_from_json(Poco::JSON::Array::Ptr json, strava::athlete::koms& out)
+{
+    // TODO: Parse response
+}
+
 std::string strava::request_access(int client_id, oauth_scope scope)
 {
     std::stringstream url_builder;
@@ -613,12 +623,24 @@ strava::athlete::zones strava::athlete::get_zones(const oauth& auth_info)
     return out;
 }
 
-void strava::athlete::get_stats(detailed::athlete& athlete, stats& stats)
+strava::athlete::stats strava::athlete::get_stats(const oauth& auth_info, int id)
 {
-    // TODO:
+    auto url = std::string("/api/v3/athletes/" + std::to_string(id) + "/stats");
+    auto response = throw_on_error(get(url, auth_info.access_token));
+    auto json = response.extract<Poco::JSON::Object::Ptr>();
+
+    strava::athlete::stats out;
+    stats_from_json(json, out);
+    return out;
 }
 
-void strava::athlete::list_kqom_cr(detailed::athlete& athlete, kqom_c& out)
+strava::athlete::koms strava::athlete::get_koms(const oauth& auth_info, int id, int page, int per_page)
 {
-    // TODO:
+    auto url = std::string("/api/v3/athletes/" + std::to_string(id) + "/koms");
+    auto response = throw_on_error(get(url, auth_info.access_token));
+    auto json = response.extract<Poco::JSON::Array::Ptr>();
+
+    strava::athlete::koms out;
+    koms_from_json(json, out);
+    return out;
 }

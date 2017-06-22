@@ -33,7 +33,10 @@ int main(int argc, char* argv[])
 
     auto both_following = strava::athlete::list_both_following(auth_info, me);
     //auto updated_me = strava::athlete::update(auth_info, me, { { "weight", "50.0" } });
+
     auto my_zones = strava::athlete::get_zones(auth_info);
+    auto my_stats = strava::athlete::get_stats(auth_info, me.id);
+    auto my_koms = strava::athlete::get_koms(auth_info, me.id);
 
     std::cout << me.firstname << ", " << me.lastname << std::endl;
     std::cout << "Friends = " << friends.size() << std::endl;
