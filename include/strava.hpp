@@ -105,6 +105,12 @@ namespace strava
     std::string exchange_token(int client_id, std::string client_secret, std::string token);
 
     ///
+    ///
+    ///
+    ///
+    std::string deauthorization(const oauth& auth_info);
+
+    ///
     /// You get three types of representation with strava, a meta repr a summary repr and
     /// a detailed repr. Here they are split into seperate namespaces
     /// for clarity.

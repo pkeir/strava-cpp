@@ -133,7 +133,7 @@ T get(std::string url, std::string access_token)
 }
 
 template<typename T>
-T put(std::string url, std::map<std::string, std::string> form_entries)
+T put(std::string url, std::string access_token, std::map<std::string, std::string> form_entries)
 {
     requires_https();
 
@@ -146,8 +146,12 @@ T put(std::string url, std::map<std::string, std::string> form_entries)
         Poco::Net::HTTPRequest request;
 
         request.setMethod(Poco::Net::HTTPRequest::HTTP_PUT);
-        //request.set("Authorization", "Bearer " + authentication.access_token);
         request.setURI(url);
+
+        if (!access_token.empty())
+        {
+            request.set("Authorization", "Bearer " + access_token);
+        }
 
         Poco::Net::HTMLForm form;
         form.prepareSubmit(request);
@@ -165,7 +169,7 @@ T put(std::string url, std::map<std::string, std::string> form_entries)
 }
 
 template<typename T>
-T post(std::string url, std::map<std::string, std::string> form_entries)
+T post(std::string url, std::string access_token = "", std::map<std::string, std::string> form_entries = {})
 {
     requires_https();
 
@@ -181,16 +185,30 @@ T post(std::string url, std::map<std::string, std::string> form_entries)
         request.setMethod(Poco::Net::HTTPRequest::HTTP_POST);
         request.setURI(url);
 
-        for (auto& p : form_entries)
+        if (!access_token.empty())
         {
-            form.set(p.first, p.second);
+            request.set("Authorization", "Bearer " + access_token);
+        }
+
+        if(!form_entries.empty())
+        { 
+            for (auto& p : form_entries)
+            {
+                form.set(p.first, p.second);
+            }
+
+            form.prepareSubmit(request);
+            form.write(session.session->sendRequest(request));
+        }
+        else
+        {
+            session.session->sendRequest(request);
         }
 
         std::stringstream ss;
-        form.prepareSubmit(request);
-        form.write(session.session->sendRequest(request));
+        std::istream& is = session.session->receiveResponse(response);
 
-        Poco::StreamCopier::copyStream(session.session->receiveResponse(response), ss);
+        Poco::StreamCopier::copyStream(is, ss);
         value = parser.parse(ss.str()).extract<T>();
     }
     catch (const Poco::Net::SSLException& e)
@@ -230,6 +248,30 @@ std::vector<T> json_to_vector(Poco::JSON::Array::Ptr list, F functor)
     }
 
     return elements;
+}
+
+void throw_on_error(Poco::JSON::Object::Ptr response)
+{
+    auto error_array = response->getArray("errors");
+
+    if (!error_array.isNull())
+    {
+        auto error_message = response->get("message").toString();
+        auto error_codes = std::vector<strava::error::error_code>();
+
+        for (auto& e : *error_array)
+        {
+            auto eo = e.extract<Poco::JSON::Object::Ptr>();
+
+            error_codes.push_back({
+                eo->get("resource").toString(),
+                eo->get("field").toString(),
+                eo->get("code").toString()
+            });
+        }
+
+        throw strava::error(error_message, error_codes);
+    }
 }
 
 void club_from_json(Poco::JSON::Object::Ptr json, strava::summary::club& club)
@@ -318,8 +360,8 @@ void athlete_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& 
     athlete.weight = cast<int>(json, "weight", 0);
     athlete.ftp = cast<int>(json, "ftp", 0);
 
-    if(!bikes.isNull() && !shoes.isNull() && !clubs.isNull())
-    { 
+    if (!bikes.isNull() && !shoes.isNull() && !clubs.isNull())
+    {
         athlete.bikes.reserve(bikes->size());
         athlete.shoes.reserve(shoes->size());
         athlete.clubs.reserve(clubs->size());
@@ -380,22 +422,23 @@ std::string strava::request_access(int client_id, oauth_scope scope)
 std::string strava::exchange_token(int client_id, std::string client_secret, std::string token)
 {
     auto access_token = std::string("");
-    auto url = std::string("/oauth/token");
-    auto parameters = std::map<std::string, std::string> 
+    auto parameters = std::map<std::string, std::string>
     {
         { "client_id", std::to_string(client_id) },
         { "client_secret", client_secret },
         { "code", token }
     };
 
-    auto response = post<Poco::JSON::Object::Ptr>(url, parameters);
+    auto response = post<Poco::JSON::Object::Ptr>("/oauth/token", "", parameters);
+    throw_on_error(response);
+    return response->get("access_token").toString();
+}
 
-    if (!response.isNull())
-    {
-        access_token = response->get("access_token").toString();
-    }
-
-    return access_token;
+std::string strava::deauthorization(const strava::oauth& auth)
+{
+    auto response = post<Poco::JSON::Object::Ptr>("/oauth/deauthorize", auth.access_token);
+    throw_on_error(response);
+    return response->get("access_token").toString();
 }
 
 std::vector<strava::summary::athlete> strava::athlete::list_athlete_friends(meta::athlete& athlete, int page, int per_page)
@@ -415,7 +458,7 @@ std::vector<strava::summary::athlete> strava::athlete::list_athlete_friends(int 
     //auto filler = [](auto& json, auto& athlete) { athlete_from_json(json, athlete); };
 
     //return json_to_vector<strava::summary::athlete>(response, filler);
-    return {};
+    return{};
 }
 
 std::vector<strava::summary::athlete> strava::athlete::list_athlete_followers(meta::athlete& athlete, int page, int per_page)
@@ -455,34 +498,10 @@ void strava::athlete::retrieve(int id, summary::athlete& out)
 
 }
 
-void throw_on_error(Poco::JSON::Object::Ptr response)
-{
-    auto error_array = response->getArray("errors");
-
-    if (!error_array.isNull())
-    {
-        auto error_message = response->get("message").toString();
-        auto error_codes = std::vector<strava::error::error_code>();
-
-        for (auto& e : *error_array)
-        {
-            auto eo = e.extract<Poco::JSON::Object::Ptr>();
-
-            error_codes.push_back({
-                eo->get("resource").toString(),
-                eo->get("field").toString(),  
-                eo->get("code").toString() 
-            });
-        }
-
-        throw strava::error(error_message, error_codes);
-    }
-}
-
 strava::detailed::athlete strava::athlete::current(const strava::oauth& auth)
 {
     auto response = get<Poco::JSON::Object::Ptr>(athlete_url, auth.access_token);
-  
+
     throw_on_error(response);
 
     strava::detailed::athlete out;
@@ -498,7 +517,7 @@ void strava::gear::retrieve(const std::string& id, detailed::gear& out)
 
 void strava::athlete::update(detailed::athlete& update, detailed::athlete& updated_out)
 {
-    auto response = put<Poco::JSON::Object::Ptr>(athlete_url, {});
+    //auto response = put<Poco::JSON::Object::Ptr>(athlete_url, "", {});
 }
 
 void heart_rate_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& out)

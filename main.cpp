@@ -19,12 +19,12 @@ int main(int argc, char* argv[])
 
     if (code.empty())
     {
-        std::cout << strava::request_access(client_id, scope::scope_public) << std::endl;
+        std::cout << strava::request_access(client_id, scope::scope_view_private_write) << std::endl;
         std::cin >> code;
     }
 
     auto access_token = strava::exchange_token(client_id, client_secret, code);
-    auto auth_info = strava::oauth{ client_id, client_secret, access_token };
+    auto auth_info = strava::oauth { client_id, client_secret, access_token };
     auto athlete = strava::athlete::current(auth_info);
 
     std::cout << athlete.firstname << ", " << athlete.lastname << std::endl;
