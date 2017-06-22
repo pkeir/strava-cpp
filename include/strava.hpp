@@ -51,10 +51,18 @@ namespace strava
     ///
     struct oauth
     {
+        int client_id;
         std::string access_token;
         std::string redirect_url;
         std::string client_secret;
-        std::string client_id;
+    };
+
+    enum class oauth_scope
+    {
+        scope_public,
+        scope_write,
+        scope_view_write,
+        scope_view_private_write
     };
 
     ///
@@ -64,6 +72,20 @@ namespace strava
     /// bool skip_init - Should we initialise the https client (default: false) 
     /// 
     void authenticate(oauth&& info, bool skip_init = false);
+
+    ///
+    ///
+    ///
+    ///
+    std::string token_url(int client_id, oauth_scope scope);
+
+    ///
+    ///
+    ///
+    ///
+    std::string exchange_token(std::string token, int client_id, std::string client_secret);
+
+    void setup_client();
 
     ///
     /// You get three types of representation with strava, a meta repr a summary repr and
