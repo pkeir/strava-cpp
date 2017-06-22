@@ -30,6 +30,7 @@
 #include <string>
 #include <vector>
 #include <time.h>
+#include <map>
 
 namespace strava
 {
@@ -404,23 +405,14 @@ namespace strava
         ///
         struct zones
         {
-            ///
-            ///
-            ///
             struct zone { int min, max; };
 
-            ///
-            ///
-            ///
             struct heart_rate_struct
             {
                 bool custom_zones;
                 std::vector<zone> zones;
             };
 
-            ///
-            ///
-            ///
             struct power_struct
             {
                 std::vector<zone> zones;
@@ -434,11 +426,8 @@ namespace strava
         ///
         ///
         ///
-        struct statistics
+        struct stats
         {
-            ///
-            ///
-            ///
             struct total_no_ac
             {
                 double distance;
@@ -450,9 +439,6 @@ namespace strava
                 int achievement_count;
             };
 
-            ///
-            ///
-            ///
             struct total : public total_no_ac
             {
                 int achievement_count;
@@ -480,12 +466,12 @@ namespace strava
         ///
         /// 
         ///
-        void get_zones(zones& out);
+        zones get_zones(const oauth& auth_info);
 
         ///
         /// 
         ///
-        void get_stats(detailed::athlete& athlete, statistics& stats);
+        void get_stats(detailed::athlete& athlete, stats& stats);
 
         ///
         /// 

@@ -32,7 +32,8 @@ int main(int argc, char* argv[])
     auto followers = strava::athlete::list_athlete_followers(auth_info);
 
     auto both_following = strava::athlete::list_both_following(auth_info, me);
-    auto updated_me = strava::athlete::update(auth_info, me, {{ "weight", "50.0" }});
+    //auto updated_me = strava::athlete::update(auth_info, me, { { "weight", "50.0" } });
+    auto my_zones = strava::athlete::get_zones(auth_info);
 
     std::cout << me.firstname << ", " << me.lastname << std::endl;
     std::cout << "Friends = " << friends.size() << std::endl;

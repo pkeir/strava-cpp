@@ -406,6 +406,59 @@ void athlete_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& 
     }
 }
 
+void heart_rate_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& out)
+{
+    if (json.isNull())
+    {
+        return;
+    }
+
+    out.heart_rate = {};
+    out.heart_rate.custom_zones = cast<bool>(json, "custom_zones", false); 
+
+    auto maybe_zones = json->get("zones");
+
+    if (maybe_zones.isArray())
+    {
+        auto zones = maybe_zones.extract<Poco::JSON::Array::Ptr>();
+
+        for (auto& zone : *zones)
+        {
+            auto obj = zone.extract<Poco::JSON::Object::Ptr>();
+            out.heart_rate.zones.push_back({
+                cast<int>(obj, "min", 0),
+                cast<int>(obj, "max", 0)
+            });
+        }
+    }
+}
+
+void power_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& out)
+{
+    if (json.isNull())
+    {
+        return;
+    }
+
+    out.power = {};
+
+    auto maybe_zones = json->get("zones");
+
+    if (maybe_zones.isArray())
+    {
+        auto zones = maybe_zones.extract<Poco::JSON::Array::Ptr>();
+
+        for (auto& zone : *zones)
+        {
+            auto obj = zone.extract<Poco::JSON::Object::Ptr>();
+            out.power.zones.push_back({
+                cast<int>(obj, "min", 0),
+                cast<int>(obj, "max", 0)
+            });
+        }
+    }
+}
+
 std::string strava::request_access(int client_id, oauth_scope scope)
 {
     std::stringstream url_builder;
@@ -549,28 +602,18 @@ strava::detailed::athlete strava::athlete::update(const oauth& auth_info, meta::
     return value;
 }
 
-void heart_rate_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& out)
+strava::athlete::zones strava::athlete::get_zones(const oauth& auth_info)
 {
-    // TODO:
-    // out.heart_rate
+    auto response = throw_on_error(get("/api/v3/athlete/zones", auth_info.access_token));
+    auto json = response.extract<Poco::JSON::Object::Ptr>();
+
+    strava::athlete::zones out;
+    heart_rate_from_json(json->getObject("heart_rate"), out);
+    power_from_json(json->getObject("power"), out);
+    return out;
 }
 
-void power_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& out)
-{
-    // TODO:
-    // out.power
-}
-
-void strava::athlete::get_zones(athlete::zones& out)
-{
-    // auto response = get<Poco::JSON::Object::Ptr>("api/v3/athlete/zones");
-    // TODO:
-    // heart_rate_from_json(response->get("heart_rate"), out);
-    // power_from_json(response->get("power"), out);
-
-}
-
-void strava::athlete::get_stats(detailed::athlete& athlete, statistics& stats)
+void strava::athlete::get_stats(detailed::athlete& athlete, stats& stats)
 {
     // TODO:
 }
