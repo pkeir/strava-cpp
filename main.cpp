@@ -29,19 +29,18 @@ int main(int argc, char* argv[])
     auto more_friends = strava::athlete::list_athlete_friends(auth_info, me);
     auto friends = strava::athlete::list_athlete_friends(auth_info);
 
+    auto more_followers = strava::athlete::list_athlete_followers(auth_info, me);
+    auto followers = strava::athlete::list_athlete_followers(auth_info);
+
+    auto both_following = strava::athlete::list_both_following(auth_info, me);
+
     std::cout << me.firstname << ", " << me.lastname << std::endl;
     std::cout << "Friends = " << friends.size() << std::endl;
     std::cin.ignore();
     std::cin.get();
 
     /*
-   
-
-    auto more_followers = strava::athlete::list_athlete_followers(me);
-    auto followers = strava::athlete::list_athlete_followers();
-
-    auto both_following = strava::athlete::list_both_following(me);
-
+  
     strava::detailed::athlete updated_me;
     strava::athlete::update(me, updated_me);
 

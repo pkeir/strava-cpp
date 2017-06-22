@@ -308,6 +308,18 @@ namespace strava
             std::string country;
             std::string sex;
         };
+
+        struct activity
+        {
+            bool is_private;
+            bool commute;
+            bool trainer;
+
+            std::string description;
+            std::string gear_id;
+            std::string name;
+            std::string type;
+        };
     }
 
     ///
@@ -318,40 +330,69 @@ namespace strava
     namespace athlete
     {
         ///
-        /// 
+        /// Lists friends for the current athlete. Pagination is supported.
+        ///
+        /// const oauth& auth - Authorization info
+        /// int page - The page to display (disabled by default)
+        /// int per_page - The number of entries per page
         ///
         std::vector<summary::athlete> list_athlete_friends(const oauth& auth, int page = -1, int per_page = 10);
 
         ///
+        /// Lists friends for the provided athlete. Pagination is supported.
         ///
+        /// const oauth& auth - Authorization info
+        /// meta::athlete& athlete - The athlete to get friends from
+        /// int page - The page to display (disabled by default)
+        /// int per_page - The number of entries per page
         ///
         std::vector<summary::athlete> list_athlete_friends(const oauth& auth, meta::athlete& athlete, int page = -1, int per_page = 10);
         
 
         ///
-        /// 
+        /// Lists followers for the current athlete. Pagination is supported.
         ///
-        std::vector<summary::athlete> list_athlete_followers(meta::athlete& athlete, int page = -1, int per_page = 10);
+        /// const oauth& auth - Authorization info
+        /// int page - The page to display (disabled by default)
+        /// int per_page - The number of entries per page
+        ///
+        std::vector<summary::athlete> list_athlete_followers(const oauth& auth,meta::athlete& athlete, int page = -1, int per_page = 10);
         
         ///
-        /// 
+        /// Lists followers for the provided athlete. Pagination is supported.
         ///
-        std::vector<summary::athlete> list_athlete_followers(int page = -1, int per_page = 10);
+        /// const oauth& auth - Authorization info
+        /// meta::athlete& athlete - The athlete to get followers from
+        /// int page - The page to display (disabled by default)
+        /// int per_page - The number of entries per page
+        ///
+        std::vector<summary::athlete> list_athlete_followers(const oauth& auth, int page = -1, int per_page = 10);
 
         ///
-        /// 
+        ///  List athletes that both the current athlete and given athlete
+        ///  are following.
         ///
-        std::vector<summary::athlete> list_both_following(meta::athlete& athlete, int page = -1, int per_page = 10);
+        /// const oauth& auth - Authorization info
+        /// meta::athlete& athlete - The athlete to find shared followers for
+        /// int page - The page to display (disabled by default)
+        /// int per_page - The number of entries per page
+        ///  
+        std::vector<summary::athlete> list_both_following(const oauth& auth, meta::athlete& athlete, int page = -1, int per_page = 10);
 
         ///
-        /// 
+        /// Returns the current athlete.
+        ///
+        /// const oauth& auth - Authorization info
         ///
         detailed::athlete current(const oauth& auth_info);
 
         ///
-        /// 
+        /// Gets an athlete by id.
         ///
-        summary::athlete retrieve(int id, const oauth& auth_info);
+        /// int id - The athlete to get
+        /// const oauth& auth - Authorization info
+        ///
+        summary::athlete retrieve(const oauth& auth_info, int id);
 
         ///
         /// 
@@ -477,7 +518,10 @@ namespace strava
         /// Retrieves a gear via id, representation
         /// returned is detailed and not a summary.
         ///
-        void retrieve(const std::string& id, detailed::gear& out);
+        /// const oauth& auth_info - Authorization info 
+        /// const std::string& id - The gear id to get
+        ///
+        detailed::gear retrieve(const oauth& auth_info, const std::string& id);
     }
 
     ///
