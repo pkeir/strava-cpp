@@ -190,8 +190,8 @@ T post(std::string url, std::string access_token = "", std::map<std::string, std
             request.set("Authorization", "Bearer " + access_token);
         }
 
-        if(!form_entries.empty())
-        { 
+        if (!form_entries.empty())
+        {
             for (auto& p : form_entries)
             {
                 form.set(p.first, p.second);

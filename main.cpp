@@ -6,7 +6,6 @@ using scope = strava::oauth_scope;
 
 int main(int argc, char* argv[])
 {
-    // 18035, "8a08050aaf532074ab06bdacf3297b3ecc86d640" 
     auto code = std::string(argc > 3 ? argv[3] : "");
     auto client_secret = std::string(argc > 2 ? argv[2] : "");  
     auto client_id = argc > 1 ? atoi(argv[1]) : 0;

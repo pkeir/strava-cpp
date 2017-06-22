@@ -1,33 +1,32 @@
 
-// Placeholder license (MIT) cough cough cough...
-//
-//  Copyright(c) <year> <copyright holders>
-//
-//  Permission is hereby granted, free of charge, to any person obtaining a copy
-//  of this software and associated documentation files(the "Software"), to deal
-//  in the Software without restriction, including without limitation the rights
-//  to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-//  copies of the Software, and to permit persons to whom the Software is
-//  furnished to do so, subject to the following conditions :
-//
-//  The above copyright notice and this permission notice shall be included in all
-//  copies or substantial portions of the Software.
-//
-//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-//  SOFTWARE.
-
 #pragma once
+
+/// Placeholder license (MIT) cough cough cough...
+///
+///  Copyright(c) 2017 Paul Keir, William Taylor
+///
+///  Permission is hereby granted, free of charge, to any person obtaining a copy
+///  of this software and associated documentation files(the "Software"), to deal
+///  in the Software without restriction, including without limitation the rights
+///  to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+///  copies of the Software, and to permit persons to whom the Software is
+///  furnished to do so, subject to the following conditions :
+///
+///  The above copyright notice and this permission notice shall be included in all
+///  copies or substantial portions of the Software.
+///
+///  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+///  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+///  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+///  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+///  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+///  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+///  SOFTWARE.
 
 #include <Poco/Net/HTTPSClientSession.h>
 #include <Poco/Net/NetSSL.h>
 #include <Poco/SharedPtr.h>
 #include <stdexcept>
-#include <memory>
 #include <string>
 #include <vector>
 #include <time.h>
@@ -47,9 +46,10 @@ namespace strava
     };
 
     ///
-    ///
+    /// Custom excpetion cast which mirrors
+    /// the error object returned from Strava
+    /// when something goes wrong.
     /// 
-    ///
     class error : public std::runtime_error
     {
     public:
@@ -93,20 +93,28 @@ namespace strava
     };
 
     ///
+    /// Generates a url for you to view in a browser
+    /// to grant access to your data.
     ///
-    ///
+    /// int client_id - The client id for your application
+    /// oauth_scope scope - Access level for the athletes data
     ///
     std::string request_access(int client_id, oauth_scope scope);
 
     ///
+    /// Generates a url for you to view in a browser
+    /// to grant access to your data.
     ///
-    ///
+    /// int client_id - The client id for your application
+    /// std::string client_secret - The client secret for your application
+    /// std::string token - The token you received by opening the url from request_access
     ///
     std::string exchange_token(int client_id, std::string client_secret, std::string token);
 
     ///
-    ///
-    ///
+    /// Call this method to deauthorize a access_token returned
+    /// by the function 'exchange_token'. Once you call this,
+    /// the access token will no longer be able to access data.
     ///
     std::string deauthorization(const oauth& auth_info);
 
