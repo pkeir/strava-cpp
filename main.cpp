@@ -6,22 +6,23 @@ using scope = strava::oauth_scope;
 
 int main(int argc, char* argv[])
 {
-    strava::setup_client();
+    const auto client_secret = argc > 2 ? argv[2] : "";  // "8a08050aaf532074ab06bdacf3297b3ecc86d640" 
+    const auto client_id = argc > 1 ? atoi(argv[1]) : 0; // 18035
 
-    auto url = strava::token_url(18035, scope::scope_public);
+    if (client_id == 0 || client_secret == "")
+    {
+        std::cerr << "No parameters provided, closing" << std::endl;
+        return 1;
+    }
 
-    strava::exchange_token("71ced2a8e18ad25f6546605809f78382d12ad5ab", 18035, "8a08050aaf532074ab06bdacf3297b3ecc86d640");
+    auto token = strava::request_access(client_id, scope::scope_public);
+    auto access_token = strava::exchange_token(client_id, client_secret, token);
+    auto auth_info = strava::oauth{ client_id, client_secret, access_token };
+
+    //strava::detailed::athlete me;
+    //strava::athlete::current(me);
+
     /*
-    strava::authenticate({
-        "44e10826ce68c67f1f155fb4989b6b92cbbf5ae4",  // access_token
-        "http://localhost:3000",                     // redirect_url
-        "8a08050aaf532074ab06bdacf3297b3ecc86d640 ", // client_secret
-        "18035"                                      // client_id
-    });
-    
-    strava::detailed::athlete me;
-    strava::athlete::current(me);
-
     auto more_friends = strava::athlete::list_athlete_friends(me);
     auto friends = strava::athlete::list_athlete_friends();
 
@@ -32,7 +33,8 @@ int main(int argc, char* argv[])
 
     strava::detailed::athlete updated_me;
     strava::athlete::update(me, updated_me);
-*/
+
     std::cin.get();
+*/
 
 }

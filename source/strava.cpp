@@ -187,6 +187,28 @@ std::vector<T> json_to_vector(Poco::JSON::Array::Ptr list, F functor)
     return elements;
 }
 
+void requires_https()
+{
+    using namespace Poco::Net;
+
+    if (session.context.isNull())
+    {
+        session.context = new Context(Context::CLIENT_USE, "");
+    }
+
+    if (session.session.isNull() && !session.context.isNull())
+    {
+        Poco::URI uri("https://www.strava.com");
+
+        session.session = new HTTPSClientSession(uri.getHost(), uri.getPort(), session.context);
+        session.session->setPort(443);
+        session.session->setTimeout(Poco::Timespan(10L, 0L));
+
+        SSLManager::InvalidCertificateHandlerPtr handler(new AcceptCertificateHandler(false));
+        SSLManager::instance().initializeClient(0, handler, session.context);
+    }
+}
+
 void club_from_json(Poco::JSON::Object::Ptr json, strava::summary::club& club)
 {
     club.id = cast<int>(json, "id", 0);
@@ -302,7 +324,7 @@ void athlete_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& 
     }
 }
 
-std::string strava::token_url(int client_id, oauth_scope scope)
+std::string strava::request_access(int client_id, oauth_scope scope)
 {
     std::stringstream url_builder;
     url_builder << "https://www.strava.com/oauth/authorize?";
@@ -332,8 +354,9 @@ std::string strava::token_url(int client_id, oauth_scope scope)
     return url_builder.str();
 }
 
-std::string strava::exchange_token(std::string token, int client_id, std::string client_secret)
+std::string strava::exchange_token(int client_id, std::string client_secret, std::string token)
 {
+    auto access_token = std::string("");
     auto url = std::string("/oauth/token");
     auto parameters = std::map<std::string, std::string> 
     {
@@ -344,39 +367,12 @@ std::string strava::exchange_token(std::string token, int client_id, std::string
 
     auto response = post<Poco::JSON::Object::Ptr>(url, parameters);
 
-    std::stringstream ss;
-    response->stringify(ss, 4, 0);
-
-    std::cout << ss.str() << std::endl;
-    std::cin.get();
-    
-    return "";
-}
-
-
-void strava::setup_client()
-{
-    using namespace Poco::Net;
-
-    Poco::URI uri("https://www.strava.com");
-
-    session.context = new Context(Context::CLIENT_USE, "");
-    session.session = new HTTPSClientSession(uri.getHost(), uri.getPort(), session.context);
-    session.session->setPort(443);
-    session.session->setTimeout(Poco::Timespan(10L, 0L));
-
-    SSLManager::InvalidCertificateHandlerPtr handler(new AcceptCertificateHandler(false));
-    SSLManager::instance().initializeClient(0, handler, session.context);
-}
-
-void strava::authenticate(strava::oauth&& autho, bool skip_init)
-{
-    authentication = autho;
-
-    if (!skip_init && session.context.isNull())
+    if (!response.isNull())
     {
-        setup_client();
+        access_token = response->get("access_token").toString();
     }
+
+    return access_token;
 }
 
 std::vector<strava::summary::athlete> strava::athlete::list_athlete_friends(meta::athlete& athlete, int page, int per_page)
@@ -428,26 +424,13 @@ std::vector<strava::summary::athlete> strava::athlete::list_both_following(meta:
 void strava::athlete::retrieve(int id, summary::athlete& out)
 {
     auto response = get<Poco::JSON::Object::Ptr>(athlete_url + "/" + std::to_string(id));
-
-    std::stringstream ss;
-    response->stringify(ss, 4, 0);
-
-    std::cout << ss.str() << std::endl;
-    std::cin.get();
-
-//    athlete_from_json(response, out);
+    athlete_from_json(response, out);
 }
 
 void strava::athlete::current(detailed::athlete& out)
 {
     auto response = get<Poco::JSON::Object::Ptr>(athlete_url);
-  
-    std::stringstream ss;
-    response->stringify(ss, 4, 0);
-
-    std::cout << ss.str() << std::endl;
-    std::cin.get();
-    //athlete_from_json(response, out);
+    athlete_from_json(response, out);
 }
 
 void strava::gear::retrieve(const std::string& id, detailed::gear& out)
