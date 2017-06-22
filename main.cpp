@@ -15,9 +15,16 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    auto token = strava::request_access(client_id, scope::scope_public);
-    auto access_token = strava::exchange_token(client_id, client_secret, token);
+    std::string code;
+    std::cout << strava::request_access(client_id, scope::scope_public) << std::endl;    
+    std::cin >> code;
+
+    auto access_token = strava::exchange_token(client_id, client_secret, code);
     auto auth_info = strava::oauth{ client_id, client_secret, access_token };
+
+    std::cout << "AccessToken=" << access_token << std::endl;
+    std::cin.ignore();
+    std::cin.get();
 
     //strava::detailed::athlete me;
     //strava::athlete::current(me);

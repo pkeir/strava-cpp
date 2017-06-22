@@ -62,9 +62,33 @@ std::string pretty_time_t(time_t time)
     return buffer;
 }
 
+void requires_https()
+{
+    using namespace Poco::Net;
+
+    if (session.context.isNull())
+    {
+        session.context = new Context(Context::CLIENT_USE, "");
+    }
+
+    if (session.session.isNull() && !session.context.isNull())
+    {
+        Poco::URI uri("https://www.strava.com");
+
+        session.session = new HTTPSClientSession(uri.getHost(), uri.getPort(), session.context);
+        session.session->setPort(443);
+        session.session->setTimeout(Poco::Timespan(10L, 0L));
+
+        SSLManager::InvalidCertificateHandlerPtr handler(new AcceptCertificateHandler(false));
+        SSLManager::instance().initializeClient(0, handler, session.context);
+    }
+}
+
 template<typename T>
 T get(std::string url)
 {
+    requires_https();
+
     Poco::JSON::Parser parser;
     T value = {};
 
@@ -94,6 +118,8 @@ T get(std::string url)
 template<typename T>
 T put(std::string url, std::map<std::string, std::string> form_entries)
 {
+    requires_https();
+
     Poco::JSON::Parser parser;
     T value = {};
 
@@ -124,6 +150,8 @@ T put(std::string url, std::map<std::string, std::string> form_entries)
 template<typename T>
 T post(std::string url, std::map<std::string, std::string> form_entries)
 {
+    requires_https();
+
     Poco::JSON::Parser parser;
     T value = {};
 
@@ -185,28 +213,6 @@ std::vector<T> json_to_vector(Poco::JSON::Array::Ptr list, F functor)
     }
 
     return elements;
-}
-
-void requires_https()
-{
-    using namespace Poco::Net;
-
-    if (session.context.isNull())
-    {
-        session.context = new Context(Context::CLIENT_USE, "");
-    }
-
-    if (session.session.isNull() && !session.context.isNull())
-    {
-        Poco::URI uri("https://www.strava.com");
-
-        session.session = new HTTPSClientSession(uri.getHost(), uri.getPort(), session.context);
-        session.session->setPort(443);
-        session.session->setTimeout(Poco::Timespan(10L, 0L));
-
-        SSLManager::InvalidCertificateHandlerPtr handler(new AcceptCertificateHandler(false));
-        SSLManager::instance().initializeClient(0, handler, session.context);
-    }
 }
 
 void club_from_json(Poco::JSON::Object::Ptr json, strava::summary::club& club)
