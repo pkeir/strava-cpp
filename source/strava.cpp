@@ -414,7 +414,7 @@ void heart_rate_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& 
     }
 
     out.heart_rate = {};
-    out.heart_rate.custom_zones = cast<bool>(json, "custom_zones", false); 
+    out.heart_rate.custom_zones = cast<bool>(json, "custom_zones", false);
 
     auto maybe_zones = json->get("zones");
 

@@ -32,6 +32,12 @@
 #include <time.h>
 #include <map>
 
+///
+/// Entire API is found in the strava namespace,
+/// don't import it into the global namespace,
+/// as many objects and methods have opaque
+/// names which could lead to conflicts
+///
 namespace strava
 {
     ///
@@ -299,6 +305,9 @@ namespace strava
         };
     }
 
+    ///
+    ///
+    ///
     namespace update
     {
         struct athlete
@@ -348,7 +357,7 @@ namespace strava
         /// int per_page - The number of entries per page
         ///
         std::vector<summary::athlete> list_athlete_friends(const oauth& auth, meta::athlete& athlete, int page = -1, int per_page = 10);
-        
+
 
         ///
         /// Lists followers for the current athlete. Pagination is supported.
@@ -357,8 +366,8 @@ namespace strava
         /// int page - The page to display (disabled by default)
         /// int per_page - The number of entries per page
         ///
-        std::vector<summary::athlete> list_athlete_followers(const oauth& auth,meta::athlete& athlete, int page = -1, int per_page = 10);
-        
+        std::vector<summary::athlete> list_athlete_followers(const oauth& auth, meta::athlete& athlete, int page = -1, int per_page = 10);
+
         ///
         /// Lists followers for the provided athlete. Pagination is supported.
         ///
