@@ -112,7 +112,7 @@ namespace strava
     std::string exchange_token(int client_id, std::string client_secret, std::string token);
 
     ///
-    /// Call this method to deauthorize a access_token returned
+    /// Call this method to deauthorize an access_token returned
     /// by the function 'exchange_token'. Once you call this,
     /// the access token will no longer be able to access data.
     ///
@@ -311,10 +311,53 @@ namespace strava
     }
 
     ///
-    ///
+    /// Athlete namespace for each method which
+    /// grabs some important athlete info from 
+    /// the API.
     ///
     namespace athlete
     {
+        ///
+        /// 
+        ///
+        std::vector<summary::athlete> list_athlete_friends(const oauth& auth, int page = -1, int per_page = 10);
+
+        ///
+        ///
+        ///
+        std::vector<summary::athlete> list_athlete_friends(const oauth& auth, meta::athlete& athlete, int page = -1, int per_page = 10);
+        
+
+        ///
+        /// 
+        ///
+        std::vector<summary::athlete> list_athlete_followers(meta::athlete& athlete, int page = -1, int per_page = 10);
+        
+        ///
+        /// 
+        ///
+        std::vector<summary::athlete> list_athlete_followers(int page = -1, int per_page = 10);
+
+        ///
+        /// 
+        ///
+        std::vector<summary::athlete> list_both_following(meta::athlete& athlete, int page = -1, int per_page = 10);
+
+        ///
+        /// 
+        ///
+        detailed::athlete current(const oauth& auth_info);
+
+        ///
+        /// 
+        ///
+        summary::athlete retrieve(int id, const oauth& auth_info);
+
+        ///
+        /// 
+        ///
+        void update(detailed::athlete& update, detailed::athlete& updated_out);
+
         ///
         ///
         ///
@@ -392,29 +435,6 @@ namespace strava
         {
             // Array of segment efforts http://strava.github.io/api/v3/efforts/
         };
-
-        std::vector<summary::athlete> list_athlete_friends(meta::athlete& athlete, int page = -1, int per_page = 10);
-        std::vector<summary::athlete> list_athlete_friends(int page = -1, int per_page = 10);
-
-        std::vector<summary::athlete> list_athlete_followers(meta::athlete& athlete, int page = -1, int per_page = 10);
-        std::vector<summary::athlete> list_athlete_followers(int page = -1, int per_page = 10);
-
-        std::vector<summary::athlete> list_both_following(meta::athlete& athlete, int page = -1, int per_page = 10);
-
-        ///
-        /// 
-        ///
-        void retrieve(int id, summary::athlete& out);
-
-        ///
-        /// 
-        ///
-        detailed::athlete current(const oauth& auth_info);
-
-        ///
-        /// 
-        ///
-        void update(detailed::athlete& update, detailed::athlete& updated_out);
 
         ///
         /// 

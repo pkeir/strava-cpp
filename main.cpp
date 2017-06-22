@@ -24,15 +24,18 @@ int main(int argc, char* argv[])
 
     auto access_token = strava::exchange_token(client_id, client_secret, code);
     auto auth_info = strava::oauth { client_id, client_secret, access_token };
-    auto athlete = strava::athlete::current(auth_info);
+    auto me = strava::athlete::current(auth_info);
 
-    std::cout << athlete.firstname << ", " << athlete.lastname << std::endl;
+    auto more_friends = strava::athlete::list_athlete_friends(auth_info, me);
+    auto friends = strava::athlete::list_athlete_friends(auth_info);
+
+    std::cout << me.firstname << ", " << me.lastname << std::endl;
+    std::cout << "Friends = " << friends.size() << std::endl;
     std::cin.ignore();
     std::cin.get();
 
     /*
-    auto more_friends = strava::athlete::list_athlete_friends(me);
-    auto friends = strava::athlete::list_athlete_friends();
+   
 
     auto more_followers = strava::athlete::list_athlete_followers(me);
     auto followers = strava::athlete::list_athlete_followers();
