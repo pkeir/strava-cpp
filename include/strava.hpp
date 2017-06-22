@@ -26,6 +26,7 @@
 #include <Poco/Net/HTTPSClientSession.h>
 #include <Poco/Net/NetSSL.h>
 #include <Poco/SharedPtr.h>
+#include <stdexcept>
 #include <memory>
 #include <string>
 #include <vector>
@@ -46,6 +47,29 @@ namespace strava
     };
 
     ///
+    ///
+    /// 
+    ///
+    class error : public std::runtime_error
+    {
+    public:
+        struct error_code
+        {
+            std::string resource;
+            std::string field;
+            std::string code;
+        };
+    private:
+
+        std::vector<error_code> error_codes;
+        std::string message;
+    public:
+        error(const std::string& msg, const std::vector<error_code>& codes);
+        const char* what() const override;
+        const std::vector<error_code>& codes();
+    };
+
+    ///
     /// Simple struct that sets out details
     /// needed for authentication.
     ///
@@ -56,6 +80,10 @@ namespace strava
         std::string access_token;
     };
 
+    ///
+    /// Scope enum for each type
+    /// of permission.
+    ///
     enum class oauth_scope
     {
         scope_public,
@@ -367,7 +395,7 @@ namespace strava
         ///
         /// 
         ///
-        void current(detailed::athlete& out);
+        detailed::athlete current(const oauth& auth_info);
 
         ///
         /// 

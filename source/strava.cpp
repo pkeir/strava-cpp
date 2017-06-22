@@ -27,7 +27,6 @@
 #include <map>
 
 strava::client session;
-strava::oauth authentication;
 
 const std::string activities_url = "/api/v3/activities";
 const std::string segments_url = "/api/v3/segments";
@@ -36,6 +35,24 @@ const std::string uploads_url = "/api/v3/uploads";
 const std::string routes_url = "/api/v3/routes";
 const std::string clubs_url = "/api/v3/clubs";
 const std::string gear_url = "/api/v3/gear";
+
+
+strava::error::error(const std::string& msg, const std::vector<error_code>& codes) :
+    std::runtime_error(msg),
+    error_codes(codes),
+    message(msg)
+{
+}
+
+const char* strava::error::what() const
+{
+    return message.c_str();
+}
+
+const std::vector<strava::error::error_code>& strava::error::codes()
+{
+    return error_codes;
+}
 
 std::time_t to_time_t(std::string timestring, std::string format)
 {
@@ -85,7 +102,7 @@ void requires_https()
 }
 
 template<typename T>
-T get(std::string url)
+T get(std::string url, std::string access_token)
 {
     requires_https();
 
@@ -98,7 +115,7 @@ T get(std::string url)
         Poco::Net::HTTPRequest request;
 
         request.setMethod(Poco::Net::HTTPRequest::HTTP_GET);
-        request.set("Authorization", "Bearer " + authentication.access_token);
+        request.set("Authorization", "Bearer " + access_token);
         request.setURI(url);
 
         std::stringstream ss;
@@ -129,7 +146,7 @@ T put(std::string url, std::map<std::string, std::string> form_entries)
         Poco::Net::HTTPRequest request;
 
         request.setMethod(Poco::Net::HTTPRequest::HTTP_PUT);
-        request.set("Authorization", "Bearer " + authentication.access_token);
+        //request.set("Authorization", "Bearer " + authentication.access_token);
         request.setURI(url);
 
         Poco::Net::HTMLForm form;
@@ -383,66 +400,100 @@ std::string strava::exchange_token(int client_id, std::string client_secret, std
 
 std::vector<strava::summary::athlete> strava::athlete::list_athlete_friends(meta::athlete& athlete, int page, int per_page)
 {
-    auto url = std::string("/api/v3/athletes/" + std::to_string(athlete.id) + "/friends");
-    auto response = get<Poco::JSON::Array::Ptr>(url);
-    auto filler = [](auto& json, auto& athlete) { athlete_from_json(json, athlete); };
+    //auto url = std::string("/api/v3/athletes/" + std::to_string(athlete.id) + "/friends");
+    //auto response = get<Poco::JSON::Array::Ptr>(url);
+    //auto filler = [](auto& json, auto& athlete) { athlete_from_json(json, athlete); };
 
-    return json_to_vector<strava::summary::athlete>(response, filler);
+    //return json_to_vector<strava::summary::athlete>(response, filler);
+    return{};
 }
 
 std::vector<strava::summary::athlete> strava::athlete::list_athlete_friends(int page, int per_page)
 {
-    auto url = std::string("/api/v3/athlete/friends");
-    auto response = get<Poco::JSON::Array::Ptr>(url);
-    auto filler = [](auto& json, auto& athlete) { athlete_from_json(json, athlete); };
+    //auto url = std::string("/api/v3/athlete/friends");
+    //auto response = get<Poco::JSON::Array::Ptr>(url);
+    //auto filler = [](auto& json, auto& athlete) { athlete_from_json(json, athlete); };
 
-    return json_to_vector<strava::summary::athlete>(response, filler);
+    //return json_to_vector<strava::summary::athlete>(response, filler);
+    return {};
 }
 
 std::vector<strava::summary::athlete> strava::athlete::list_athlete_followers(meta::athlete& athlete, int page, int per_page)
 {
-    auto url = std::string("/api/v3/athletes/" + std::to_string(athlete.id) + "/followers");
-    auto response = get<Poco::JSON::Array::Ptr>(url);
-    auto filler = [](auto& json, auto& athlete) { athlete_from_json(json, athlete); };
+    //auto url = std::string("/api/v3/athletes/" + std::to_string(athlete.id) + "/followers");
+    //auto response = get<Poco::JSON::Array::Ptr>(url);
+    //auto filler = [](auto& json, auto& athlete) { athlete_from_json(json, athlete); };
 
-    return json_to_vector<strava::summary::athlete>(response, filler);
-
+    //return json_to_vector<strava::summary::athlete>(response, filler);
+    return{};
 }
 
 std::vector<strava::summary::athlete> strava::athlete::list_athlete_followers(int page, int per_page)
 {
-    auto url = std::string("/api/v3/athlete/followers");
-    auto response = get<Poco::JSON::Array::Ptr>(url);
-    auto filler = [](auto& json, auto& athlete) { athlete_from_json(json, athlete); };
+    //auto url = std::string("/api/v3/athlete/followers");
+    //auto response = get<Poco::JSON::Array::Ptr>(url);
+    //auto filler = [](auto& json, auto& athlete) { athlete_from_json(json, athlete); };
 
-    return json_to_vector<strava::summary::athlete>(response, filler);
+    //return json_to_vector<strava::summary::athlete>(response, filler);
+    return{};
 }
 
 std::vector<strava::summary::athlete> strava::athlete::list_both_following(meta::athlete& athlete, int page, int per_page)
 {
-    auto url = std::string("/api/v3/athletes/" + std::to_string(athlete.id) + "/both-following");
-    auto response = get<Poco::JSON::Array::Ptr>(url);
-    auto filler = [](auto& json, auto& athlete) { athlete_from_json(json, athlete); };
+    //auto url = std::string("/api/v3/athletes/" + std::to_string(athlete.id) + "/both-following");
+    //auto response = get<Poco::JSON::Array::Ptr>(url);
+    //auto filler = [](auto& json, auto& athlete) { athlete_from_json(json, athlete); };
 
-    return json_to_vector<strava::summary::athlete>(response, filler);
+    //return json_to_vector<strava::summary::athlete>(response, filler);
+    return{};
 }
 
 void strava::athlete::retrieve(int id, summary::athlete& out)
 {
-    auto response = get<Poco::JSON::Object::Ptr>(athlete_url + "/" + std::to_string(id));
-    athlete_from_json(response, out);
+    //auto response = get<Poco::JSON::Object::Ptr>(athlete_url + "/" + std::to_string(id));
+    //athlete_from_json(response, out);
+
 }
 
-void strava::athlete::current(detailed::athlete& out)
+void throw_on_error(Poco::JSON::Object::Ptr response)
 {
-    auto response = get<Poco::JSON::Object::Ptr>(athlete_url);
+    auto error_array = response->getArray("errors");
+
+    if (!error_array.isNull())
+    {
+        auto error_message = response->get("message").toString();
+        auto error_codes = std::vector<strava::error::error_code>();
+
+        for (auto& e : *error_array)
+        {
+            auto eo = e.extract<Poco::JSON::Object::Ptr>();
+
+            error_codes.push_back({
+                eo->get("resource").toString(),
+                eo->get("field").toString(),  
+                eo->get("code").toString() 
+            });
+        }
+
+        throw strava::error(error_message, error_codes);
+    }
+}
+
+strava::detailed::athlete strava::athlete::current(const strava::oauth& auth)
+{
+    auto response = get<Poco::JSON::Object::Ptr>(athlete_url, auth.access_token);
+  
+    throw_on_error(response);
+
+    strava::detailed::athlete out;
     athlete_from_json(response, out);
+    return out;
 }
 
 void strava::gear::retrieve(const std::string& id, detailed::gear& out)
 {
-    auto response = get<Poco::JSON::Object::Ptr>(gear_url + "/" + id);
-    gear_from_json(response, out);
+    //auto response = get<Poco::JSON::Object::Ptr>(gear_url + "/" + id);
+    //gear_from_json(response, out);
 }
 
 void strava::athlete::update(detailed::athlete& update, detailed::athlete& updated_out)
@@ -464,7 +515,7 @@ void power_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& out)
 
 void strava::athlete::get_zones(athlete::zones& out)
 {
-    auto response = get<Poco::JSON::Object::Ptr>("api/v3/athlete/zones");
+    //auto response = get<Poco::JSON::Object::Ptr>("api/v3/athlete/zones");
     // TODO:
     //heart_rate_from_json(response->get("heart_rate"), out);
     //power_from_json(response->get("power"), out);

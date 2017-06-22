@@ -6,8 +6,10 @@ using scope = strava::oauth_scope;
 
 int main(int argc, char* argv[])
 {
-    const auto client_secret = argc > 2 ? argv[2] : "";  // "8a08050aaf532074ab06bdacf3297b3ecc86d640" 
-    const auto client_id = argc > 1 ? atoi(argv[1]) : 0; // 18035
+    // 18035, "8a08050aaf532074ab06bdacf3297b3ecc86d640" 
+    auto code = std::string(argc > 3 ? argv[3] : "");
+    auto client_secret = std::string(argc > 2 ? argv[2] : "");  
+    auto client_id = argc > 1 ? atoi(argv[1]) : 0;
 
     if (client_id == 0 || client_secret == "")
     {
@@ -15,19 +17,19 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    std::string code;
-    std::cout << strava::request_access(client_id, scope::scope_public) << std::endl;    
-    std::cin >> code;
+    if (code.empty())
+    {
+        std::cout << strava::request_access(client_id, scope::scope_public) << std::endl;
+        std::cin >> code;
+    }
 
     auto access_token = strava::exchange_token(client_id, client_secret, code);
     auto auth_info = strava::oauth{ client_id, client_secret, access_token };
+    auto athlete = strava::athlete::current(auth_info);
 
-    std::cout << "AccessToken=" << access_token << std::endl;
+    std::cout << athlete.firstname << ", " << athlete.lastname << std::endl;
     std::cin.ignore();
     std::cin.get();
-
-    //strava::detailed::athlete me;
-    //strava::athlete::current(me);
 
     /*
     auto more_friends = strava::athlete::list_athlete_friends(me);
