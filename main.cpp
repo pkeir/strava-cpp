@@ -40,5 +40,7 @@ int main(int argc, char* argv[])
 
     std::cout << next_to_me.firstname << ", " << next_to_me.lastname << std::endl;
     std::cout << "Friends = " << more_friends.size() << std::endl;
+
+    auto first_segment = strava::segment_efforts::retrieve(auth_info, 1);
     std::cin.get();
 }

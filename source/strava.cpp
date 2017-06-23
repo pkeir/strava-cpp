@@ -788,7 +788,7 @@ strava::detailed::gear strava::gear::retrieve(const oauth& auth_info, const std:
 
 strava::detailed::segment_effort strava::segment_efforts::retrieve(const oauth& auth, std::int64_t id)
 {
-    auto response = throw_on_error(get("/api/v3/segment_efforts/" + id, auth.access_token));
+    auto response = throw_on_error(get("/api/v3/segment_efforts/"s + std::to_string(id), auth.access_token));
     auto json = response.extract<Poco::JSON::Object::Ptr>();
 
     detailed::segment_effort out;
