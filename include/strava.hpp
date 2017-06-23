@@ -601,18 +601,11 @@ namespace strava
         ///
         detailed::segment_effort retrieve(const oauth& auth, std::int64_t id);
     }
+
     ///
     ///
     ///
     namespace streams
-    {
-
-    }
-
-    ///
-    ///
-    ///
-    namespace uploads
     {
 
     }
