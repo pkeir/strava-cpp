@@ -38,6 +38,16 @@
 namespace strava
 {
     ///
+    /// Simple pagination struct for specifying
+    /// pagination for large requests.
+    ///
+    struct pagination
+    {
+        int page;
+        int per_page;
+    };
+
+    ///
     /// Custom excpetion cast which mirrors
     /// the error object returned from Strava
     /// when something goes wrong.
@@ -256,6 +266,40 @@ namespace strava
         {
 
         };
+
+        ///
+        ///
+        ///
+        struct segment_effort
+        {
+
+            std::int64_t id;
+            std::string name;
+
+            summary::segment segment;
+            meta::activity activity;
+            meta::athlete athlete;
+
+            int resource_state;
+            int elapsed_time;
+            int moving_time;
+            int start_index;
+            int end_index;
+            int max_heartrate;
+            int kom_rank;
+            int pr_rank;
+
+            std::time_t start_date;
+            std::time_t start_date_local;
+
+            float distance;
+            float average_cadence;
+            float average_watts;
+            float average_heartrate;
+
+            bool device_watts;
+            bool hidden;
+        };
     }
 
     ///
@@ -308,34 +352,8 @@ namespace strava
         ///
         ///
         ///
-        struct segment_effort
+        struct segment_effort : public summary::segment_effort
         {
-            std::int64_t id;
-            std::string name;
-
-            summary::segment segment;
-            meta::activity activity;
-            meta::athlete athlete;
-
-            int resource_state;
-            int elapsed_time;
-            int moving_time;
-            int start_index;
-            int end_index;
-            int max_heartrate;
-            int kom_rank;
-            int pr_rank;
-
-            std::time_t start_date;
-            std::time_t start_date_local;
-
-            float distance;
-            float average_cadence;
-            float average_watts;
-            float average_heartrate;
-
-            bool device_watts;
-            bool hidden;
         };
     }
 
@@ -502,11 +520,6 @@ namespace strava
             total all_run_totals;
         };
 
-        struct koms
-        {
-            // Array of segment efforts http://strava.github.io/api/v3/efforts/
-        };
-
         ///
         /// 
         ///
@@ -520,7 +533,7 @@ namespace strava
         ///
         /// 
         ///
-        koms get_koms(const oauth& auth_info, int id, int page = -1, int per_page = 10);
+        std::vector<strava::detailed::segment_effort> get_koms(const oauth& auth_info, int id, int page = -1, int per_page = 50);
     }
 
     ///
@@ -578,6 +591,16 @@ namespace strava
 
     }
 
+    ///
+    ///
+    ///
+    namespace segment_efforts
+    {
+        ///
+        ///
+        ///
+        detailed::segment_effort retrieve(const oauth& auth, std::int64_t id);
+    }
     ///
     ///
     ///
