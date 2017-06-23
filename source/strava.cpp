@@ -522,17 +522,64 @@ void stats_from_json(Poco::JSON::Object::Ptr json, strava::athlete::stats& out)
     total_from_json(json->getObject("all_run_totals"), out.all_run_totals);
 }
 
+void map_from_json(Poco::JSON::Object::Ptr json, strava::polyline& out)
+{
+    out = {};
+    out.id = cast<std::string>(json, "id", "");
+    out.line = cast<std::string>(json, "polyline", "");
+    out.resource_state = cast<int>(json, "resource_state", 0);
+}
+
 void segment_from_json(Poco::JSON::Object::Ptr json, strava::summary::segment& out)
 {
-    // TODO: write method
+    out.id = cast<int>(json, "id", 0);
+    out.resource_state = cast<int>(json, "resource_state", 0);
+    out.climb_category = cast<int>(json, "climb_category", 0);
+
+    out.distance = cast<float>(json, "distance", 0.0);
+    out.average_grade = cast<float>(json, "average_grade", 0.0);
+    out.maximum_grade = cast<float>(json, "maximum_grade", 0.0);
+    out.elevation_high = cast<float>(json, "elevation_high", 0.0);
+    out.elevation_low = cast<float>(json, "elevation_low", 0.0);
+
+    out.name = cast<std::string>(json, "name", "");
+    out.activity_type = cast<std::string>(json, "activity_type", "");
+    out.city = cast<std::string>(json, "city", "");
+    out.state = cast<std::string>(json, "state", "");
+    out.country = cast<std::string>(json, "country", "");
+
+    auto start_elements = json->getArray("start_latlng");
+    auto end_elements = json->getArray("start_latlng");
+
+    out.start_latlng[0] = start_elements->get(0).extract<int>();
+    out.start_latlng[1] = start_elements->get(1).extract<int>();
+
+    out.end_latlng[0] = end_elements->get(0).extract<int>();
+    out.end_latlng[1] = end_elements->get(1).extract<int>();
+
+    out.is_private = cast<bool>(json, "is_private", false);
+    out.hazardous = cast<bool>(json, "hazardous", false);
+    out.starred = cast<bool>(json, "starred", false);
+}
+
+void segment_from_json(Poco::JSON::Object::Ptr json, strava::detailed::segment& out)
+{
+    segment_from_json(json, (strava::summary::segment&) out);
+    map_from_json(json, out.map);
+
+    out.total_elevation_gain = cast<int>(json, "total_elevation_gain", 0);
+    out.athlete_count = cast<int>(json, "athlete_count", 0);
+    out.effort_count = cast<int>(json, "effort_count", 0);
+    out.star_count = cast<int>(json, "star_count", 0);
+
+    auto created_timestamp = cast<std::string>(json, "created_at", "");
+    auto updated_timestamp = cast<std::string>(json, "updated_at", "");
+
+    out.created_at = to_time_t(created_timestamp, "%Y-%m-%dT%H:%M:%SZ");
+    out.updated_at = to_time_t(updated_timestamp, "%Y-%m-%dT%H:%M:%SZ");
 }
 
 void segment_effort_from_json(Poco::JSON::Object::Ptr json, strava::detailed::segment_effort& out)
-{
-    // TODO: write method
-}
-
-void koms_from_json(Poco::JSON::Object::Ptr json, strava::detailed::segment_effort& out)
 {
     auto start_date = cast<std::string>(json, "start_date", "");
     auto start_date_local = cast<std::string>(json, "start_date_local", "");
@@ -726,7 +773,7 @@ std::vector<strava::detailed::segment_effort> strava::athlete::get_koms(const oa
     auto response = throw_on_error(get(url, auth_info.access_token));
     auto json = response.extract<Poco::JSON::Array::Ptr>();
 
-    return json_to_vector<detailed::segment_effort>(json, [](auto& j, auto& s) { koms_from_json(j, s); });
+    return json_to_vector<detailed::segment_effort>(json, [](auto& j, auto& s) { segment_effort_from_json(j, s); });
 }
 
 strava::detailed::gear strava::gear::retrieve(const oauth& auth_info, const std::string& id)

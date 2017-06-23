@@ -26,6 +26,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <array>
 #include <ctime>
 #include <map>
 
@@ -38,6 +39,17 @@
 namespace strava
 {
     ///
+    /// No standard time object in C++, so this struct
+    /// provides the time string from the Strava API
+    /// and a copy of that time as a time_t type.
+    ///
+    struct time
+    {
+        std::string time_string;
+        std::time_t time_epoch;
+    };
+
+    ///
     /// Simple pagination struct for specifying
     /// pagination for large requests.
     ///
@@ -45,6 +57,16 @@ namespace strava
     {
         int page;
         int per_page;
+    };
+
+    ///
+    /// Polyline struct whic details a path
+    ///
+    struct polyline
+    {
+        std::string id;
+        std::string line;
+        int resource_state;
     };
 
     ///
@@ -126,27 +148,18 @@ namespace strava
     ///
     namespace meta
     {
-        ///
-        ///
-        ///
         struct athlete
         {
             int id;
             int resource_state;
         };
 
-        ///
-        ///
-        ///
         struct activity
         {
             int id;
             int resouce_state;
         };
 
-        ///
-        ///
-        ///
         struct club
         {
             int id;
@@ -154,9 +167,6 @@ namespace strava
             std::string name;
         };
 
-        ///
-        ///
-        ///
         struct route
         {
             int id;
@@ -165,30 +175,18 @@ namespace strava
             // map object??? http://strava.github.io/api/v3/routes/#maps
         };
 
-        ///
-        /// Race metadata empty
-        ///
         struct race
         {
         };
 
-        ///
-        /// Gear metadata empty
-        ///
         struct gear
         {
         };
 
-        ///
-        /// Segment metadata empty
-        ///
         struct segment
         {
         };
 
-        ///
-        /// Segment Effort metadata empty
-        ///
         struct segment_effort
         {
         };
@@ -201,9 +199,6 @@ namespace strava
     ///
     namespace summary
     {
-        ///
-        ///
-        ///
         struct athlete : public meta::athlete
         {
             std::string firstname;
@@ -223,9 +218,6 @@ namespace strava
             std::time_t updated_at;
         };
 
-        ///
-        ///
-        ///
         struct club : public meta::club
         {
             int id;
@@ -247,9 +239,6 @@ namespace strava
             bool featured;
         };
 
-        ///
-        ///
-        ///
         struct gear : public meta::gear
         {
             bool primary;
@@ -259,20 +248,34 @@ namespace strava
             std::string name;
         };
 
-        /// 
-        ///
-        ///
         struct segment : public meta::segment
         {
+            int id;
+            int resource_state;
+            int climb_category;
 
+            std::string name;
+            std::string activity_type;
+            std::string city;
+            std::string state;
+            std::string country;
+
+            float distance;
+            float average_grade;
+            float maximum_grade;
+            float elevation_high;
+            float elevation_low;
+
+            std::array<int, 2> start_latlng;
+            std::array<int, 2> end_latlng;
+
+            bool is_private;
+            bool hazardous;
+            bool starred;
         };
 
-        ///
-        ///
-        ///
         struct segment_effort
         {
-
             std::int64_t id;
             std::string name;
 
@@ -309,9 +312,6 @@ namespace strava
     ///
     namespace detailed
     {
-        ///
-        ///
-        ///
         struct athlete : public summary::athlete
         {
             int follower_count;
@@ -330,17 +330,10 @@ namespace strava
             std::vector<summary::gear> shoes;
         };
 
-        ///
-        ///
-        ///
         struct club : public summary::club
         {
-
         };
 
-        ///
-        ///
-        ///
         struct gear : public summary::gear
         {
             std::string brand_name;
@@ -349,38 +342,21 @@ namespace strava
             std::string description;
         };
 
-        ///
-        ///
-        ///
+        struct segment : public summary::segment_effort
+        {
+            int effort_count;
+            int athlete_count;
+            int star_count;
+            polyline map;
+
+            std::time_t created_at;
+            std::time_t updated_at;
+
+            float total_elevation_gain;
+        };
+
         struct segment_effort : public summary::segment_effort
         {
-        };
-    }
-
-    ///
-    ///
-    ///
-    namespace update
-    {
-        struct athlete
-        {
-            float weight;
-            std::string city;
-            std::string state;
-            std::string country;
-            std::string sex;
-        };
-
-        struct activity
-        {
-            bool is_private;
-            bool commute;
-            bool trainer;
-
-            std::string description;
-            std::string gear_id;
-            std::string name;
-            std::string type;
         };
     }
 
