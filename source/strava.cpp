@@ -1,5 +1,5 @@
 
-#include <Poco/Net/HTTPClientSession.h>
+#include <Poco/Net/HTTPSClientSession.h>
 #include <Poco/Net/NetSSL.h>
 #include <Poco/Net/InvalidCertificateHandler.h>
 #include <Poco/Net/AcceptCertificateHandler.h>
@@ -24,17 +24,32 @@
 #include <sstream>
 #include <iomanip>
 #include <sstream>
+#include <string>
 #include <map>
 
-strava::client session;
+using namespace std::string_literals;
 
-const std::string activities_url = "/api/v3/activities";
-const std::string segments_url = "/api/v3/segments";
-const std::string athlete_url = "/api/v3/athlete";
-const std::string uploads_url = "/api/v3/uploads";
-const std::string routes_url = "/api/v3/routes";
-const std::string clubs_url = "/api/v3/clubs";
-const std::string gear_url = "/api/v3/gear";
+
+const auto activities_url = "/api/v3/activities"s;
+const auto segments_url = "/api/v3/segments"s;
+const auto athletes_url = "/api/v3/athletes"s;
+const auto athlete_url = "/api/v3/athlete"s;
+const auto uploads_url = "/api/v3/uploads"s;
+const auto routes_url = "/api/v3/routes"s;
+const auto clubs_url = "/api/v3/clubs"s;
+const auto gear_url = "/api/v3/gear"s;
+
+
+///
+/// Client struct which keeps
+/// a Poco https session and the context
+/// for SSL https server/client
+///
+struct poco_client
+{
+    Poco::SharedPtr<Poco::Net::HTTPSClientSession> client;
+    Poco::AutoPtr<Poco::Net::Context> context;
+} client;
 
 
 strava::error::error(const std::string& msg, const std::vector<error_code>& codes) :
@@ -83,21 +98,21 @@ void requires_https()
 {
     using namespace Poco::Net;
 
-    if (session.context.isNull())
+    if (client.context.isNull())
     {
-        session.context = new Context(Context::CLIENT_USE, "");
+        client.context = new Context(Context::CLIENT_USE, "");
     }
 
-    if (session.session.isNull() && !session.context.isNull())
+    if (client.client.isNull() && !client.context.isNull())
     {
         Poco::URI uri("https://www.strava.com");
 
-        session.session = new HTTPSClientSession(uri.getHost(), uri.getPort(), session.context);
-        session.session->setPort(443);
-        session.session->setTimeout(Poco::Timespan(10L, 0L));
+        client.client = new HTTPSClientSession(uri.getHost(), uri.getPort(), client.context);
+        client.client->setPort(443);
+        client.client->setTimeout(Poco::Timespan(10L, 0L));
 
         SSLManager::InvalidCertificateHandlerPtr handler(new AcceptCertificateHandler(false));
-        SSLManager::instance().initializeClient(0, handler, session.context);
+        SSLManager::instance().initializeClient(0, handler, client.context);
     }
 }
 
@@ -118,9 +133,9 @@ Poco::Dynamic::Var get(std::string url, std::string access_token)
         request.setURI(url);
 
         std::stringstream ss;
-        session.session->sendRequest(request);
+        client.client->sendRequest(request);
 
-        Poco::StreamCopier::copyStream(session.session->receiveResponse(response), ss);
+        Poco::StreamCopier::copyStream(client.client->receiveResponse(response), ss);
         value = parser.parse(ss.str());
     }
     catch (const Poco::Net::SSLException& e)
@@ -160,15 +175,15 @@ Poco::Dynamic::Var put(std::string url, std::string access_token, std::map<std::
             }
 
             form.prepareSubmit(request);
-            form.write(session.session->sendRequest(request));
+            form.write(client.client->sendRequest(request));
         }
         else
         {
-            session.session->sendRequest(request);
+            client.client->sendRequest(request);
         }
 
         std::stringstream ss;
-        std::istream& is = session.session->receiveResponse(response);
+        std::istream& is = client.client->receiveResponse(response);
 
         Poco::StreamCopier::copyStream(is, ss);
         value = parser.parse(ss.str());
@@ -210,15 +225,15 @@ Poco::Dynamic::Var post(std::string url, std::string access_token = "", std::map
             }
 
             form.prepareSubmit(request);
-            form.write(session.session->sendRequest(request));
+            form.write(client.client->sendRequest(request));
         }
         else
         {
-            session.session->sendRequest(request);
+            client.client->sendRequest(request);
         }
 
         std::stringstream ss;
-        std::istream& is = session.session->receiveResponse(response);
+        std::istream& is = client.client->receiveResponse(response);
 
         Poco::StreamCopier::copyStream(is, ss);
         value = parser.parse(ss.str());
@@ -244,6 +259,14 @@ T cast(Poco::JSON::Object::Ptr json, std::string key, T on_empty)
     auto v = on_empty;
     value.convert(v);
     return v;
+}
+
+template<typename T>
+std::string stringify(T json)
+{
+    std::stringstream ss;
+    json->stringify(ss, 4, 0);
+    return ss.str();
 }
 
 template<typename T, typename F>
@@ -337,6 +360,8 @@ void athlete_from_json(Poco::JSON::Object::Ptr json, strava::meta::athlete& athl
 
 void athlete_from_json(Poco::JSON::Object::Ptr json, strava::summary::athlete& athlete)
 {
+    athlete_from_json(json, (strava::meta::athlete&)athlete);
+
     athlete.firstname = cast<std::string>(json, "firstname", "");
     athlete.lastname = cast<std::string>(json, "lastname", "");
     athlete.profile_medium = cast<std::string>(json, "profile_medium", "");
@@ -359,7 +384,6 @@ void athlete_from_json(Poco::JSON::Object::Ptr json, strava::summary::athlete& a
 
 void athlete_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& athlete)
 {
-    athlete_from_json(json, (strava::meta::athlete&)athlete);
     athlete_from_json(json, (strava::summary::athlete&)athlete);
 
     auto clubs = json->getArray("clubs");
@@ -459,9 +483,38 @@ void power_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& out)
     }
 }
 
+void total_from_json(Poco::JSON::Object::Ptr json, strava::athlete::stats::total& total)
+{
+    total = {};
+    total.distance = cast<double>(json, "distance", 0.0);
+    total.elevation_gain = cast<double>(json, "elevation_gain", 0.0);
+    total.eleapsed_time = cast<int>(json, "eleapsed_time", 0);
+    total.moving_time = cast<int>(json, "moving_time", 0);
+    total.count = cast<int>(json, "count", 0);
+}
+
+void total_with_ac_from_json(Poco::JSON::Object::Ptr json, strava::athlete::stats::total_with_ac& total)
+{
+    total_from_json(json, total);
+    total.achievement_count = cast<int>(json, "achievement_count", 0);
+}
+
 void stats_from_json(Poco::JSON::Object::Ptr json, strava::athlete::stats& out)
 {
-    // TODO: Parse response
+    out = {};
+    out.biggest_ride_distance = cast<double>(json, "biggest_ride_distance", 0.0);
+    out.biggest_climb_elevation_gain = cast<double>(json, "biggest_climb_elevation_gain", 0.0);
+
+    total_with_ac_from_json(json->getObject("recent_ride_totals"), out.recent_ride_totals);
+    total_with_ac_from_json(json->getObject("recent_swim_totals"), out.recent_swim_totals);
+    total_with_ac_from_json(json->getObject("recent_run_totals"), out.recent_run_totals);
+
+    total_from_json(json->getObject("ytd_ride_totals"), out.ytd_ride_totals);
+    total_from_json(json->getObject("ytd_run_totals"), out.ytd_run_totals);
+    total_from_json(json->getObject("ytd_swim_totals"), out.ytd_swim_totals);
+    total_from_json(json->getObject("all_ride_totals"), out.all_ride_totals);
+    total_from_json(json->getObject("all_swim_totals"), out.all_swim_totals);
+    total_from_json(json->getObject("all_run_totals"), out.all_run_totals);
 }
 
 void koms_from_json(Poco::JSON::Array::Ptr json, strava::athlete::koms& out)
@@ -499,7 +552,7 @@ std::string strava::request_access(int client_id, oauth_scope scope)
     return url_builder.str();
 }
 
-std::string strava::exchange_token(int client_id, std::string client_secret, std::string token)
+std::string strava::exchange_token(int client_id, const std::string& client_secret, const std::string& token)
 {
     auto parameters = std::map<std::string, std::string>
     {
@@ -580,7 +633,7 @@ strava::detailed::athlete strava::athlete::current(const strava::oauth& auth)
 strava::summary::athlete strava::athlete::retrieve(const oauth& auth, int id)
 {
     std::stringstream ss;
-    ss << athlete_url << "/";
+    ss << athletes_url << "/";
     ss << std::to_string(id);
 
     auto response = throw_on_error(get(ss.str(), auth.access_token));
@@ -588,17 +641,6 @@ strava::summary::athlete strava::athlete::retrieve(const oauth& auth, int id)
 
     strava::summary::athlete out;
     athlete_from_json(json, out);
-    return out;
-}
-
-strava::detailed::gear strava::gear::retrieve(const oauth& auth_info, const std::string& id)
-{
-    auto url = gear_url + "/" + id;
-    auto response = throw_on_error(get(url, auth_info.access_token));
-    auto json = response.extract<Poco::JSON::Object::Ptr>();
-
-    detailed::gear out;
-    gear_from_json(json, out);
     return out;
 }
 
@@ -640,7 +682,20 @@ strava::athlete::koms strava::athlete::get_koms(const oauth& auth_info, int id, 
     auto response = throw_on_error(get(url, auth_info.access_token));
     auto json = response.extract<Poco::JSON::Array::Ptr>();
 
+    std::cout << "Koms" << stringify(json) << std::endl;
+    std::cin.get();
+
     strava::athlete::koms out;
     koms_from_json(json, out);
+    return out;
+}
+
+strava::detailed::gear strava::gear::retrieve(const oauth& auth_info, const std::string& id)
+{
+    auto response = throw_on_error(get(gear_url + "/" + id, auth_info.access_token));
+    auto json = response.extract<Poco::JSON::Object::Ptr>();
+
+    detailed::gear out;
+    gear_from_json(json, out);
     return out;
 }

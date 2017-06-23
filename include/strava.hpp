@@ -1,6 +1,4 @@
 
-#pragma once
-
 /// Placeholder license (MIT) cough cough cough...
 ///
 ///  Copyright(c) 2017 Paul Keir, William Taylor
@@ -23,13 +21,12 @@
 ///  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ///  SOFTWARE.
 
-#include <Poco/Net/HTTPSClientSession.h>
-#include <Poco/Net/NetSSL.h>
-#include <Poco/SharedPtr.h>
+#pragma once
+
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <time.h>
+#include <ctime>
 #include <map>
 
 ///
@@ -40,18 +37,6 @@
 ///
 namespace strava
 {
-    ///
-    /// Client struct which keeps
-    /// a Poco https session and the context
-    /// for SSL https server/client
-    ///
-    struct client
-    {
-        // Poco::AutoPtr = std::unqiue_ptr
-        Poco::SharedPtr<Poco::Net::HTTPSClientSession> session;
-        Poco::AutoPtr<Poco::Net::Context> context;
-    };
-
     ///
     /// Custom excpetion cast which mirrors
     /// the error object returned from Strava
@@ -67,7 +52,6 @@ namespace strava
             std::string code;
         };
     private:
-
         std::vector<error_code> error_codes;
         std::string message;
     public:
@@ -91,7 +75,7 @@ namespace strava
     /// Scope enum for each type
     /// of permission.
     ///
-    enum class oauth_scope
+    enum oauth_scope
     {
         scope_public,
         scope_write,
@@ -116,7 +100,7 @@ namespace strava
     /// std::string client_secret - The client secret for your application
     /// std::string token - The token you received by opening the url from request_access
     ///
-    std::string exchange_token(int client_id, std::string client_secret, std::string token);
+    std::string exchange_token(int client_id, const std::string& client_secret, const std::string& token);
 
     ///
     /// Call this method to deauthorize an access_token returned
@@ -139,6 +123,15 @@ namespace strava
         {
             int id;
             int resource_state;
+        };
+
+        ///
+        ///
+        ///
+        struct activity
+        {
+            int id;
+            int resouce_state;
         };
 
         ///
@@ -255,6 +248,14 @@ namespace strava
             std::string id;
             std::string name;
         };
+
+        /// 
+        ///
+        ///
+        struct segment : public meta::segment
+        {
+
+        };
     }
 
     ///
@@ -302,6 +303,39 @@ namespace strava
             std::string model_name;
             std::string frame_type; // bike only
             std::string description;
+        };
+
+        ///
+        ///
+        ///
+        struct segment_effort
+        {
+            std::int64_t id;
+            std::string name;
+
+            summary::segment segment;
+            meta::activity activity;
+            meta::athlete athlete;
+
+            int resource_state;
+            int elapsed_time;
+            int moving_time;
+            int start_index;
+            int end_index;
+            int max_heartrate;
+            int kom_rank;
+            int pr_rank;
+
+            std::time_t start_date;
+            std::time_t start_date_local;
+
+            float distance;
+            float average_cadence;
+            float average_watts;
+            float average_heartrate;
+
+            bool device_watts;
+            bool hidden;
         };
     }
 
@@ -437,7 +471,7 @@ namespace strava
         ///
         struct stats
         {
-            struct total_no_ac
+            struct total
             {
                 double distance;
                 double elevation_gain;
@@ -448,23 +482,24 @@ namespace strava
                 int achievement_count;
             };
 
-            struct total : public total_no_ac
+            struct total_with_ac : public total
             {
                 int achievement_count;
             };
 
+            total_with_ac recent_ride_totals;
+            total_with_ac recent_swim_totals;
+            total_with_ac recent_run_totals;
+
             double biggest_ride_distance;
             double biggest_climb_elevation_gain;
 
-            std::vector<total_no_ac> ytd_swim_totals;
-            std::vector<total_no_ac> ytd_ride_totals;
-            std::vector<total_no_ac> ytd_run_totals;
-            std::vector<total_no_ac> all_ride_totals;
-            std::vector<total_no_ac> all_swim_totals;
-            std::vector<total_no_ac> all_run_totals;
-            std::vector<total> recent_ride_totals;
-            std::vector<total> recent_swim_totals;
-            std::vector<total> recent_run_totals;
+            total ytd_swim_totals;
+            total ytd_ride_totals;
+            total ytd_run_totals;
+            total all_ride_totals;
+            total all_swim_totals;
+            total all_run_totals;
         };
 
         struct koms
