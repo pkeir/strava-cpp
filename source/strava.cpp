@@ -498,7 +498,7 @@ void total_from_json(Poco::JSON::Object::Ptr json, strava::athlete::stats::total
     total.count = cast<int>(json, "count", 0);
 }
 
-void total_with_ac_from_json(Poco::JSON::Object::Ptr json, strava::athlete::stats::total_with_ac& total)
+void total_with_ac_from_json(Poco::JSON::Object::Ptr json, strava::athlete::stats::detailed_total& total)
 {
     total_from_json(json, total);
     total.achievement_count = cast<int>(json, "achievement_count", 0);

@@ -1,4 +1,5 @@
 
+
 /// Placeholder license (MIT) cough cough cough...
 ///
 ///  Copyright(c) 2017 Paul Keir, William Taylor
@@ -148,18 +149,21 @@ namespace strava
     ///
     namespace meta
     {
+        /// Athlete metadata info
         struct athlete
         {
             int id;
             int resource_state;
         };
 
+        /// Activity metadata info
         struct activity
         {
             int id;
             int resouce_state;
         };
 
+        /// Club metadata info
         struct club
         {
             int id;
@@ -167,26 +171,31 @@ namespace strava
             std::string name;
         };
 
+        /// Route metadata info
         struct route
         {
             int id;
             int resource_state;
             std::string name;
-            // map object??? http://strava.github.io/api/v3/routes/#maps
+            polyline map;
         };
 
+        /// Race metadata info
         struct race
         {
         };
 
+        /// Gear metadata info
         struct gear
         {
         };
 
+        /// Segment metadata info
         struct segment
         {
         };
 
+        /// Effort metadata info
         struct segment_effort
         {
         };
@@ -199,6 +208,7 @@ namespace strava
     ///
     namespace summary
     {
+        /// Athlete summary info
         struct athlete : public meta::athlete
         {
             std::string firstname;
@@ -218,13 +228,11 @@ namespace strava
             std::time_t updated_at;
         };
 
+        /// Club summary info
         struct club : public meta::club
         {
-            int id;
-            int resource_state;
             int member_count;
 
-            std::string name;
             std::string profile_medium;
             std::string profile;
             std::string cover_photo;
@@ -236,9 +244,11 @@ namespace strava
             std::string url;
 
             bool is_private;
+            bool verified;
             bool featured;
         };
 
+        /// Gear summary info
         struct gear : public meta::gear
         {
             bool primary;
@@ -248,6 +258,7 @@ namespace strava
             std::string name;
         };
 
+        /// Segment summary info
         struct segment : public meta::segment
         {
             int id;
@@ -274,6 +285,7 @@ namespace strava
             bool starred;
         };
 
+        /// Effort summary info
         struct segment_effort
         {
             std::int64_t id;
@@ -303,6 +315,25 @@ namespace strava
             bool device_watts;
             bool hidden;
         };
+
+        /// Route summary info
+        struct route : public meta::route
+        {
+            summary::athlete athlete;
+
+            float distance;
+            float elevation_gain;
+
+            std::string description;
+            std::string type;
+            std::string sub_type;
+
+            bool is_private;
+            bool starred;
+
+            int timestamp;
+            int estimated_moving_time;
+        };
     }
 
     ///
@@ -312,6 +343,7 @@ namespace strava
     ///
     namespace detailed
     {
+        /// Athlete detailed info
         struct athlete : public summary::athlete
         {
             int follower_count;
@@ -330,18 +362,28 @@ namespace strava
             std::vector<summary::gear> shoes;
         };
 
+        /// Club detailed info
         struct club : public summary::club
         {
+            int following_count;
+
+            std::string membership;
+            std::string club_type;
+
+            bool admin;
+            bool owner;
         };
 
+        /// Gear detailed info
         struct gear : public summary::gear
         {
             std::string brand_name;
             std::string model_name;
-            std::string frame_type; // bike only
+            std::string frame_type;
             std::string description;
         };
 
+        /// Segment detailed info
         struct segment : public summary::segment_effort
         {
             int effort_count;
@@ -355,8 +397,16 @@ namespace strava
             float total_elevation_gain;
         };
 
+        /// Effort detailed info
         struct segment_effort : public summary::segment_effort
         {
+            /// Empty as detailed + summary representation is the same 
+        };
+
+        /// Route detailed info
+        struct route : public summary::route
+        {
+            std::vector<segment> segments;
         };
     }
 
@@ -385,7 +435,6 @@ namespace strava
         /// int per_page - The number of entries per page
         ///
         std::vector<summary::athlete> list_athlete_friends(const oauth& auth, meta::athlete& athlete, int page = -1, int per_page = 10);
-
 
         ///
         /// Lists followers for the current athlete. Pagination is supported.
@@ -427,44 +476,71 @@ namespace strava
         ///
         /// Gets an athlete by id.
         ///
-        /// int id - The athlete to get
         /// const oauth& auth - Authorization info
+        /// int id - The athlete to get
         ///
         summary::athlete retrieve(const oauth& auth_info, int id);
 
         ///
-        /// 
+        /// Updates the athlete by id.
+        ///
+        /// const oauth& auth - Authorization info
+        /// meta::athlete athlete - The athlete to update
+        /// std::map<std::string, std::string> - Map of updates e.g {"weight", "50.0"}
         ///
         detailed::athlete update(const oauth& auth_info, meta::athlete athlete, std::map<std::string, std::string> updates);
 
         ///
+        /// Zone attached to an athlete which
+        /// denotes both a min and max value.
         ///
+        struct zone
+        {
+            int min;
+            int max;
+        };
+
+        ///
+        /// Heart rate zone struct which is 
+        /// part of the zones object returned
+        /// by athlete list zones.
+        ///
+        struct athlete_heart_rate
+        {
+            bool custom_zones;
+            std::vector<zone> zones;
+        };
+
+        ///
+        /// Power zone struct which is 
+        /// part of the zones object returned
+        /// by athlete list zones.
+        ///
+        struct athlete_power
+        {
+            std::vector<zone> zones;
+        };
+
+        ///
+        /// Zones is a combination of both heart_rate
+        /// zones and power zones. (Power zones is a 
+        /// premium feature).
         ///
         struct zones
         {
-            struct zone { int min, max; };
-
-            struct heart_rate_struct
-            {
-                bool custom_zones;
-                std::vector<zone> zones;
-            };
-
-            struct power_struct
-            {
-                std::vector<zone> zones;
-            };
-
-            heart_rate_struct heart_rate;
-            power_struct power;
+            athlete_heart_rate heart_rate;
+            athlete_power power;
         };
 
-
         ///
-        ///
+        /// Recent stats within 4 weeks which is tied
+        /// to a given athlete.
         ///
         struct stats
         {
+            /// Two types of entries one with an achievment count,
+            /// and one without. These are split into two structs
+            /// total and detailed_total.
             struct total
             {
                 double distance;
@@ -476,14 +552,15 @@ namespace strava
                 int achievement_count;
             };
 
-            struct total_with_ac : public total
+            /// See above comment
+            struct detailed_total : public total
             {
                 int achievement_count;
             };
 
-            total_with_ac recent_ride_totals;
-            total_with_ac recent_swim_totals;
-            total_with_ac recent_run_totals;
+            detailed_total recent_ride_totals;
+            detailed_total recent_swim_totals;
+            detailed_total recent_run_totals;
 
             double biggest_ride_distance;
             double biggest_climb_elevation_gain;
@@ -491,23 +568,31 @@ namespace strava
             total ytd_swim_totals;
             total ytd_ride_totals;
             total ytd_run_totals;
+
             total all_ride_totals;
             total all_swim_totals;
             total all_run_totals;
         };
 
         ///
-        /// 
+        /// Gets an zones for the current athlete.
+        ///
+        /// const oauth& auth_info - Authorization info
         ///
         zones get_zones(const oauth& auth_info);
 
         ///
-        /// 
+        /// Gets an stats for the current athlete.
+        ///
+        /// const oauth& auth_info - Authorization info
         ///
         stats get_stats(const oauth& auth_info, int id);
 
         ///
-        /// 
+        /// Gets an koms for the given athlete.
+        ///
+        /// const oauth& auth_info - Authorization info
+        /// int id - The athlete to get
         ///
         std::vector<strava::detailed::segment_effort> get_koms(const oauth& auth_info, int id, int page = -1, int per_page = 50);
     }
@@ -515,9 +600,19 @@ namespace strava
     ///
     ///
     ///
-    namespace activities
+    namespace activity
     {
-
+        // list photos
+        // list comments
+        // list kudos
+        // create activity
+        // retrieve activity
+        // update an activity
+        // list athlete activities
+        // list related activities
+        // list friends activities
+        // list activity zones
+        // list activity laps
     }
 
     ///
@@ -525,7 +620,14 @@ namespace strava
     ///
     namespace clubs
     {
-
+        // retrieve club
+        // list club announcments
+        // list athlete clubs
+        // list club members
+        // list club admins
+        // list clubs activities
+        // join club
+        // leave club
     }
 
     ///
@@ -548,7 +650,8 @@ namespace strava
     ///
     namespace routes
     {
-
+        // retrieve
+        // list
     }
 
     ///
@@ -556,7 +659,8 @@ namespace strava
     ///
     namespace races
     {
-
+        // retrieve
+        // list
     }
 
     ///
@@ -564,16 +668,25 @@ namespace strava
     ///
     namespace segments
     {
-
+        // retrieve
+        // list
+        // star a segment
+        // list efforts
+        // segment leaderboards
+        // segment explorer
     }
 
     ///
-    ///
+    /// Segment efforts namespace for each method which
+    /// provdes segment effort info.
     ///
     namespace segment_efforts
     {
         ///
+        /// Gets segment effort by id.
         ///
+        /// const oauth& auth - Authorization info
+        /// int id - The segment effort to get
         ///
         detailed::segment_effort retrieve(const oauth& auth, std::int64_t id);
     }
@@ -583,6 +696,9 @@ namespace strava
     ///
     namespace streams
     {
-
+        // retrieve activity stream
+        // retrieve effort stream
+        // retrieve segment stream
+        // retrieve route stream
     }
 }
