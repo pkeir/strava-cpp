@@ -58,6 +58,9 @@ namespace strava
     {
         int page;
         int per_page;
+
+        pagination(int page = -1, int per_page = 30);
+        bool enabled();
     };
 
     ///
@@ -424,7 +427,7 @@ namespace strava
         /// int page - The page to display (disabled by default)
         /// int per_page - The number of entries per page
         ///
-        std::vector<summary::athlete> list_athlete_friends(const oauth& auth, int page = -1, int per_page = 10);
+        std::vector<summary::athlete> list_athlete_friends(const oauth& auth, pagination page_opt = {});
 
         ///
         /// Lists friends for the provided athlete. Pagination is supported.
@@ -434,7 +437,7 @@ namespace strava
         /// int page - The page to display (disabled by default)
         /// int per_page - The number of entries per page
         ///
-        std::vector<summary::athlete> list_athlete_friends(const oauth& auth, meta::athlete& athlete, int page = -1, int per_page = 10);
+        std::vector<summary::athlete> list_athlete_friends(const oauth& auth, meta::athlete& athlete, int page = -1, int per_page = 50);
 
         ///
         /// Lists followers for the current athlete. Pagination is supported.
@@ -443,7 +446,7 @@ namespace strava
         /// int page - The page to display (disabled by default)
         /// int per_page - The number of entries per page
         ///
-        std::vector<summary::athlete> list_athlete_followers(const oauth& auth, meta::athlete& athlete, int page = -1, int per_page = 10);
+        std::vector<summary::athlete> list_athlete_followers(const oauth& auth, meta::athlete& athlete, int page = -1, int per_page = 50);
 
         ///
         /// Lists followers for the provided athlete. Pagination is supported.
@@ -453,7 +456,7 @@ namespace strava
         /// int page - The page to display (disabled by default)
         /// int per_page - The number of entries per page
         ///
-        std::vector<summary::athlete> list_athlete_followers(const oauth& auth, int page = -1, int per_page = 10);
+        std::vector<summary::athlete> list_athlete_followers(const oauth& auth, int page = -1, int per_page = 50);
 
         ///
         ///  List athletes that both the current athlete and given athlete
@@ -464,7 +467,7 @@ namespace strava
         /// int page - The page to display (disabled by default)
         /// int per_page - The number of entries per page
         ///  
-        std::vector<summary::athlete> list_both_following(const oauth& auth, meta::athlete& athlete, int page = -1, int per_page = 10);
+        std::vector<summary::athlete> list_both_following(const oauth& auth, meta::athlete& athlete, int page = -1, int per_page = 50);
 
         ///
         /// Returns the current athlete.
