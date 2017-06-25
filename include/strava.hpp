@@ -227,8 +227,8 @@ namespace strava
 
             bool premium;
 
-            std::time_t created_at;
-            std::time_t updated_at;
+            time created_at;
+            time updated_at;
         };
 
         /// Club summary info
@@ -307,8 +307,8 @@ namespace strava
             int kom_rank;
             int pr_rank;
 
-            std::time_t start_date;
-            std::time_t start_date_local;
+            time start_date;
+            time start_date_local;
 
             float distance;
             float average_cadence;
@@ -394,8 +394,8 @@ namespace strava
             int star_count;
             polyline map;
 
-            std::time_t created_at;
-            std::time_t updated_at;
+            time created_at;
+            time updated_at;
 
             float total_elevation_gain;
         };

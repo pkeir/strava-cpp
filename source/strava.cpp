@@ -52,6 +52,17 @@ struct poco_client
 
 
 ///
+///
+///
+struct http_request
+{
+    std::string method, url, access_token;
+    std::map<std::string, std::string> form_entries;
+    strava::pagination page_options;
+};
+
+
+///
 /// Constructor for setting the default values
 /// allowing overwriting when wanting pagination
 /// functionality
@@ -71,7 +82,8 @@ bool strava::pagination::enabled()
 }
 
 ///
-///
+/// Error constructor takes a vector of error codes from Strava API
+/// and the error message as well.
 ///
 strava::error::error(const std::string& msg, const std::vector<error_code>& codes) :
     std::runtime_error(msg),
@@ -80,11 +92,17 @@ strava::error::error(const std::string& msg, const std::vector<error_code>& code
 {
 }
 
+///
+/// Returns the message given by the Strava API.
+///
 const char* strava::error::what() const
 {
     return message.c_str();
 }
 
+///
+/// Returns the error codes given by the Strava API.
+///
 const std::vector<strava::error::error_code>& strava::error::codes()
 {
     return error_codes;
@@ -93,19 +111,19 @@ const std::vector<strava::error::error_code>& strava::error::codes()
 ///
 ///
 ///
-std::time_t to_time_t(std::string timestring, std::string format)
+strava::time make_time(std::string timestr)
 {
     std::tm time;
-    std::istringstream input(timestring);
+    std::istringstream input(timestr);
     input.imbue(std::locale(setlocale(LC_ALL, nullptr)));
-    input >> std::get_time(&time, format.c_str());
+    input >> std::get_time(&time, "%Y-%m-%dT%H:%M:%SZ");
 
     if (input.fail())
     {
-        return 0;
+        return { "", 0 };
     }
 
-    return mktime(&time);
+    return { timestr, mktime(&time) };
 }
 
 ///
@@ -145,16 +163,6 @@ void requires_https()
         SSLManager::instance().initializeClient(0, handler, client.context);
     }
 }
-
-struct http_request
-{
-    std::string method;
-    std::string url;    
-    std::string access_token;
-    std::map<std::string, std::string> form_entries;
-    
-    strava::pagination page_options;
-};
 
 Poco::Dynamic::Var send(http_request& request_info)
 {
@@ -344,11 +352,8 @@ void athlete_from_json(Poco::JSON::Object::Ptr json, strava::summary::athlete& a
 
     athlete.premium = cast<bool>(json, "premium", false);
 
-    auto created_timestamp = cast<std::string>(json, "created_at", "");
-    auto updated_timestamp = cast<std::string>(json, "updated_at", "");
-
-    athlete.created_at = to_time_t(created_timestamp, "%Y-%m-%dT%H:%M:%SZ");
-    athlete.updated_at = to_time_t(updated_timestamp, "%Y-%m-%dT%H:%M:%SZ");
+    athlete.created_at = make_time(cast<std::string>(json, "created_at", ""));
+    athlete.updated_at = make_time(cast<std::string>(json, "updated_at", ""));
 }
 
 void athlete_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& athlete)
@@ -531,23 +536,16 @@ void segment_from_json(Poco::JSON::Object::Ptr json, strava::detailed::segment& 
     segment_from_json(json, (strava::summary::segment&) out);
     map_from_json(json, out.map);
 
+    out.created_at = make_time(cast<std::string>(json, "created_at", ""));
+    out.updated_at = make_time(cast<std::string>(json, "updated_at", ""));
     out.total_elevation_gain = cast<int>(json, "total_elevation_gain", 0);
     out.athlete_count = cast<int>(json, "athlete_count", 0);
     out.effort_count = cast<int>(json, "effort_count", 0);
     out.star_count = cast<int>(json, "star_count", 0);
-
-    auto created_timestamp = cast<std::string>(json, "created_at", "");
-    auto updated_timestamp = cast<std::string>(json, "updated_at", "");
-
-    out.created_at = to_time_t(created_timestamp, "%Y-%m-%dT%H:%M:%SZ");
-    out.updated_at = to_time_t(updated_timestamp, "%Y-%m-%dT%H:%M:%SZ");
 }
 
 void segment_effort_from_json(Poco::JSON::Object::Ptr json, strava::detailed::segment_effort& out)
 {
-    auto start_date = cast<std::string>(json, "start_date", "");
-    auto start_date_local = cast<std::string>(json, "start_date_local", "");
-
     out = {};
     out.id = cast<std::int64_t>(json, "id", 0);
     out.name = cast<std::string>(json, "name", "");
@@ -556,9 +554,9 @@ void segment_effort_from_json(Poco::JSON::Object::Ptr json, strava::detailed::se
     athlete_from_json(json, out.athlete);
     segment_from_json(json, out.segment);
 
-    out.start_date = to_time_t(start_date, "%Y-%m-%dT%H:%M:%SZ");
-    out.start_date_local = to_time_t(start_date_local, "%Y-%m-%dT%H:%M:%SZ");
 
+    out.start_date_local = make_time(cast<std::string>(json, "start_date_local", ""));
+    out.start_date = make_time(cast<std::string>(json, "start_date", ""));
     out.average_heartrate = cast<float>(json, "average_heartrate", 0.0);
     out.average_cadence = cast<float>(json, "average_cadence", 0.0);
     out.average_watts = cast<float>(json, "average_watts", 0.0);
@@ -616,7 +614,8 @@ std::string strava::exchange_token(int client_id, const std::string& client_secr
         { "code", token }
     };
 
-    http_request request = {
+    auto request = http_request
+    {
         Poco::Net::HTTPRequest::HTTP_POST,
         "/oauth/token",
         "", form, {}
@@ -630,15 +629,30 @@ std::string strava::exchange_token(int client_id, const std::string& client_secr
 
 std::string strava::deauthorization(const strava::oauth& auth)
 {
-    auto response = check(post("/oauth/deauthorize", auth.access_token));
-    auto json = response.extract<Poco::JSON::Object::Ptr>();
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_GET,
+        "/oauth/deauthorize",
+        auth.access_token,
+        {}, {}
+    };
+
+    auto resp = check(send(request));
+    auto json = resp.extract<Poco::JSON::Object::Ptr>();
 
     return json->get("access_token").toString();
 }
 
 std::vector<strava::summary::athlete> strava::athlete::list_athlete_friends(const strava::oauth& auth, meta::athlete& athlete, int page, int per_page)
 {
-    auto url = std::string("/api/v3/athletes/" + std::to_string(athlete.id) + "/friends");
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_POST,
+        "/api/v3/athletes/"s + std::to_string(athlete.id) + "/friends"s,
+        auth.access_token,
+        {},{}
+    };
+
     auto response = check(get(url, auth.access_token));
     auto json = response.extract<Poco::JSON::Array::Ptr>();
 
