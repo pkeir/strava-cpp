@@ -180,13 +180,6 @@ Poco::Dynamic::Var send(http_request& request_info)
 {
     Poco::JSON::Parser parser;
     Poco::Dynamic::Var value = {};
-    Poco::URI uri(request_info.url);
-
-    if (request_info.page_options.enabled())
-    {
-        uri.addQueryParameter("page", std::to_string(request_info.page_options.page));
-        uri.addQueryParameter("per_page", std::to_string(request_info.page_options.per_page));
-    }
 
     lazy_start_session();
 
@@ -198,7 +191,13 @@ Poco::Dynamic::Var send(http_request& request_info)
         Poco::Net::HTMLForm form;
 
         request.setMethod(request_info.method);
-        request.setURI(uri.toString());
+        request.setURI(request_info.url);
+
+        if (request_info.page_options.enabled())
+        {
+            request.set("page", std::to_string(request_info.page_options.page));
+            request.set("per_page", std::to_string(request_info.page_options.per_page));
+        }
 
         if (!request_info.access_token.empty())
         {
@@ -675,13 +674,14 @@ std::vector<strava::summary::athlete> strava::athlete::list_athlete_friends(cons
     return json_to_vector<summary::athlete>(json, parser);
 }
 
-std::vector<strava::summary::athlete> strava::athlete::list_athlete_friends(const strava::oauth& auth, pagination page_opt)
+std::vector<strava::summary::athlete> strava::athlete::list_athlete_friends(const strava::oauth& auth, pagination page_options)
 {
     auto request = http_request
     {
         Poco::Net::HTTPRequest::HTTP_GET,
         "/api/v3/athlete/friends",
-        auth.access_token, {}, {}
+        auth.access_token, {}, 
+        page_options
     };
 
     auto parser = [](auto& j, auto& a) { athlete_from_json(j, a); };

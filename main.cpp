@@ -2,7 +2,7 @@
 #include <strava.hpp>
 #include <iostream>
 
-using scope = strava::oauth_scope;
+using namespace strava;
 
 int main(int argc, char* argv[])
 {
@@ -18,16 +18,17 @@ int main(int argc, char* argv[])
 
     if (code.empty())
     {
-        std::cout << strava::request_access(client_id, scope::scope_view_private_write) << std::endl;
+        std::cout << request_access(client_id, scope_view_private_write) << std::endl;
         std::cin >> code;
         std::cin.ignore();
     }
 
-    auto access_token = strava::exchange_token(client_id, client_secret, code);
-    auto auth_info = strava::oauth { client_id, client_secret, access_token };
-    auto me = strava::athlete::current(auth_info);
-    
-    auto races = strava::races::list(auth_info, 0);
-    auto race = strava::races::retrieve(auth_info, races.front().id);
+    auto access_token = exchange_token(client_id, client_secret, code);
+    auto auth_info = oauth { client_id, client_secret, access_token };
+    auto me = athlete::current(auth_info);
+
+    auto friends = athlete::list_athlete_friends(auth_info, { 0, 50 });
+    auto races = races::list(auth_info, 0);
+
     std::cin.get();
 }
