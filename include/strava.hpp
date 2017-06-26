@@ -146,6 +146,25 @@ namespace strava
     std::string deauthorization(const oauth& auth);
 
     ///
+    /// Namespace of constants specified by the Strava API.
+    ///
+    namespace constants
+    {
+        /// See https://strava.github.io/api/v3/running_races/ distances section
+        const auto km_100 = 100000.0;
+        const auto km_50 = 50000.0;
+        const auto km_10 = 10000.0;
+        const auto km_5 = 5000.0;
+
+        const auto mi_10 = 16093.4;
+        const auto mi_5 = 8046.70;
+        const auto mi_1 = 1609.34;
+
+        const auto half_marathon = 21097.0;
+        const auto marathon = 42195.0;
+    }
+
+    ///
     /// You get three types of representation with strava, a meta repr a summary repr and
     /// a detailed repr. Here they are split into seperate namespaces
     /// for clarity.
@@ -337,6 +356,12 @@ namespace strava
             int timestamp;
             int estimated_moving_time;
         };
+
+        /// Race summary info 
+        struct race : public meta::race
+        {
+
+        };
     }
 
     ///
@@ -411,6 +436,13 @@ namespace strava
         struct route : public summary::route
         {
             std::vector<summary::segment> segments;
+        };
+
+        /// Route detailed info
+        struct race : public summary::race
+        {
+            std::vector<int> route_ids;
+            std::string website_url;
         };
     }
 
@@ -678,6 +710,7 @@ namespace strava
     {
         // retrieve
         // list
+        std::vector<summary::ra
     }
 
     ///

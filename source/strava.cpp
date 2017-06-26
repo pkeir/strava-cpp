@@ -122,10 +122,10 @@ strava::time make_time(std::string timestr)
 
     if (input.fail())
     {
-        return{ "", 0 };
+        return { "", 0 };
     }
 
-    return{ timestr, mktime(&time) };
+    return { timestr, mktime(&time) };
 }
 
 ///
