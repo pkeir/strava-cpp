@@ -7,7 +7,7 @@ using namespace strava;
 int main(int argc, char* argv[])
 {
     auto code = std::string(argc > 3 ? argv[3] : "");
-    auto client_secret = std::string(argc > 2 ? argv[2] : "");  
+    auto client_secret = std::string(argc > 2 ? argv[2] : "");
     auto client_id = argc > 1 ? atoi(argv[1]) : 0;
 
     if (client_id == 0 || client_secret == "")
@@ -24,10 +24,12 @@ int main(int argc, char* argv[])
     }
 
     auto access_token = exchange_token(client_id, client_secret, code);
-    auto auth_info = oauth { client_id, client_secret, access_token };
-    auto me = athlete::current(auth_info);
+    auto auth_info = oauth{ client_id, client_secret, access_token };
 
-    auto friends = athlete::list_athlete_friends(auth_info, { 0, 50 });
+    auto me = athlete::current(auth_info);
+    auto next = athlete::retrieve(auth_info, me.id + 1);
+
+    auto friends = athlete::list_athlete_friends(auth_info, next, { 1, 1 });
     auto races = races::list(auth_info, 0);
 
     std::cin.get();

@@ -59,7 +59,7 @@ namespace strava
         int page;
         int per_page;
 
-        pagination(int page = -1, int per_page = 30);
+        pagination(int page = 0, int per_page = 30);
         bool enabled();
     };
 
@@ -370,7 +370,7 @@ namespace strava
             std::string country;
             std::string measurement_preference;
             std::string url;
-            
+
             float distance;
 
             time start_date_local;
@@ -483,7 +483,7 @@ namespace strava
         /// int page - The page to display (disabled by default)
         /// int per_page - The number of entries per page
         ///
-        std::vector<summary::athlete> list_athlete_friends(const oauth& auth, meta::athlete& athlete, int page = -1, int per_page = 50);
+        std::vector<summary::athlete> list_athlete_friends(const oauth& auth, meta::athlete& athlete, pagination page_opt = {});
 
         ///
         /// Lists followers for the current athlete. Pagination is supported.
@@ -492,7 +492,7 @@ namespace strava
         /// int page - The page to display (disabled by default)
         /// int per_page - The number of entries per page
         ///
-        std::vector<summary::athlete> list_athlete_followers(const oauth& auth, meta::athlete& athlete, int page = -1, int per_page = 50);
+        std::vector<summary::athlete> list_athlete_followers(const oauth& auth, meta::athlete& athlete, pagination page_opt = {});
 
         ///
         /// Lists followers for the provided athlete. Pagination is supported.
@@ -502,7 +502,7 @@ namespace strava
         /// int page - The page to display (disabled by default)
         /// int per_page - The number of entries per page
         ///
-        std::vector<summary::athlete> list_athlete_followers(const oauth& auth, int page = -1, int per_page = 50);
+        std::vector<summary::athlete> list_athlete_followers(const oauth& auth, pagination page_opt = {});
 
         ///
         ///  List athletes that both the current athlete and given athlete
@@ -513,7 +513,7 @@ namespace strava
         /// int page - The page to display (disabled by default)
         /// int per_page - The number of entries per page
         ///  
-        std::vector<summary::athlete> list_both_following(const oauth& auth, meta::athlete& athlete, int page = -1, int per_page = 50);
+        std::vector<summary::athlete> list_both_following(const oauth& auth, meta::athlete& athlete, pagination page_opt = {});
 
         ///
         /// Returns the current athlete.
@@ -643,7 +643,7 @@ namespace strava
         /// const oauth& auth - Authorization info
         /// int id - The athlete to get
         ///
-        std::vector<strava::detailed::segment_effort> get_koms(const oauth& auth, int id, int page = -1, int per_page = 50);
+        std::vector<strava::detailed::segment_effort> get_koms(const oauth& auth, int id, pagination page_opt = {});
     }
 
     ///
