@@ -752,6 +752,21 @@ namespace strava
     }
 
     ///
+    /// Segment efforts namespace for each method which
+    /// provdes segment effort info.
+    ///
+    namespace segment_efforts
+    {
+        ///
+        /// Gets segment effort by id.
+        ///
+        /// const oauth& auth - Authorization info
+        /// int id - The segment effort to get
+        ///
+        detailed::segment_effort retrieve(const oauth& auth, std::int64_t id);
+    }
+
+    ///
     ///
     ///
     namespace segments
@@ -781,33 +796,41 @@ namespace strava
         ///
         std::vector<summary::segment_effort> list(const oauth& auth, int id, int athlete, pagination page_options = {});
 
-        // segment leaderboards
-        // segment explorer
-    }
+        ///
+        ///
+        ///                
+        std::vector<summary::segment> leaderboard(const oauth& auth, int id, pagination page_options = {});
 
-    ///
-    /// Segment efforts namespace for each method which
-    /// provdes segment effort info.
-    ///
-    namespace segment_efforts
-    {
         ///
-        /// Gets segment effort by id.
         ///
-        /// const oauth& auth - Authorization info
-        /// int id - The segment effort to get
         ///
-        detailed::segment_effort retrieve(const oauth& auth, std::int64_t id);
+        std::vector<summary::segment> explore(const oauth& auth, float bounds, std::string type = "", int min_cat = 0, int max_cat = 0);
     }
 
     ///
     ///
     ///
-    namespace streams
+    namespace stream
     {
+        struct object
+        {
+            std::string type;
+            std::vector<int> data;
+            std::string series_type;
+            int original_size;
+            std::string resolution;
+        };
+
         // retrieve activity stream
+        void retrieve_activity();
+
         // retrieve effort stream
+        void retrieve_effort();
+
         // retrieve segment stream
+        void retrieve_segment();
+
         // retrieve route stream
+        void retrieve_route();
     }
 }
