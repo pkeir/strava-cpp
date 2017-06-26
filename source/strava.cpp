@@ -111,34 +111,32 @@ const std::vector<strava::error::error_code>& strava::error::codes()
 }
 
 ///
-/// Make function for the time object
+/// Constructor for time object from ISO 8601 standard.
 ///
-strava::time make_time(std::string timestr)
+strava::time::time(std::string timestr)
 {
     std::tm time;
     std::istringstream input(timestr);
     input.imbue(std::locale(setlocale(LC_ALL, nullptr)));
     input >> std::get_time(&time, "%Y-%m-%dT%H:%M:%SZ");
-
-    if (input.fail())
-    {
-        return{ "", 0 };
-    }
-
-    return{ timestr, mktime(&time) };
+    
+    auto failed = input.fail();
+    time_string = failed ? "" : timestr;
+    time_epoch = failed ? 0 : mktime(&time);
 }
 
 ///
-/// Pretty time function for debugging purposes
+/// Constructor for time object from std::time_t
 ///
-std::string pretty_time(time_t time)
+strava::time::time(std::time_t num)
 {
-    const auto format = "%Y-%m-%d %H:%M:%S";
+    const auto format = "%Y-%m-%dT%H:%M:%SZ";//"%Y-%m-%d %H:%M:%S";
     const auto size = 20;
 
     char buffer[size];
-    strftime(buffer, size, format, localtime(&time));
-    return buffer;
+    strftime(buffer, size, format, localtime(&num));
+    time_string = buffer;
+    time_epoch = num;
 }
 
 ///
@@ -369,8 +367,8 @@ void athlete_from_json(Poco::JSON::Object::Ptr json, strava::summary::athlete& a
 
     athlete.premium = cast<bool>(json, "premium");
 
-    athlete.created_at = make_time(cast<std::string>(json, "created_at"));
-    athlete.updated_at = make_time(cast<std::string>(json, "updated_at"));
+    athlete.created_at = strava::time(cast<std::string>(json, "created_at"));
+    athlete.updated_at = strava::time(cast<std::string>(json, "updated_at"));
 }
 
 void athlete_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& athlete)
@@ -553,8 +551,8 @@ void segment_from_json(Poco::JSON::Object::Ptr json, strava::detailed::segment& 
     segment_from_json(json, (strava::summary::segment&) out);
     map_from_json(json, out.map);
 
-    out.created_at = make_time(cast<std::string>(json, "created_at"));
-    out.updated_at = make_time(cast<std::string>(json, "updated_at"));
+    out.created_at = strava::time(cast<std::string>(json, "created_at"));
+    out.updated_at = strava::time(cast<std::string>(json, "updated_at"));
     out.total_elevation_gain = cast<int>(json, "total_elevation_gain");
     out.athlete_count = cast<int>(json, "athlete_count");
     out.effort_count = cast<int>(json, "effort_count");
@@ -571,8 +569,8 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::detailed::segment_eff
     athlete_from_json(json, out.athlete);
     segment_from_json(json, out.segment);
 
-    out.start_date_local = make_time(cast<std::string>(json, "start_date_local"));
-    out.start_date = make_time(cast<std::string>(json, "start_date"));
+    out.start_date_local = strava::time(cast<std::string>(json, "start_date_local"));
+    out.start_date = strava::time(cast<std::string>(json, "start_date"));
     out.average_heartrate = cast<float>(json, "average_heartrate");
     out.average_cadence = cast<float>(json, "average_cadence");
     out.average_watts = cast<float>(json, "average_watts");
@@ -980,7 +978,7 @@ void parse_from_json(json_object json, strava::summary::race& out)
     out.name = cast<std::string>(json, "name");
     out.url = cast<std::string>(json, "url");
 
-    out.start_date_local = make_time(json->get("start_date_local"));
+    out.start_date_local = strava::time(cast<std::string>(json, "start_date_local"));
     out.distance = cast<float>(json, "distance");
 }
 

@@ -48,6 +48,19 @@ namespace strava
     {
         std::string time_string;
         std::time_t time_epoch;
+
+        time(std::string iso_string);
+        time(std::time_t timestamp);
+        time() = default;
+    };
+
+    ///
+    /// Time range struct for date queries.
+    ///
+    struct time_range
+    {
+        time start;
+        time end;
     };
 
     ///
@@ -743,10 +756,31 @@ namespace strava
     ///
     namespace segments
     {
-        // retrieve
-        // list
-        // star a segment
-        // list efforts
+        ///
+        ///
+        ///
+        detailed::segment retrieve(const oauth& auth, int id);
+
+        ///
+        ///
+        ///
+        std::vector<summary::segment> retrieve(const oauth& auth, pagination page_options);
+
+        ///
+        ///
+        ///
+        detailed::segment star(const oauth& auth, int id, bool starred);
+
+        ///
+        ///
+        ///
+        std::vector<summary::segment_effort> list(const oauth& auth, int id, int athlete, time_range range, pagination page_options = {});
+
+        ///
+        ///
+        ///
+        std::vector<summary::segment_effort> list(const oauth& auth, int id, int athlete, pagination page_options = {});
+
         // segment leaderboards
         // segment explorer
     }
