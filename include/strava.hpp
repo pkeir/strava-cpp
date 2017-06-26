@@ -704,13 +704,25 @@ namespace strava
     }
 
     ///
-    ///
+    /// Race functionality wrapped in namespace
     ///
     namespace races
     {
-        // retrieve
-        // list
-        std::vector<summary::ra
+        ///
+        /// Returns a detailed race by the given id.
+        ///
+        /// const oauth& auth - Authorization info
+        /// int race_id - The race's id
+        ///
+        detailed::race retrieve(const oauth& auth, int race_id);
+
+        ///
+        /// Returns a vector of races tied to the athletes id.
+        ///
+        /// const oauth& auth - Authorization info
+        /// int id - The athlete's id
+        ///
+        std::vector<summary::race> list(const oauth& auth, int id);
     }
 
     ///

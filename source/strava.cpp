@@ -122,10 +122,10 @@ strava::time make_time(std::string timestr)
 
     if (input.fail())
     {
-        return { "", 0 };
+        return{ "", 0 };
     }
 
-    return { timestr, mktime(&time) };
+    return{ timestr, mktime(&time) };
 }
 
 ///
@@ -889,7 +889,7 @@ void parse_from_json(json_object json, strava::meta::route& route)
     route.id = cast<int>(json, "id", 0);
     route.resource_state = cast<int>(json, "resource_state", 0);
     route.name = cast<std::string>(json, "name", "");
-    
+
     map_from_json(json, route.map); // fix this
 }
 
@@ -908,7 +908,7 @@ void parse_from_json(json_object json, strava::summary::route& route)
 
     route.is_private = cast<bool>(json, "private", false);
     route.starred = cast<bool>(json, "starred", false);
-   
+
     route.elevation_gain = cast<float>(json, "elevation_gain", 0.0);
     route.distance = cast<float>(json, "distance", 0.0);
 
@@ -960,4 +960,49 @@ strava::detailed::route strava::routes::retrieve(const oauth& auth, int route_id
     detailed::route value;
     parse_from_json(json, value);
     return value;
+}
+
+void parse_from_json(json_object json, strava::summary::race& out)
+{
+    // TODO:
+}
+
+void parse_from_json(json_object json, strava::detailed::race& out)
+{
+    parse_from_json(json, (strava::summary::race&)out);
+
+    // TODO:
+}
+
+strava::detailed::race strava::races::retrieve(const oauth& auth, int race_id)
+{
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_GET,
+        join("/api/v3/running_races/", race_id),
+        auth.access_token, {}, {}
+    };
+
+    auto resp = check(send(request));
+    auto json = resp.extract<json_object>();
+
+    detailed::race value;
+    parse_from_json(json, value);
+    return value;
+}
+
+std::vector<strava::summary::race> strava::races::list(const oauth& auth, int id)
+{
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_GET,
+        "/api/v3/running_races",
+        auth.access_token, {}, {}
+    };
+
+    auto parser = [](auto& j, auto& s) { parse_from_json(j, s); };
+    auto resp = check(send(request));
+    auto json = resp.extract<json_object>();
+
+    return json_to_vector<summary::race>(json, parser);
 }
