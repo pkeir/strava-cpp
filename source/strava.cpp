@@ -235,16 +235,16 @@ Poco::Dynamic::Var send(http_request& request_info)
 }
 
 template<typename T>
-T cast(Poco::JSON::Object::Ptr json, std::string key, T on_empty)
+T cast(Poco::JSON::Object::Ptr json, std::string key)
 {
     auto value = json->get(key);
 
     if (value.isEmpty())
     {
-        return on_empty;
+        return T{};
     }
 
-    auto v = on_empty;
+    auto v = T{};
     value.convert(v);
     return v;
 }
@@ -304,73 +304,73 @@ Poco::Dynamic::Var& check(Poco::Dynamic::Var& response)
 
 void club_from_json(Poco::JSON::Object::Ptr json, strava::summary::club& club)
 {
-    club.id = cast<int>(json, "id", 0);
-    club.resource_state = cast<int>(json, "resource_state", 0);
-    club.name = cast<std::string>(json, "name", "");
-    club.profile = cast<std::string>(json, "profile", "");
-    club.profile_medium = cast<std::string>(json, "profile_medium", "");
-    club.cover_photo = cast<std::string>(json, "cover_photo", "");
-    club.cover_photo_small = cast<std::string>(json, "cover_photo_small", "");
-    club.sport_type = cast<std::string>(json, "sport_type", "");
-    club.city = cast<std::string>(json, "city", "");
-    club.state = cast<std::string>(json, "state", "");
-    club.country = cast<std::string>(json, "country", "");
-    club.is_private = cast<bool>(json, "private", false);
-    club.member_count = cast<int>(json, "member_count", 0);
-    club.featured = cast<bool>(json, "featured", false);
-    club.url = cast<std::string>(json, "url", "");
+    club.id = cast<int>(json, "id");
+    club.resource_state = cast<int>(json, "resource_state");
+    club.name = cast<std::string>(json, "name");
+    club.profile = cast<std::string>(json, "profile");
+    club.profile_medium = cast<std::string>(json, "profile_medium");
+    club.cover_photo = cast<std::string>(json, "cover_photo");
+    club.cover_photo_small = cast<std::string>(json, "cover_photo_small");
+    club.sport_type = cast<std::string>(json, "sport_type");
+    club.city = cast<std::string>(json, "city");
+    club.state = cast<std::string>(json, "state");
+    club.country = cast<std::string>(json, "country");
+    club.is_private = cast<bool>(json, "private");
+    club.member_count = cast<int>(json, "member_count");
+    club.featured = cast<bool>(json, "featured");
+    club.url = cast<std::string>(json, "url");
 }
 
 void gear_from_json(Poco::JSON::Object::Ptr json, strava::summary::gear& gear)
 {
-    gear.resource_state = cast<int>(json, "resource_state", 0);
-    gear.distance = cast<double>(json, "distance", 0.0);
-    gear.primary = cast<bool>(json, "primary", false);
-    gear.name = cast<std::string>(json, "name", "");
-    gear.id = cast<std::string>(json, "id", "");
+    gear.resource_state = cast<int>(json, "resource_state");
+    gear.distance = cast<double>(json, "distance");
+    gear.primary = cast<bool>(json, "primary");
+    gear.name = cast<std::string>(json, "name");
+    gear.id = cast<std::string>(json, "id");
 }
 
 void gear_from_json(Poco::JSON::Object::Ptr json, strava::detailed::gear& gear)
 {
     gear_from_json(json, (strava::summary::gear&)gear);
 
-    gear.brand_name = cast<std::string>(json, "brand_name", "");
-    gear.model_name = cast<std::string>(json, "model_name", "");
-    gear.frame_type = cast<std::string>(json, "frame_type", "");
-    gear.description = cast<std::string>(json, "description", "");
+    gear.brand_name = cast<std::string>(json, "brand_name");
+    gear.model_name = cast<std::string>(json, "model_name");
+    gear.frame_type = cast<std::string>(json, "frame_type");
+    gear.description = cast<std::string>(json, "description");
 }
 
 void athlete_from_json(Poco::JSON::Object::Ptr json, strava::meta::athlete& athlete)
 {
-    athlete.id = cast<int>(json, "id", 0);
-    athlete.resource_state = cast<int>(json, "resource_state", 0);
+    athlete.id = cast<int>(json, "id");
+    athlete.resource_state = cast<int>(json, "resource_state");
 }
 
 void activity_from_json(Poco::JSON::Object::Ptr json, strava::meta::activity& activity)
 {
-    activity.id = cast<int>(json, "id", 0);
-    activity.resouce_state = cast<int>(json, "resource_state", 0);
+    activity.id = cast<int>(json, "id");
+    activity.resouce_state = cast<int>(json, "resource_state");
 }
 
 void athlete_from_json(Poco::JSON::Object::Ptr json, strava::summary::athlete& athlete)
 {
     athlete_from_json(json, (strava::meta::athlete&)athlete);
 
-    athlete.firstname = cast<std::string>(json, "firstname", "");
-    athlete.lastname = cast<std::string>(json, "lastname", "");
-    athlete.profile_medium = cast<std::string>(json, "profile_medium", "");
-    athlete.profile = cast<std::string>(json, "profile", "");
-    athlete.city = cast<std::string>(json, "city", "");
-    athlete.state = cast<std::string>(json, "state", "");
-    athlete.country = cast<std::string>(json, "country", "");
-    athlete.sex = cast<std::string>(json, "sex", "");
-    athlete.follower = cast<std::string>(json, "follower", "");
-    athlete.is_friend = cast<std::string>(json, "friend", "");
+    athlete.firstname = cast<std::string>(json, "firstname");
+    athlete.lastname = cast<std::string>(json, "lastname");
+    athlete.profile_medium = cast<std::string>(json, "profile_medium");
+    athlete.profile = cast<std::string>(json, "profile");
+    athlete.city = cast<std::string>(json, "city");
+    athlete.state = cast<std::string>(json, "state");
+    athlete.country = cast<std::string>(json, "country");
+    athlete.sex = cast<std::string>(json, "sex");
+    athlete.follower = cast<std::string>(json, "follower");
+    athlete.is_friend = cast<std::string>(json, "friend");
 
-    athlete.premium = cast<bool>(json, "premium", false);
+    athlete.premium = cast<bool>(json, "premium");
 
-    athlete.created_at = make_time(cast<std::string>(json, "created_at", ""));
-    athlete.updated_at = make_time(cast<std::string>(json, "updated_at", ""));
+    athlete.created_at = make_time(cast<std::string>(json, "created_at"));
+    athlete.updated_at = make_time(cast<std::string>(json, "updated_at"));
 }
 
 void athlete_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& athlete)
@@ -381,16 +381,16 @@ void athlete_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& 
     auto bikes = json->getArray("bikes");
     auto shoes = json->getArray("shoes");
 
-    athlete.measurement_preference = cast<std::string>(json, "measurement_preference", "");
-    athlete.date_preference = cast<std::string>(json, "date_preference", "");
-    athlete.email = cast<std::string>(json, "email", "");
+    athlete.measurement_preference = cast<std::string>(json, "measurement_preference");
+    athlete.date_preference = cast<std::string>(json, "date_preference");
+    athlete.email = cast<std::string>(json, "email");
 
-    athlete.mutual_friend_count = cast<int>(json, "mutual_friend_count", 0);
-    athlete.follower_count = cast<int>(json, "follower_count", 0);
-    athlete.friend_count = cast<int>(json, "friend_count", 0);
-    athlete.athlete_type = cast<int>(json, "athlete_type", 0);
-    athlete.weight = cast<int>(json, "weight", 0);
-    athlete.ftp = cast<int>(json, "ftp", 0);
+    athlete.mutual_friend_count = cast<int>(json, "mutual_friend_count");
+    athlete.follower_count = cast<int>(json, "follower_count");
+    athlete.friend_count = cast<int>(json, "friend_count");
+    athlete.athlete_type = cast<int>(json, "athlete_type");
+    athlete.weight = cast<int>(json, "weight");
+    athlete.ftp = cast<int>(json, "ftp");
 
     if (!bikes.isNull() && !shoes.isNull() && !clubs.isNull())
     {
@@ -429,7 +429,7 @@ void heart_rate_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& 
     }
 
     out.heart_rate = {};
-    out.heart_rate.custom_zones = cast<bool>(json, "custom_zones", false);
+    out.heart_rate.custom_zones = cast<bool>(json, "custom_zones");
 
     auto maybe_zones = json->get("zones");
 
@@ -441,8 +441,8 @@ void heart_rate_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& 
         {
             auto obj = zone.extract<Poco::JSON::Object::Ptr>();
             out.heart_rate.zones.push_back({
-                cast<int>(obj, "min", 0),
-                cast<int>(obj, "max", 0)
+                cast<int>(obj, "min"),
+                cast<int>(obj, "max")
             });
         }
     }
@@ -467,8 +467,8 @@ void power_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& out)
         {
             auto obj = zone.extract<Poco::JSON::Object::Ptr>();
             out.power.zones.push_back({
-                cast<int>(obj, "min", 0),
-                cast<int>(obj, "max", 0)
+                cast<int>(obj, "min"),
+                cast<int>(obj, "max")
             });
         }
     }
@@ -477,24 +477,24 @@ void power_from_json(Poco::JSON::Object::Ptr json, strava::athlete::zones& out)
 void total_from_json(Poco::JSON::Object::Ptr json, strava::athlete::stats::total& total)
 {
     total = {};
-    total.distance = cast<double>(json, "distance", 0.0);
-    total.elevation_gain = cast<double>(json, "elevation_gain", 0.0);
-    total.eleapsed_time = cast<int>(json, "eleapsed_time", 0);
-    total.moving_time = cast<int>(json, "moving_time", 0);
-    total.count = cast<int>(json, "count", 0);
+    total.distance = cast<double>(json, "distance");
+    total.elevation_gain = cast<double>(json, "elevation_gain");
+    total.eleapsed_time = cast<int>(json, "eleapsed_time");
+    total.moving_time = cast<int>(json, "moving_time");
+    total.count = cast<int>(json, "count");
 }
 
 void total_with_ac_from_json(Poco::JSON::Object::Ptr json, strava::athlete::stats::detailed_total& total)
 {
     total_from_json(json, total);
-    total.achievement_count = cast<int>(json, "achievement_count", 0);
+    total.achievement_count = cast<int>(json, "achievement_count");
 }
 
 void stats_from_json(Poco::JSON::Object::Ptr json, strava::athlete::stats& out)
 {
     out = {};
-    out.biggest_ride_distance = cast<double>(json, "biggest_ride_distance", 0.0);
-    out.biggest_climb_elevation_gain = cast<double>(json, "biggest_climb_elevation_gain", 0.0);
+    out.biggest_ride_distance = cast<double>(json, "biggest_ride_distance");
+    out.biggest_climb_elevation_gain = cast<double>(json, "biggest_climb_elevation_gain");
 
     total_with_ac_from_json(json->getObject("recent_ride_totals"), out.recent_ride_totals);
     total_with_ac_from_json(json->getObject("recent_swim_totals"), out.recent_swim_totals);
@@ -511,28 +511,28 @@ void stats_from_json(Poco::JSON::Object::Ptr json, strava::athlete::stats& out)
 void map_from_json(Poco::JSON::Object::Ptr json, strava::polyline& out)
 {
     out = {};
-    out.id = cast<std::string>(json, "id", "");
-    out.line = cast<std::string>(json, "polyline", "");
-    out.resource_state = cast<int>(json, "resource_state", 0);
+    out.id = cast<std::string>(json, "id");
+    out.line = cast<std::string>(json, "polyline");
+    out.resource_state = cast<int>(json, "resource_state");
 }
 
 void segment_from_json(Poco::JSON::Object::Ptr json, strava::summary::segment& out)
 {
-    out.id = cast<int>(json, "id", 0);
-    out.resource_state = cast<int>(json, "resource_state", 0);
-    out.climb_category = cast<int>(json, "climb_category", 0);
+    out.id = cast<int>(json, "id");
+    out.resource_state = cast<int>(json, "resource_state");
+    out.climb_category = cast<int>(json, "climb_category");
 
-    out.distance = cast<float>(json, "distance", 0.0);
-    out.average_grade = cast<float>(json, "average_grade", 0.0);
-    out.maximum_grade = cast<float>(json, "maximum_grade", 0.0);
-    out.elevation_high = cast<float>(json, "elevation_high", 0.0);
-    out.elevation_low = cast<float>(json, "elevation_low", 0.0);
+    out.distance = cast<float>(json, "distance");
+    out.average_grade = cast<float>(json, "average_grade");
+    out.maximum_grade = cast<float>(json, "maximum_grade");
+    out.elevation_high = cast<float>(json, "elevation_high");
+    out.elevation_low = cast<float>(json, "elevation_low");
 
-    out.name = cast<std::string>(json, "name", "");
-    out.activity_type = cast<std::string>(json, "activity_type", "");
-    out.city = cast<std::string>(json, "city", "");
-    out.state = cast<std::string>(json, "state", "");
-    out.country = cast<std::string>(json, "country", "");
+    out.name = cast<std::string>(json, "name");
+    out.activity_type = cast<std::string>(json, "activity_type");
+    out.city = cast<std::string>(json, "city");
+    out.state = cast<std::string>(json, "state");
+    out.country = cast<std::string>(json, "country");
 
     auto start_elements = json->getArray("start_latlng");
     auto end_elements = json->getArray("start_latlng");
@@ -543,9 +543,9 @@ void segment_from_json(Poco::JSON::Object::Ptr json, strava::summary::segment& o
     out.end_latlng[0] = end_elements->get(0).convert<int>();
     out.end_latlng[1] = end_elements->get(1).convert<int>();
 
-    out.is_private = cast<bool>(json, "is_private", false);
-    out.hazardous = cast<bool>(json, "hazardous", false);
-    out.starred = cast<bool>(json, "starred", false);
+    out.is_private = cast<bool>(json, "is_private");
+    out.hazardous = cast<bool>(json, "hazardous");
+    out.starred = cast<bool>(json, "starred");
 }
 
 void segment_from_json(Poco::JSON::Object::Ptr json, strava::detailed::segment& out)
@@ -553,42 +553,42 @@ void segment_from_json(Poco::JSON::Object::Ptr json, strava::detailed::segment& 
     segment_from_json(json, (strava::summary::segment&) out);
     map_from_json(json, out.map);
 
-    out.created_at = make_time(cast<std::string>(json, "created_at", ""));
-    out.updated_at = make_time(cast<std::string>(json, "updated_at", ""));
-    out.total_elevation_gain = cast<int>(json, "total_elevation_gain", 0);
-    out.athlete_count = cast<int>(json, "athlete_count", 0);
-    out.effort_count = cast<int>(json, "effort_count", 0);
-    out.star_count = cast<int>(json, "star_count", 0);
+    out.created_at = make_time(cast<std::string>(json, "created_at"));
+    out.updated_at = make_time(cast<std::string>(json, "updated_at"));
+    out.total_elevation_gain = cast<int>(json, "total_elevation_gain");
+    out.athlete_count = cast<int>(json, "athlete_count");
+    out.effort_count = cast<int>(json, "effort_count");
+    out.star_count = cast<int>(json, "star_count");
 }
 
 void parse_from_json(Poco::JSON::Object::Ptr json, strava::detailed::segment_effort& out)
 {
     out = {};
-    out.id = cast<std::int64_t>(json, "id", 0);
-    out.name = cast<std::string>(json, "name", "");
+    out.id = cast<std::int64_t>(json, "id");
+    out.name = cast<std::string>(json, "name");
 
     activity_from_json(json, out.activity);
     athlete_from_json(json, out.athlete);
     segment_from_json(json, out.segment);
 
-    out.start_date_local = make_time(cast<std::string>(json, "start_date_local", ""));
-    out.start_date = make_time(cast<std::string>(json, "start_date", ""));
-    out.average_heartrate = cast<float>(json, "average_heartrate", 0.0);
-    out.average_cadence = cast<float>(json, "average_cadence", 0.0);
-    out.average_watts = cast<float>(json, "average_watts", 0.0);
-    out.distance = cast<float>(json, "distance", 0.0);
+    out.start_date_local = make_time(cast<std::string>(json, "start_date_local"));
+    out.start_date = make_time(cast<std::string>(json, "start_date"));
+    out.average_heartrate = cast<float>(json, "average_heartrate");
+    out.average_cadence = cast<float>(json, "average_cadence");
+    out.average_watts = cast<float>(json, "average_watts");
+    out.distance = cast<float>(json, "distance");
 
-    out.resource_state = cast<int>(json, "resource_state", 0);
-    out.max_heartrate = cast<int>(json, "max_heartrate", 0);
-    out.elapsed_time = cast<int>(json, "elapsed_time", 0);
-    out.moving_time = cast<int>(json, "moving_time", 0);
-    out.start_index = cast<int>(json, "start_index", 0);
-    out.end_index = cast<int>(json, "end_index", 0);
-    out.kom_rank = cast<int>(json, "kom_rank", 0);
-    out.pr_rank = cast<int>(json, "pr_rank", 0);
+    out.resource_state = cast<int>(json, "resource_state");
+    out.max_heartrate = cast<int>(json, "max_heartrate");
+    out.elapsed_time = cast<int>(json, "elapsed_time");
+    out.moving_time = cast<int>(json, "moving_time");
+    out.start_index = cast<int>(json, "start_index");
+    out.end_index = cast<int>(json, "end_index");
+    out.kom_rank = cast<int>(json, "kom_rank");
+    out.pr_rank = cast<int>(json, "pr_rank");
 
-    out.device_watts = cast<bool>(json, "device_watts", false);
-    out.hidden = cast<bool>(json, "hidden", false);
+    out.device_watts = cast<bool>(json, "device_watts");
+    out.hidden = cast<bool>(json, "hidden");
 }
 
 std::string strava::request_access(int client_id, oauth_scope scope)
@@ -886,9 +886,9 @@ strava::detailed::segment_effort strava::segment_efforts::retrieve(const oauth& 
 void parse_from_json(json_object json, strava::meta::route& route)
 {
     route = {};
-    route.id = cast<int>(json, "id", 0);
-    route.resource_state = cast<int>(json, "resource_state", 0);
-    route.name = cast<std::string>(json, "name", "");
+    route.id = cast<int>(json, "id");
+    route.resource_state = cast<int>(json, "resource_state");
+    route.name = cast<std::string>(json, "name");
 
     map_from_json(json, route.map); // fix this
 }
@@ -899,18 +899,18 @@ void parse_from_json(json_object json, strava::summary::route& route)
 
     athlete_from_json(json, route.athlete);
 
-    route.description = cast<std::string>(json, "description", "");
-    route.sub_type = cast<std::string>(json, "sub_type", "");
-    route.type = cast<std::string>(json, "type", "");
+    route.description = cast<std::string>(json, "description");
+    route.sub_type = cast<std::string>(json, "sub_type");
+    route.type = cast<std::string>(json, "type");
 
-    route.estimated_moving_time = cast<int>(json, "estimated_moving_time", 0);
-    route.timestamp = cast<int>(json, "timestamp", 0);
+    route.estimated_moving_time = cast<int>(json, "estimated_moving_time");
+    route.timestamp = cast<int>(json, "timestamp");
 
-    route.is_private = cast<bool>(json, "private", false);
-    route.starred = cast<bool>(json, "starred", false);
+    route.is_private = cast<bool>(json, "private");
+    route.starred = cast<bool>(json, "starred");
 
-    route.elevation_gain = cast<float>(json, "elevation_gain", 0.0);
-    route.distance = cast<float>(json, "distance", 0.0);
+    route.elevation_gain = cast<float>(json, "elevation_gain");
+    route.distance = cast<float>(json, "distance");
 
 }
 
@@ -964,19 +964,19 @@ strava::detailed::route strava::routes::retrieve(const oauth& auth, int route_id
 
 void parse_from_json(json_object json, strava::summary::race& out)
 {
-    out.id = cast<int>(json, "id", 0);
-    out.resource_state = cast<int>(json, "id", 0);
-    out.running_race_type = cast<int>(json, "running_race_type", 0);
+    out.id = cast<int>(json, "id");
+    out.resource_state = cast<int>(json, "id");
+    out.running_race_type = cast<int>(json, "running_race_type");
 
-    out.measurement_preference = cast<std::string>(json, "measurement_preference", "");
-    out.country = cast<std::string>(json, "country", "");
-    out.state = cast<std::string>(json, "state", "");
-    out.city = cast<std::string>(json, "city", "");
-    out.name = cast<std::string>(json, "name", "");
-    out.url = cast<std::string>(json, "url", "");
+    out.measurement_preference = cast<std::string>(json, "measurement_preference");
+    out.country = cast<std::string>(json, "country");
+    out.state = cast<std::string>(json, "state");
+    out.city = cast<std::string>(json, "city");
+    out.name = cast<std::string>(json, "name");
+    out.url = cast<std::string>(json, "url");
 
     out.start_date_local = make_time(json->get("start_date_local"));
-    out.distance = cast<float>(json, "distance", 0.0f);
+    out.distance = cast<float>(json, "distance");
 }
 
 void parse_from_json(json_object json, strava::detailed::race& out)
@@ -984,7 +984,7 @@ void parse_from_json(json_object json, strava::detailed::race& out)
     auto integers = json->getArray("route_ids");
     parse_from_json(json, (strava::summary::race&)out);
 
-    out.website_url = cast<std::string>(json, "website_url", "");
+    out.website_url = cast<std::string>(json, "website_url");
     out.route_ids.reserve(integers->size());
 
     for (auto& i : *integers)
