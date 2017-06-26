@@ -964,14 +964,33 @@ strava::detailed::route strava::routes::retrieve(const oauth& auth, int route_id
 
 void parse_from_json(json_object json, strava::summary::race& out)
 {
-    // TODO:
+    out.id = cast<int>(json, "id", 0);
+    out.resource_state = cast<int>(json, "id", 0);
+    out.running_race_type = cast<int>(json, "running_race_type", 0);
+
+    out.measurement_preference = cast<std::string>(json, "measurement_preference", "");
+    out.country = cast<std::string>(json, "country", "");
+    out.state = cast<std::string>(json, "state", "");
+    out.city = cast<std::string>(json, "city", "");
+    out.name = cast<std::string>(json, "name", "");
+    out.url = cast<std::string>(json, "url", "");
+
+    out.start_date_local = make_time(json->get("start_date_local"));
+    out.distance = cast<float>(json, "distance", 0.0f);
 }
 
 void parse_from_json(json_object json, strava::detailed::race& out)
 {
+    auto integers = json->getArray("route_ids");
     parse_from_json(json, (strava::summary::race&)out);
 
-    // TODO:
+    out.website_url = cast<std::string>(json, "website_url", "");
+    out.route_ids.reserve(integers->size());
+
+    for (auto& i : *integers)
+    {
+        out.route_ids.push_back(i.convert<int>());
+    }
 }
 
 strava::detailed::race strava::races::retrieve(const oauth& auth, int race_id)
@@ -991,7 +1010,7 @@ strava::detailed::race strava::races::retrieve(const oauth& auth, int race_id)
     return value;
 }
 
-std::vector<strava::summary::race> strava::races::list(const oauth& auth, int id)
+std::vector<strava::summary::race> strava::races::list(const oauth& auth, int year)
 {
     auto request = http_request
     {
@@ -1002,7 +1021,7 @@ std::vector<strava::summary::race> strava::races::list(const oauth& auth, int id
 
     auto parser = [](auto& j, auto& s) { parse_from_json(j, s); };
     auto resp = check(send(request));
-    auto json = resp.extract<json_object>();
+    auto json = resp.extract<json_array>();
 
     return json_to_vector<summary::race>(json, parser);
 }

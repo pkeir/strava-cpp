@@ -27,9 +27,7 @@ int main(int argc, char* argv[])
     auto auth_info = strava::oauth { client_id, client_secret, access_token };
     auto me = strava::athlete::current(auth_info);
     
-    auto routes = strava::routes::list(auth_info, me.id);
-    auto route = strava::routes::retrieve(auth_info, routes.front().id);
-
-    //auto first_segment = strava::segment_efforts::retrieve(auth_info, 1);
+    auto races = strava::races::list(auth_info, 0);
+    auto race = strava::races::retrieve(auth_info, races.front().id);
     std::cin.get();
 }

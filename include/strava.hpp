@@ -360,7 +360,20 @@ namespace strava
         /// Race summary info 
         struct race : public meta::race
         {
+            int id;
+            int resource_state;
+            int running_race_type;
 
+            std::string name;
+            std::string city;
+            std::string state;
+            std::string country;
+            std::string measurement_preference;
+            std::string url;
+            
+            float distance;
+
+            time start_date_local;
         };
     }
 
@@ -717,12 +730,12 @@ namespace strava
         detailed::race retrieve(const oauth& auth, int race_id);
 
         ///
-        /// Returns a vector of races tied to the athletes id.
+        /// Returns a vector of races
         ///
         /// const oauth& auth - Authorization info
-        /// int id - The athlete's id
+        /// int year - The year to get races for
         ///
-        std::vector<summary::race> list(const oauth& auth, int id);
+        std::vector<summary::race> list(const oauth& auth, int year);
     }
 
     ///
