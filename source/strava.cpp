@@ -111,7 +111,7 @@ const std::vector<strava::error::error_code>& strava::error::codes()
 }
 
 ///
-///
+/// Make function for the time object
 ///
 strava::time make_time(std::string timestr)
 {
@@ -129,22 +129,22 @@ strava::time make_time(std::string timestr)
 }
 
 ///
+/// Pretty time function for debugging purposes
 ///
-///
-std::string pretty_time_t(time_t time)
+std::string pretty_time(time_t time)
 {
     const auto format = "%Y-%m-%d %H:%M:%S";
     const auto size = 20;
 
-    char buffer[20];
-    strftime(buffer, 20, format, localtime(&time));
+    char buffer[size];
+    strftime(buffer, size, format, localtime(&time));
     return buffer;
 }
 
 ///
 ///
 ///
-void requires_https()
+void lazy_start_session()
 {
     using namespace Poco::Net;
 
@@ -178,8 +178,6 @@ std::string join(std::string prefix, T value, std::string suffix = "")
 
 Poco::Dynamic::Var send(http_request& request_info)
 {
-    requires_https();
-
     Poco::JSON::Parser parser;
     Poco::Dynamic::Var value = {};
     Poco::URI uri(request_info.url);
@@ -190,8 +188,11 @@ Poco::Dynamic::Var send(http_request& request_info)
         uri.addQueryParameter("per_page", std::to_string(request_info.page_options.per_page));
     }
 
+    lazy_start_session();
+
     try
     {
+
         Poco::Net::HTTPResponse response;
         Poco::Net::HTTPRequest request;
         Poco::Net::HTMLForm form;
@@ -761,7 +762,7 @@ strava::summary::athlete strava::athlete::retrieve(const oauth& auth, int id)
     auto request = http_request
     {
         Poco::Net::HTTPRequest::HTTP_GET,
-        join("/api/v3/athlete", id),
+        join("/api/v3/athletes/", id),
         auth.access_token,
         {}, {}
     };
@@ -819,7 +820,7 @@ strava::athlete::stats strava::athlete::get_stats(const oauth& auth, int id)
         Poco::Net::HTTPRequest::HTTP_GET,
         join("/api/v3/athletes/", id, "/stats"),
         auth.access_token,
-        {},{}
+        {}, {}
     };
 
     auto resp = check(send(request));
