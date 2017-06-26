@@ -143,7 +143,7 @@ namespace strava
     /// by the function 'exchange_token'. Once you call this,
     /// the access token will no longer be able to access data.
     ///
-    std::string deauthorization(const oauth& auth_info);
+    std::string deauthorization(const oauth& auth);
 
     ///
     /// You get three types of representation with strava, a meta repr a summary repr and
@@ -387,11 +387,12 @@ namespace strava
         };
 
         /// Segment detailed info
-        struct segment : public summary::segment_effort
+        struct segment : public summary::segment
         {
             int effort_count;
             int athlete_count;
             int star_count;
+
             polyline map;
 
             time created_at;
@@ -409,7 +410,7 @@ namespace strava
         /// Route detailed info
         struct route : public summary::route
         {
-            std::vector<segment> segments;
+            std::vector<summary::segment> segments;
         };
     }
 
@@ -474,7 +475,7 @@ namespace strava
         ///
         /// const oauth& auth - Authorization info
         ///
-        detailed::athlete current(const oauth& auth_info);
+        detailed::athlete current(const oauth& auth);
 
         ///
         /// Gets an athlete by id.
@@ -482,7 +483,7 @@ namespace strava
         /// const oauth& auth - Authorization info
         /// int id - The athlete to get
         ///
-        summary::athlete retrieve(const oauth& auth_info, int id);
+        summary::athlete retrieve(const oauth& auth, int id);
 
         ///
         /// Updates the athlete by id.
@@ -491,7 +492,7 @@ namespace strava
         /// meta::athlete athlete - The athlete to update
         /// std::map<std::string, std::string> - Map of updates e.g {"weight", "50.0"}
         ///
-        detailed::athlete update(const oauth& auth_info, meta::athlete athlete, std::map<std::string, std::string> updates);
+        detailed::athlete update(const oauth& auth, meta::athlete athlete, std::map<std::string, std::string> updates);
 
         ///
         /// Zone attached to an athlete which
@@ -580,24 +581,24 @@ namespace strava
         ///
         /// Gets an zones for the current athlete.
         ///
-        /// const oauth& auth_info - Authorization info
+        /// const oauth& auth - Authorization info
         ///
-        zones get_zones(const oauth& auth_info);
+        zones get_zones(const oauth& auth);
 
         ///
         /// Gets an stats for the current athlete.
         ///
-        /// const oauth& auth_info - Authorization info
+        /// const oauth& auth - Authorization info
         ///
-        stats get_stats(const oauth& auth_info, int id);
+        stats get_stats(const oauth& auth, int id);
 
         ///
         /// Gets an koms for the given athlete.
         ///
-        /// const oauth& auth_info - Authorization info
+        /// const oauth& auth - Authorization info
         /// int id - The athlete to get
         ///
-        std::vector<strava::detailed::segment_effort> get_koms(const oauth& auth_info, int id, int page = -1, int per_page = 50);
+        std::vector<strava::detailed::segment_effort> get_koms(const oauth& auth, int id, int page = -1, int per_page = 50);
     }
 
     ///
@@ -642,19 +643,32 @@ namespace strava
         /// Retrieves a gear via id, representation
         /// returned is detailed and not a summary.
         ///
-        /// const oauth& auth_info - Authorization info 
+        /// const oauth& auth - Authorization info 
         /// const std::string& id - The gear id to get
         ///
-        detailed::gear retrieve(const oauth& auth_info, const std::string& id);
+        detailed::gear retrieve(const oauth& auth, const std::string& id);
     }
 
     ///
-    ///
+    /// Route functionality wrapped in the route namespace
     ///
     namespace routes
     {
-        // retrieve
-        // list
+        ///
+        /// Returns a vector of routes tied to the athletes id.
+        ///
+        /// const oauth& auth - Authorization info
+        /// int id - The athlete id
+        ///
+        std::vector<summary::route> list(const oauth& auth, int id);
+
+        ///
+        /// Returns a detailed route by the given id.
+        ///
+        /// const oauth& auth - Authorization info
+        /// int route_id - The route's id
+        ///
+        detailed::route retrieve(const oauth& auth, int route_id);
     }
 
     ///
