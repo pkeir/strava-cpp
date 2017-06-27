@@ -29,12 +29,14 @@ int main(int argc, char* argv[])
     auto me = athlete::current(auth_info);
     auto next = athlete::retrieve(auth_info, me.id + 1);
 
+    auto my_routes = routes::list(auth_info, me.id);
+    auto only_route = routes::retrieve(auth_info, my_routes.front().id);
 
-    auto stream = stream::retrieve_activity<stream::types::latlng>();
-    auto friends = athlete::list_athlete_friends(auth_info, next, { 1, 1 });
-    auto races = races::list(auth_info, 2015);
+    auto first_segment = only_route.segments.front();
+    auto checking = segments::retrieve(auth_info, first_segment.id);
+    auto updated = segments::star(auth_info, checking.id, true);
 
-    
+    auto starred = segments::list_starred(auth_info);
 
     std::cin.get();
 }
