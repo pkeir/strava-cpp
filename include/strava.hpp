@@ -748,7 +748,7 @@ namespace strava
         /// const oauth& auth - Authorization info
         /// int year - The year to get races for
         ///
-        std::vector<summary::race> list(const oauth& auth, int year);
+        std::vector<summary::race> list(const oauth& auth, int year = 0);
     }
 
     ///
@@ -771,6 +771,46 @@ namespace strava
     ///
     namespace segments
     {
+        struct leaderboard_entry
+        {
+            int athlete_id;
+            int elapsed_time;
+            int moving_time;
+            int activity_id;
+            int effort_id;
+            int rank;
+
+            std::string athlete_name;
+            std::string athlete_gender;
+            std::string athlete_profile;
+
+            double average_watts;
+            double average_hr;
+            double distance;
+
+            time start_date;
+            time start_date_local;
+        };
+
+        struct bounds
+        {
+            double sw_lat, sw_lng;
+            double ne_lat, ne_lng;
+        };
+
+        struct leaderbord_params
+        {
+            int club_id;
+            int context_entries;
+           
+            bool following;
+           
+            std::string gender;
+            std::string age_group;
+            std::string weight_class;
+            std::string date_range;
+        };
+
         ///
         ///
         ///
@@ -779,7 +819,12 @@ namespace strava
         ///
         ///
         ///
-        std::vector<summary::segment> retrieve(const oauth& auth, pagination page_options);
+        std::vector<summary::segment> list_starred(const oauth& auth, int athlete_id, pagination page_option = {});
+
+        ///
+        ///
+        ///
+        std::vector<summary::segment> list_starred(const oauth& auth, pagination page_option = {});
 
         ///
         ///
@@ -789,22 +834,18 @@ namespace strava
         ///
         ///
         ///
-        std::vector<summary::segment_effort> list(const oauth& auth, int id, int athlete, time_range range, pagination page_options = {});
+        std::vector<summary::segment_effort> efforts(const oauth& auth, int id, int athlete = 0, time_range range = {}, pagination page_option = {});
 
         ///
         ///
         ///
-        std::vector<summary::segment_effort> list(const oauth& auth, int id, int athlete, pagination page_options = {});
-
-        ///
-        ///
-        ///                
-        std::vector<summary::segment> leaderboard(const oauth& auth, int id, pagination page_options = {});
+        std::vector<leaderboard_entry> leaderboard(const oauth& auth, int id, leaderbord_params params = {}, pagination page_option = {});
 
         ///
         ///
         ///
-        std::vector<summary::segment> explore(const oauth& auth, float bounds, std::string type = "", int min_cat = 0, int max_cat = 0);
+        std::vector<summary::segment> explore(const oauth& auth, bounds bound, std::string activity_type, int min_cat, int max_cat);
+        
     }
 
     ///

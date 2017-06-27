@@ -31,9 +31,10 @@ int main(int argc, char* argv[])
 
 
     auto stream = stream::retrieve_activity<stream::types::latlng>();
-
     auto friends = athlete::list_athlete_friends(auth_info, next, { 1, 1 });
-    auto races = races::list(auth_info, 0);
+    auto races = races::list(auth_info, 2015);
+
+    
 
     std::cin.get();
 }

@@ -59,7 +59,8 @@ struct poco_client
 struct http_request
 {
     std::string method, url, access_token;
-    std::map<std::string, std::string> form_entries;
+    std::map<std::string, std::string> form;
+    std::map<std::string, std::string> data;
     strava::pagination page_options;
 };
 
@@ -182,8 +183,13 @@ Poco::Dynamic::Var send(http_request& info)
 
     if (info.page_options.enabled())
     {
-        uri.addQueryParameter("per_page", std::to_string(info.page_options.per_page));
-        uri.addQueryParameter("page", std::to_string(info.page_options.page));
+        info.data["per_page"] = std::to_string(info.page_options.per_page);
+        info.data["page"] = std::to_string(info.page_options.page);
+    }
+
+    for (auto& data : info.data)
+    {
+        uri.addQueryParameter(data.first, data.second);
     }
 
     lazy_start_session();
@@ -203,9 +209,9 @@ Poco::Dynamic::Var send(http_request& info)
             request.set("Authorization", "Bearer " + info.access_token);
         }
 
-        if (!info.form_entries.empty())
+        if (!info.form.empty())
         {
-            for (auto& p : info.form_entries)
+            for (auto& p : info.form)
             {
                 form.set(p.first, p.second);
             }
@@ -664,7 +670,7 @@ std::vector<strava::summary::athlete> strava::athlete::list_athlete_friends(cons
         Poco::Net::HTTPRequest::HTTP_GET,
         join("/api/v3/athletes/", athlete.id, "/friends"),
         auth.access_token, {},
-        page_opt
+        {}, page_opt
     };
 
     auto parser = [](auto& j, auto& a) { athlete_from_json(j, a); };
@@ -681,7 +687,7 @@ std::vector<strava::summary::athlete> strava::athlete::list_athlete_friends(cons
         Poco::Net::HTTPRequest::HTTP_GET,
         "/api/v3/athlete/friends",
         auth.access_token, {},
-        page_options
+        {}, page_options
     };
 
     auto parser = [](auto& j, auto& a) { athlete_from_json(j, a); };
@@ -698,7 +704,7 @@ std::vector<strava::summary::athlete> strava::athlete::list_athlete_followers(co
         Poco::Net::HTTPRequest::HTTP_GET,
         join("/api/v3/athletes/", athlete.id, "/followers"),
         auth.access_token, {},
-        page_option
+        {}, page_option
     };
 
     auto parser = [](auto& j, auto& a) { athlete_from_json(j, a); };
@@ -715,7 +721,7 @@ std::vector<strava::summary::athlete> strava::athlete::list_athlete_followers(co
         Poco::Net::HTTPRequest::HTTP_GET,
         "/api/v3/athlete/followers",
         auth.access_token, {},
-        page_option
+        {}, page_option
     };
 
     auto parser = [](auto& j, auto& a) { athlete_from_json(j, a); };
@@ -732,7 +738,7 @@ std::vector<strava::summary::athlete> strava::athlete::list_both_following(const
         Poco::Net::HTTPRequest::HTTP_GET,
         join("/api/v3/athletes/", athlete.id, "/both-following"),
         auth.access_token, {},
-        page_options
+        {}, page_options
     };
 
     auto parser = [](auto& j, auto& a) { athlete_from_json(j, a); };
@@ -841,7 +847,7 @@ std::vector<strava::detailed::segment_effort> strava::athlete::get_koms(const oa
         Poco::Net::HTTPRequest::HTTP_GET,
         join("/api/v3/athletes/", id, "/koms"),
         auth.access_token, {},
-        page_options
+        {}, page_options
     };
 
     auto parser = [](auto& j, auto& s) { parse_from_json(j, s); };
@@ -1015,11 +1021,19 @@ strava::detailed::race strava::races::retrieve(const oauth& auth, int race_id)
 
 std::vector<strava::summary::race> strava::races::list(const oauth& auth, int year)
 {
+    auto data = std::map<std::string, std::string>{};
+
+    if (year != 0)
+    {
+        data["year"] = std::to_string(year);
+    }
+
     auto request = http_request
     {
         Poco::Net::HTTPRequest::HTTP_GET,
-        "/api/v3/running_races",
-        auth.access_token, {}, {}
+        "/api/v3/running_races", 
+        auth.access_token, 
+        {}, data, {}
     };
 
     auto parser = [](auto& j, auto& s) { parse_from_json(j, s); };
@@ -1027,4 +1041,99 @@ std::vector<strava::summary::race> strava::races::list(const oauth& auth, int ye
     auto json = resp.extract<json_array>();
 
     return json_to_vector<summary::race>(json, parser);
+}
+
+void parse_from_json(json_object json, strava::summary::segment& out)
+{
+    out = {};
+}
+
+void parse_from_json(json_object json, strava::detailed::segment& out)
+{
+    parse_from_json(json, (strava::summary::segment)out);
+}
+
+strava::detailed::segment strava::segments::retrieve(const oauth& auth, int id)
+{
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_GET,
+        join("/api/v3/segments/", id),
+        auth.access_token, {}, {}
+    };
+    
+    auto resp = check(send(request));
+    auto json = resp.extract<json_object>();
+
+    detailed::segment value;
+    parse_from_json(json, value);
+    return value;
+}
+
+std::vector<strava::summary::segment> strava::segments::list_starred(const oauth& auth, int athlete_id, pagination page_options)
+{
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_GET,
+        join("/api/v3/athletes/", athlete_id, "/segments/starred"),
+        auth.access_token, {}, 
+        {}, page_options
+    };
+
+    auto parser = [](auto& j, auto& s) { parse_from_json(j, s); };
+    auto resp = check(send(request));
+    auto json = resp.extract<json_array>();
+
+    return json_to_vector<summary::segment>(json, parser);
+}
+
+std::vector<strava::summary::segment> strava::segments::list_starred(const oauth& auth, pagination page_options)
+{
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_GET,
+        "/api/v3/segments/starred",
+        auth.access_token,{},
+        {}, page_options
+    };
+
+    auto parser = [](auto& j, auto& s) { parse_from_json(j, s); };
+    auto resp = check(send(request));
+    auto json = resp.extract<json_array>();
+
+    return json_to_vector<summary::segment>(json, parser);
+}
+
+strava::detailed::segment strava::segments::star(const oauth& auth, int id, bool starred)
+{
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_GET,
+        join("/api/v3/segments/", id, (starred ? "/true" : "/false")),
+        auth.access_token, {}, {}
+    };
+
+    auto resp = check(send(request));
+    auto json = resp.extract<json_object>();
+
+    detailed::segment value;
+    parse_from_json(json, value);
+    return value;
+}
+              
+std::vector<strava::summary::segment_effort> strava::segments::efforts(const oauth& auth, int id, int athlete, time_range range, pagination page_option)
+{
+    return {};
+}
+
+
+std::vector<strava::segments::leaderboard_entry> strava::segments::leaderboard(const oauth& auth, int id, leaderbord_params params, pagination page_option)
+{
+    return {};
+}
+
+
+std::vector<strava::summary::segment> strava::segments::explore(const oauth& auth, bounds bound, std::string activity_type, int min_cat, int max_cat)
+{
+    return {};
 }
