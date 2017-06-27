@@ -812,17 +812,32 @@ namespace strava
     ///
     namespace stream
     {
+        ///
+        /// Types namespace to denote vector type for 
+        /// stream::object<T>
+        ///
+        namespace types
+        {
+            struct latlng { using type = std::array<int, 2>; };
+            struct time { using type = int; };
+        }
+
+        template<typename T>
         struct object
         {
             std::string type;
-            std::vector<int> data;
+            std::vector<T> data;
             std::string series_type;
             int original_size;
             std::string resolution;
         };
 
-        // retrieve activity stream
-        void retrieve_activity();
+        template<typename T>
+        object<typename T::type> retrieve_activity() {
+            object<typename T::type> out;
+            out.data.push_back(typename T::type{});
+            return out;
+        }
 
         // retrieve effort stream
         void retrieve_effort();
