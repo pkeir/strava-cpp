@@ -37,6 +37,9 @@ int main(int argc, char* argv[])
     auto updated = segments::star(auth_info, checking.id, true);
 
     auto starred = segments::list_starred(auth_info);
-
+    auto leaderboard = segments::get_leaderboard(auth_info, checking.id);
+    auto area = strava::segments::bounds{ 55.777683, -3.651581, 55.994877, -2.937469 };
+    auto found = segments::explore(auth_info, area);
+    
     std::cin.get();
 }

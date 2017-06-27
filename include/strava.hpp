@@ -33,7 +33,7 @@
 
 ///
 /// Entire API is found in the strava namespace,
-/// don't import it into the global namespace,
+/// don't import it int64_to the global namespace,
 /// as many objects and methods have opaque
 /// names which could lead to conflicts
 ///
@@ -69,10 +69,10 @@ namespace strava
     ///
     struct pagination
     {
-        int page;
-        int per_page;
+        int64_t page;
+        int64_t per_page;
 
-        pagination(int page = 0, int per_page = 30);
+        pagination(int64_t page = 0, int64_t per_page = 30);
         bool enabled();
     };
 
@@ -83,7 +83,7 @@ namespace strava
     {
         std::string id;
         std::string line;
-        int resource_state;
+        int64_t resource_state;
     };
 
     ///
@@ -115,7 +115,7 @@ namespace strava
     ///
     struct oauth
     {
-        int client_id;
+        int64_t client_id;
         std::string client_secret;
         std::string access_token;
     };
@@ -136,20 +136,20 @@ namespace strava
     /// Generates a url for you to view in a browser
     /// to grant access to your data.
     ///
-    /// int client_id - The client id for your application
+    /// int64_t client_id - The client id for your application
     /// oauth_scope scope - Access level for the athletes data
     ///
-    std::string request_access(int client_id, oauth_scope scope);
+    std::string request_access(int64_t client_id, oauth_scope scope);
 
     ///
     /// Generates a url for you to view in a browser
     /// to grant access to your data.
     ///
-    /// int client_id - The client id for your application
+    /// int64_t client_id - The client id for your application
     /// std::string client_secret - The client secret for your application
     /// std::string token - The token you received by opening the url from request_access
     ///
-    std::string exchange_token(int client_id, const std::string& client_secret, const std::string& token);
+    std::string exchange_token(int64_t client_id, const std::string& client_secret, const std::string& token);
 
     ///
     /// Call this method to deauthorize an access_token returned
@@ -179,7 +179,7 @@ namespace strava
 
     ///
     /// You get three types of representation with strava, a meta repr a summary repr and
-    /// a detailed repr. Here they are split into seperate namespaces
+    /// a detailed repr. Here they are split int64_to seperate namespaces
     /// for clarity.
     ///
     namespace meta
@@ -187,30 +187,30 @@ namespace strava
         /// Athlete metadata info
         struct athlete
         {
-            int id;
-            int resource_state;
+            int64_t id;
+            int64_t resource_state;
         };
 
         /// Activity metadata info
         struct activity
         {
-            int id;
-            int resouce_state;
+            int64_t id;
+            int64_t resouce_state;
         };
 
         /// Club metadata info
         struct club
         {
-            int id;
-            int resource_state;
+            int64_t id;
+            int64_t resource_state;
             std::string name;
         };
 
         /// Route metadata info
         struct route
         {
-            int id;
-            int resource_state;
+            int64_t id;
+            int64_t resource_state;
             std::string name;
             polyline map;
         };
@@ -238,7 +238,7 @@ namespace strava
 
     ///
     /// You get three types of representation with strava, a meta repr a summary repr and
-    /// a detailed repr. Here they are split into seperate namespaces
+    /// a detailed repr. Here they are split int64_to seperate namespaces
     /// for clarity.
     ///
     namespace summary
@@ -266,7 +266,7 @@ namespace strava
         /// Club summary info
         struct club : public meta::club
         {
-            int member_count;
+            int64_t member_count;
 
             std::string profile_medium;
             std::string profile;
@@ -288,7 +288,7 @@ namespace strava
         {
             bool primary;
             double distance;
-            int resource_state;
+            int64_t resource_state;
             std::string id;
             std::string name;
         };
@@ -296,9 +296,9 @@ namespace strava
         /// Segment summary info
         struct segment : public meta::segment
         {
-            int id;
-            int resource_state;
-            int climb_category;
+            int64_t id;
+            int64_t resource_state;
+            int64_t climb_category;
 
             std::string name;
             std::string activity_type;
@@ -312,8 +312,8 @@ namespace strava
             float elevation_high;
             float elevation_low;
 
-            std::array<int, 2> start_latlng;
-            std::array<int, 2> end_latlng;
+            std::array<int64_t, 2> start_latlng;
+            std::array<int64_t, 2> end_latlng;
 
             bool is_private;
             bool hazardous;
@@ -330,14 +330,14 @@ namespace strava
             meta::activity activity;
             meta::athlete athlete;
 
-            int resource_state;
-            int elapsed_time;
-            int moving_time;
-            int start_index;
-            int end_index;
-            int max_heartrate;
-            int kom_rank;
-            int pr_rank;
+            int64_t resource_state;
+            int64_t elapsed_time;
+            int64_t moving_time;
+            int64_t start_index;
+            int64_t end_index;
+            int64_t max_heartrate;
+            int64_t kom_rank;
+            int64_t pr_rank;
 
             time start_date;
             time start_date_local;
@@ -366,16 +366,16 @@ namespace strava
             bool is_private;
             bool starred;
 
-            int timestamp;
-            int estimated_moving_time;
+            int64_t timestamp;
+            int64_t estimated_moving_time;
         };
 
         /// Race summary info 
         struct race : public meta::race
         {
-            int id;
-            int resource_state;
-            int running_race_type;
+            int64_t id;
+            int64_t resource_state;
+            int64_t running_race_type;
 
             std::string name;
             std::string city;
@@ -392,7 +392,7 @@ namespace strava
 
     ///
     /// You get three types of representation with strava, a meta repr a summary repr and
-    /// a detailed repr. Here they are split into seperate namespaces
+    /// a detailed repr. Here they are split int64_to seperate namespaces
     /// for clarity.
     ///
     namespace detailed
@@ -400,12 +400,12 @@ namespace strava
         /// Athlete detailed info
         struct athlete : public summary::athlete
         {
-            int follower_count;
-            int mutual_friend_count;
-            int friend_count;
-            int athlete_type;
-            int weight;
-            int ftp;
+            int64_t follower_count;
+            int64_t mutual_friend_count;
+            int64_t friend_count;
+            int64_t athlete_type;
+            int64_t weight;
+            int64_t ftp;
 
             std::string date_preference;
             std::string measurement_preference;
@@ -419,7 +419,7 @@ namespace strava
         /// Club detailed info
         struct club : public summary::club
         {
-            int following_count;
+            int64_t following_count;
 
             std::string membership;
             std::string club_type;
@@ -440,9 +440,9 @@ namespace strava
         /// Segment detailed info
         struct segment : public summary::segment
         {
-            int effort_count;
-            int athlete_count;
-            int star_count;
+            int64_t effort_count;
+            int64_t athlete_count;
+            int64_t star_count;
 
             polyline map;
 
@@ -467,7 +467,7 @@ namespace strava
         /// Route detailed info
         struct race : public summary::race
         {
-            std::vector<int> route_ids;
+            std::vector<int64_t> route_ids;
             std::string website_url;
         };
     }
@@ -483,8 +483,8 @@ namespace strava
         /// Lists friends for the current athlete. Pagination is supported.
         ///
         /// const oauth& auth - Authorization info
-        /// int page - The page to display (disabled by default)
-        /// int per_page - The number of entries per page
+        /// int64_t page - The page to display (disabled by default)
+        /// int64_t per_page - The number of entries per page
         ///
         std::vector<summary::athlete> list_athlete_friends(const oauth& auth, pagination page_opt = {});
 
@@ -493,8 +493,8 @@ namespace strava
         ///
         /// const oauth& auth - Authorization info
         /// meta::athlete& athlete - The athlete to get friends from
-        /// int page - The page to display (disabled by default)
-        /// int per_page - The number of entries per page
+        /// int64_t page - The page to display (disabled by default)
+        /// int64_t per_page - The number of entries per page
         ///
         std::vector<summary::athlete> list_athlete_friends(const oauth& auth, meta::athlete& athlete, pagination page_opt = {});
 
@@ -502,8 +502,8 @@ namespace strava
         /// Lists followers for the current athlete. Pagination is supported.
         ///
         /// const oauth& auth - Authorization info
-        /// int page - The page to display (disabled by default)
-        /// int per_page - The number of entries per page
+        /// int64_t page - The page to display (disabled by default)
+        /// int64_t per_page - The number of entries per page
         ///
         std::vector<summary::athlete> list_athlete_followers(const oauth& auth, meta::athlete& athlete, pagination page_opt = {});
 
@@ -512,8 +512,8 @@ namespace strava
         ///
         /// const oauth& auth - Authorization info
         /// meta::athlete& athlete - The athlete to get followers from
-        /// int page - The page to display (disabled by default)
-        /// int per_page - The number of entries per page
+        /// int64_t page - The page to display (disabled by default)
+        /// int64_t per_page - The number of entries per page
         ///
         std::vector<summary::athlete> list_athlete_followers(const oauth& auth, pagination page_opt = {});
 
@@ -523,8 +523,8 @@ namespace strava
         ///
         /// const oauth& auth - Authorization info
         /// meta::athlete& athlete - The athlete to find shared followers for
-        /// int page - The page to display (disabled by default)
-        /// int per_page - The number of entries per page
+        /// int64_t page - The page to display (disabled by default)
+        /// int64_t per_page - The number of entries per page
         ///  
         std::vector<summary::athlete> list_both_following(const oauth& auth, meta::athlete& athlete, pagination page_opt = {});
 
@@ -539,9 +539,9 @@ namespace strava
         /// Gets an athlete by id.
         ///
         /// const oauth& auth - Authorization info
-        /// int id - The athlete to get
+        /// int64_t id - The athlete to get
         ///
-        summary::athlete retrieve(const oauth& auth, int id);
+        summary::athlete retrieve(const oauth& auth, int64_t id);
 
         ///
         /// Updates the athlete by id.
@@ -558,8 +558,8 @@ namespace strava
         ///
         struct zone
         {
-            int min;
-            int max;
+            int64_t min;
+            int64_t max;
         };
 
         ///
@@ -601,23 +601,23 @@ namespace strava
         struct stats
         {
             /// Two types of entries one with an achievment count,
-            /// and one without. These are split into two structs
+            /// and one without. These are split int64_to two structs
             /// total and detailed_total.
             struct total
             {
                 double distance;
                 double elevation_gain;
 
-                int count;
-                int moving_time;
-                int eleapsed_time;
-                int achievement_count;
+                int64_t count;
+                int64_t moving_time;
+                int64_t eleapsed_time;
+                int64_t achievement_count;
             };
 
             /// See above comment
             struct detailed_total : public total
             {
-                int achievement_count;
+                int64_t achievement_count;
             };
 
             detailed_total recent_ride_totals;
@@ -648,15 +648,15 @@ namespace strava
         ///
         /// const oauth& auth - Authorization info
         ///
-        stats get_stats(const oauth& auth, int id);
+        stats get_stats(const oauth& auth, int64_t id);
 
         ///
         /// Gets an koms for the given athlete.
         ///
         /// const oauth& auth - Authorization info
-        /// int id - The athlete to get
+        /// int64_t id - The athlete to get
         ///
-        std::vector<strava::detailed::segment_effort> get_koms(const oauth& auth, int id, pagination page_opt = {});
+        std::vector<strava::detailed::segment_effort> get_koms(const oauth& auth, int64_t id, pagination page_opt = {});
     }
 
     ///
@@ -716,17 +716,17 @@ namespace strava
         /// Returns a vector of routes tied to the athletes id.
         ///
         /// const oauth& auth - Authorization info
-        /// int id - The athlete id
+        /// int64_t id - The athlete id
         ///
-        std::vector<summary::route> list(const oauth& auth, int id);
+        std::vector<summary::route> list(const oauth& auth, int64_t id);
 
         ///
         /// Returns a detailed route by the given id.
         ///
         /// const oauth& auth - Authorization info
-        /// int route_id - The route's id
+        /// int64_t route_id - The route's id
         ///
-        detailed::route retrieve(const oauth& auth, int route_id);
+        detailed::route retrieve(const oauth& auth, int64_t route_id);
     }
 
     ///
@@ -738,17 +738,17 @@ namespace strava
         /// Returns a detailed race by the given id.
         ///
         /// const oauth& auth - Authorization info
-        /// int race_id - The race's id
+        /// int64_t race_id - The race's id
         ///
-        detailed::race retrieve(const oauth& auth, int race_id);
+        detailed::race retrieve(const oauth& auth, int64_t race_id);
 
         ///
         /// Returns a vector of races
         ///
         /// const oauth& auth - Authorization info
-        /// int year - The year to get races for
+        /// int64_t year - The year to get races for
         ///
-        std::vector<summary::race> list(const oauth& auth, int year = 0);
+        std::vector<summary::race> list(const oauth& auth, int64_t year = 0);
     }
 
     ///
@@ -761,7 +761,7 @@ namespace strava
         /// Gets segment effort by id.
         ///
         /// const oauth& auth - Authorization info
-        /// int id - The segment effort to get
+        /// int64_t id - The segment effort to get
         ///
         detailed::segment_effort retrieve(const oauth& auth, std::int64_t id);
     }
@@ -771,37 +771,37 @@ namespace strava
     ///
     namespace segments
     {
-        struct leaderboard_entry
+        struct leaderboard
         {
-            int athlete_id;
-            int elapsed_time;
-            int moving_time;
-            int activity_id;
-            int effort_id;
-            int rank;
+            struct entry
+            {
+                int64_t athlete_id, activity_id, effort_id;
+                int64_t elapsed_time, moving_time, rank;
 
-            std::string athlete_name;
-            std::string athlete_gender;
-            std::string athlete_profile;
+                std::string athlete_name;
+                std::string athlete_gender;
+                std::string athlete_profile;
 
-            double average_watts;
-            double average_hr;
-            double distance;
+                double average_watts, average_hr;
+                double distance;
 
-            time start_date;
-            time start_date_local;
+                time start_date, start_date_local;
+            };
+
+            int64_t entry_count;
+            std::vector<entry> entries;
         };
 
         struct bounds
         {
-            double sw_lat, sw_lng;
             double ne_lat, ne_lng;
+            double sw_lat, sw_lng;
         };
 
         struct leaderbord_params
         {
-            int club_id;
-            int context_entries;
+            int64_t club_id;
+            int64_t context_entries;
            
             bool following;
            
@@ -814,12 +814,12 @@ namespace strava
         ///
         ///
         ///
-        detailed::segment retrieve(const oauth& auth, int id);
+        detailed::segment retrieve(const oauth& auth, int64_t id);
 
         ///
         ///
         ///
-        std::vector<summary::segment> list_starred(const oauth& auth, int athlete_id, pagination page_option = {});
+        std::vector<summary::segment> list_starred(const oauth& auth, int64_t athlete_id, pagination page_option = {});
 
         ///
         ///
@@ -829,23 +829,22 @@ namespace strava
         ///
         ///
         ///
-        detailed::segment star(const oauth& auth, int id, bool starred);
+        detailed::segment star(const oauth& auth, int64_t id, bool starred);
 
         ///
         ///
         ///
-        std::vector<summary::segment_effort> efforts(const oauth& auth, int id, int athlete = 0, time_range range = {}, pagination page_option = {});
+        std::vector<summary::segment_effort> efforts(const oauth& auth, int64_t id, int64_t athlete = 0, time_range range = {}, pagination page_option = {});
 
         ///
         ///
         ///
-        std::vector<leaderboard_entry> leaderboard(const oauth& auth, int id, leaderbord_params params = {}, pagination page_option = {});
+        leaderboard get_leaderboard(const oauth& auth, int64_t id, leaderbord_params params = {}, pagination page_option = {});
 
         ///
         ///
         ///
-        std::vector<summary::segment> explore(const oauth& auth, bounds bound, std::string activity_type, int min_cat, int max_cat);
-        
+        std::vector<summary::segment> explore(const oauth& auth, bounds bound, std::string activity_type = "", int64_t min_cat = 0, int64_t max_cat = 0);
     }
 
     ///
@@ -859,8 +858,8 @@ namespace strava
         ///
         namespace types
         {
-            struct latlng { using type = std::array<int, 2>; };
-            struct time { using type = int; };
+            struct latlng { using type = std::array<int64_t, 2>; };
+            struct time { using type = int64_t; };
         }
 
         template<typename T>
@@ -869,7 +868,7 @@ namespace strava
             std::string type;
             std::vector<T> data;
             std::string series_type;
-            int original_size;
+            int64_t original_size;
             std::string resolution;
         };
 
