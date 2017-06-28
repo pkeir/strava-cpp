@@ -767,12 +767,20 @@ namespace strava
     }
 
     ///
-    ///
+    /// Segment functionality wrapped in namespace
     ///
     namespace segments
     {
+        ///
+        /// Leaderboard struct returned from the
+        /// the leaderboard segment endpoint.
+        ///
         struct leaderboard
         {
+            ///
+            /// Individual entries in this table
+            /// mirror this structure.
+            ///
             struct entry
             {
                 int64_t athlete_id, activity_id, effort_id;
@@ -792,19 +800,25 @@ namespace strava
             std::vector<entry> entries;
         };
 
+        ///
+        /// LatLng quad for exploring for segments
+        ///
         struct bounds
         {
             double ne_lat, ne_lng;
             double sw_lat, sw_lng;
         };
 
+        ///
+        /// Params for querying the leaderboard endpoint.
+        ///
         struct leaderbord_params
         {
             int64_t club_id;
             int64_t context_entries;
-           
+
             bool following;
-           
+
             std::string gender;
             std::string age_group;
             std::string weight_class;
@@ -812,37 +826,39 @@ namespace strava
         };
 
         ///
-        ///
+        /// Retrieves a segment via id. Segments can be
+        /// retrieved via routes which can be listed
+        /// via athlete id.
         ///
         detailed::segment retrieve(const oauth& auth, int64_t id);
 
         ///
-        ///
+        /// Listed starred segments for the given athlete
         ///
         std::vector<summary::segment> list_starred(const oauth& auth, int64_t athlete_id, pagination page_option = {});
 
         ///
-        ///
+        /// Listed starred segments for the current athlete
         ///
         std::vector<summary::segment> list_starred(const oauth& auth, pagination page_option = {});
 
         ///
-        ///
+        /// Stars a segment for the current athlete
         ///
         detailed::segment star(const oauth& auth, int64_t id, bool starred);
 
         ///
-        ///
+        /// Lists segment efforts.
         ///
         std::vector<summary::segment_effort> efforts(const oauth& auth, int64_t id, int64_t athlete = 0, time_range range = {}, pagination page_option = {});
 
         ///
-        ///
+        /// Gets leaderboard for a given segment
         ///
         leaderboard get_leaderboard(const oauth& auth, int64_t id, leaderbord_params params = {}, pagination page_option = {});
 
         ///
-        ///
+        /// Finds segments in a given latlng bounding box.
         ///
         std::vector<summary::segment> explore(const oauth& auth, bounds bound, std::string activity_type = "", int64_t min_cat = 0, int64_t max_cat = 0);
     }

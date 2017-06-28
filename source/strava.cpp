@@ -1151,7 +1151,7 @@ std::vector<strava::summary::segment_effort> strava::segments::efforts(const oau
 void parse_from_json(json_object json, strava::segments::leaderboard::entry& out)
 {
     out = {};
-  
+
     out.athlete_gender = cast<std::string>(json, "athlete_gender");
     out.athlete_profile = cast<std::string>(json, "athlete_profile");
     out.athlete_name = cast<std::string>(json, "athlete_name");
@@ -1196,13 +1196,13 @@ strava::segments::leaderboard strava::segments::get_leaderboard(const oauth& aut
         join("/api/v3/segments/", id, "/leaderboard"),
         auth.access_token,
         {}, data, paging
-    }; 
+    };
 
     auto resp = check(send(request));
     auto json = resp.extract<json_object>();
 
     leaderboard value;
-    parse_from_json(json, value);  
+    parse_from_json(json, value);
     return value;
 }
 
@@ -1216,7 +1216,7 @@ std::vector<strava::summary::segment> strava::segments::explore(const oauth& aut
     ss << bound.ne_lng << ",";
     ss << bound.sw_lat << ",";
     ss << bound.sw_lng;
-   
+
     data["bounds"] = ss.str();
 
     auto request = http_request
