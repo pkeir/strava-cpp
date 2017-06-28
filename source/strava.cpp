@@ -1350,3 +1350,55 @@ std::vector<strava::summary::athlete> strava::clubs::events::list_joined_athlete
 
     return json_to_vector<summary::athlete>(json, parser);
 }
+
+void parse_from_json(json_object json, strava::clubs::club_announcement& out)
+{
+    out = {};
+    out.id = cast<int>(json, "id");
+}
+
+std::vector<strava::clubs::club_announcement> strava::clubs::list_announcments(const oauth& auth, int club_id)
+{
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_GET,
+        join("/api/v3/clubs/", club_id),
+        auth.access_token, {}, {}, {}
+    };
+
+    auto parser = [](auto& s, auto& c) { parse_from_json(s, c); };
+    auto resp = check(send(request));
+    auto json = resp.extract<json_array>();
+
+    return json_to_vector<club_announcement>(json, parser);
+}
+
+std::vector<strava::summary::club> strava::clubs::list_athlete_clubs(const oauth& auth)
+{
+    return{};
+}
+
+std::vector<strava::summary::athlete>  strava::clubs::list_club_members(const oauth& auth, int club_id, pagination pagination)
+{
+    return{};
+}
+
+std::vector<strava::summary::athlete> strava::clubs::list_club_admin(const oauth& auth, int club_id, pagination pagination)
+{
+    return{};
+}
+
+std::vector<strava::summary::activity> strava::clubs::list_club_activities(const oauth& auth, int club_id, time before, pagination pagination)
+{
+    return{};
+}
+
+strava::clubs::join_response strava::clubs::join_club(const oauth& auth, int club_id)
+{
+    return{};
+}
+
+strava::clubs::leave_response strava::clubs::leave_club(const oauth& auth, int club_id)
+{
+    return{};
+}

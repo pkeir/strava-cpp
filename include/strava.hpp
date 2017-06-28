@@ -795,14 +795,76 @@ namespace strava
             std::vector<summary::athlete> list_joined_athletes(const oauth& auth, int event_id, pagination pagination);
         }
 
-        // retrieve club
-        // list club announcments
-        // list athlete clubs
-        // list club members
-        // list club admins
-        // list clubs activities
-        // join club
-        // leave club
+        ///
+        ///
+        ///
+        detailed::club retrieve(const oauth& auth, int id);
+
+        ///
+        ///
+        ///
+        struct club_announcement
+        {
+            int id;
+            int resource_state;
+            int club_id;
+            summary::athlete athlete;
+            time created_at;
+            std::string message;
+        };
+
+        ///
+        ///
+        ///
+        std::vector<club_announcement> list_announcments(const oauth& auth, int club_id);
+        
+        /// 
+        ///
+        ///
+        std::vector<summary::club> list_athlete_clubs(const oauth& auth);
+
+        ///
+        ///
+        ///
+        std::vector<summary::athlete> list_club_members(const oauth& auth, int club_id, pagination pagination);
+   
+        /// 
+        ///
+        ///
+        std::vector<summary::athlete> list_club_admin(const oauth& auth, int club_id, pagination pagination);
+
+        ///
+        ///
+        ///
+        std::vector<summary::activity> list_club_activities(const oauth& auth, int club_id, time before, pagination pagination);
+
+        ///
+        /// When leaving a group this struct is returned
+        ///
+        struct leave_response
+        {
+            bool success;
+            bool active;
+        };
+
+        ///
+        /// When joining a club the structure returned looks
+        /// like this.
+        ///
+        struct join_response : public leave_response
+        {
+            std::string membership;
+        };
+
+        ///
+        ///
+        ///
+        join_response join_club(const oauth& auth, int club_id);
+
+        /// 
+        ///
+        ///
+        leave_response leave_club(const oauth& auth, int club_id);
     }
 
     ///
