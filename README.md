@@ -5,21 +5,6 @@
 
 C++ API bindings to V3 of the Strava API. This API supports reading and updating of the Strava Dataset however file uploads and webhook events are not yet supported. The following operations are supported.
 
-* Authentication
-* Athletes
-* Activities
-* Clubs
-* Routes
-* Running Races
-* Segments
-* Segment Efforts
-* Streams
-
-While the following sections are reserved for a later date.
-
-* Uploads (Revolves around bespoke file types)
-* Webhook Events (Need Strava inc permissions)
-
 ## Example 
 
 ```cpp
@@ -49,6 +34,27 @@ int main(int argc, char* argv[])
     std::cout << myself.country << std::endl;
 }
 ```
+
+## Features
+
+The API provides access to the most prominant areas of the dataset. If you are just wanting info from the API or want to update some values, this API will meet your requirements.
+
+* Authentication
+* Athletes
+* Activities
+* Clubs
+* Routes
+* Running Races
+* Segments
+* Segment Efforts
+* Streams
+
+## Not Supported
+
+The following sections of the API are reserved for a later date.
+
+* Uploads (Revolves around bespoke file types)
+* Webhook Events (Need Strava inc permissions)
 
 ## Dependencies
 
