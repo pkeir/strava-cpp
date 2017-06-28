@@ -720,7 +720,7 @@ namespace strava
     }
 
     ///
-    ///
+    /// Activity namespace wraps activity functionality
     ///
     namespace activity
     {
@@ -736,18 +736,23 @@ namespace strava
         };
 
         // list comments
-        std::vector<comment> list_comments(const oauth& auth, int id, pagination paging = {});
+        //std::vector<comment> list_comments(const oauth& auth, int id, pagination paging = {});
 
         // list kudos
-        std::vector<summary::activity> list_kudos(const oauth& auth, int id, pagination paging = {});
+        //std::vector<summary::activity> list_kudos(const oauth& auth, int id, pagination paging = {});
 
         // list photos
         //std::vector<> list_photos()
 
         // create activity
+
         // retrieve activity
+        detailed::activity retrieve(const oauth& auth, std::int64_t id);
+
         // update an activity
-        // list athlete activities
+        // list athlete activities  
+        std::vector<summary::activity> list(const oauth& auth, time before = {}, time after = {}, pagination pagination = {});
+
         // list related activities
         // list friends activities
         // list activity zones
@@ -755,7 +760,7 @@ namespace strava
     }
 
     ///
-    ///
+    /// Clubs functionality wrapped in a namespaced
     ///
     namespace clubs
     {
@@ -1049,7 +1054,10 @@ namespace strava
         ///
         enum class source
         {
-            activity, effort, segment, route
+            activity,
+            segment,
+            effort,  
+            route
         };
 
         ///
@@ -1057,7 +1065,11 @@ namespace strava
         ///
         enum class integer_types
         {
-            time, heartrate, cadence, watts, temp
+            heartrate, 
+            cadence, 
+            watts, 
+            time,
+            temp
         };
 
         ///
@@ -1065,7 +1077,10 @@ namespace strava
         ///
         enum class float_types
         {
-            distance, altitude, velocity_smooth, grade_smooth
+            velocity_smooth,
+            grade_smooth,
+            distance, 
+            altitude, 
         };
 
         ///
@@ -1084,7 +1099,7 @@ namespace strava
         ///
         /// Gets a stream of integer from a stream source
         ///
-        object<std::int64_t> integer_stream(const oauth& info, source src, integer_types type);
+        object<std::int64_t> integer_stream(const oauth& info, std::int64_t id, source src, integer_types type);
 
         ///
         /// Gets a stream of floats from a stream source

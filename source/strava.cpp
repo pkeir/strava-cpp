@@ -1509,22 +1509,62 @@ strava::clubs::leave_response strava::clubs::leave_club(const oauth& auth, int c
     return value;
 }
 
-strava::stream::object<std::int64_t> strava::stream::integer_stream(const oauth& info, source src, integer_types type)
+strava::stream::object<std::int64_t> strava::stream::integer_stream(const oauth& auth, std::int64_t id, source src, integer_types type)
+{
+    std::stringstream ss;
+    ss << "/api/v3/";
+
+    switch (src)
+    {
+        case source::activity: ss << "activities"; break;
+        case source::segment: ss << "segments"; break;
+        case source::effort: ss << "efforts"; break;
+        case source::route: ss << "routes"; break;
+    };
+
+    ss << "/streams/";
+    ss << id << "/";
+
+    switch (type)
+    {
+        case integer_types::heartrate: ss << "heartrate"; break;
+        case integer_types::cadence: ss << "cadence"; break;
+        case integer_types::watts: ss << "watts"; break;
+        case integer_types::temp: ss << "temp"; break;
+        case integer_types::time: ss << "time"; break;
+    }
+
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_GET, 
+        ss.str(), auth.access_token,
+        {}, {}, {}
+    };
+
+    return{};
+}
+
+strava::stream::object<std::int64_t> strava::stream::float_stream(const oauth& auth, source src, float_types type)
 {
     return{};
 }
 
-strava::stream::object<std::int64_t> strava::stream::float_stream(const oauth& info, source src, float_types type)
+strava::stream::object<std::array<float, 2>> strava::stream::latlng_stream(const oauth& auth, source src)
 {
     return{};
 }
 
-strava::stream::object<std::array<float, 2>> strava::stream::latlng_stream(const oauth& info, source src)
+strava::stream::object<bool> strava::stream::bool_stream(const oauth& auth, source src)
 {
     return{};
 }
 
-strava::stream::object<bool> strava::stream::bool_stream(const oauth& info, source src)
+strava::detailed::activity strava::activity::retrieve(const oauth& auth, std::int64_t id)
 {
-    return{};
+    return {};
+}
+
+std::vector<strava::summary::activity> strava::activity::list(const oauth& auth, time before, time after, pagination pagination)
+{
+    return {};
 }
