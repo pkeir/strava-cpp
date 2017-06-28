@@ -538,11 +538,11 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::summary::segment& out
     auto start_elements = json->getArray("start_latlng");
     auto end_elements = json->getArray("start_latlng");
 
-    out.start_latlng[0] = start_elements->get(0).convert<int64_t>();
-    out.start_latlng[1] = start_elements->get(1).convert<int64_t>();
+    out.start_latlng[0] = start_elements->get(0).convert<float>();
+    out.start_latlng[1] = start_elements->get(1).convert<float>();
 
-    out.end_latlng[0] = end_elements->get(0).convert<int64_t>();
-    out.end_latlng[1] = end_elements->get(1).convert<int64_t>();
+    out.end_latlng[0] = end_elements->get(0).convert<float>();
+    out.end_latlng[1] = end_elements->get(1).convert<float>();
 
     out.is_private = cast<bool>(json, "is_private");
     out.hazardous = cast<bool>(json, "hazardous");
@@ -738,6 +738,11 @@ void parse_from_json(json_object json, strava::segments::leaderboard& out)
         parse_from_json(e.extract<json_object>(), entry);
         out.entries.push_back(entry);
     }
+}
+
+void parse_from_json(json_object json, strava::stream::object<std::int64_t>& value)
+{
+    value = {};
 }
 
 ///
@@ -1481,7 +1486,6 @@ strava::clubs::join_response strava::clubs::join_club(const oauth& auth, int clu
         {}, {}, {}
     };
 
-    auto parser = [](auto& s, auto& c) { parse_from_json(s, c); };
     auto resp = check(send(request));
     auto json = resp.extract<json_object>();
 
@@ -1500,13 +1504,47 @@ strava::clubs::leave_response strava::clubs::leave_club(const oauth& auth, int c
         {},{},{}
     };
 
-    auto parser = [](auto& s, auto& c) { parse_from_json(s, c); };
     auto resp = check(send(request));
     auto json = resp.extract<json_object>();
 
     leave_response value;
     parse_from_json(json, value);
     return value;
+}
+
+strava::detailed::activity strava::activity::retrieve(const oauth& auth, std::int64_t id)
+{
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_GET,
+        join("/api/v3/activities/", id),
+        auth.access_token,
+        {},{},{}
+    };
+
+    auto resp = check(send(request));
+    auto json = resp.extract<json_object>();
+
+    detailed::activity value;
+    parse_from_json(json, value);
+    return value;
+}
+
+std::vector<strava::summary::activity> strava::activity::list(const oauth& auth, time before, time after, pagination pagination)
+{
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_GET,
+        "/api/v3/athlete/activities",
+        auth.access_token,
+        {},{}, pagination
+    };
+
+    auto parser = [](auto& s, auto& c) { parse_from_json(s, c); };
+    auto resp = check(send(request));
+    auto json = resp.extract<json_array>();
+
+    return json_to_vector<summary::activity>(json, parser);
 }
 
 strava::stream::object<std::int64_t> strava::stream::integer_stream(const oauth& auth, std::int64_t id, source src, integer_types type)
@@ -1522,8 +1560,8 @@ strava::stream::object<std::int64_t> strava::stream::integer_stream(const oauth&
         case source::route: ss << "routes"; break;
     };
 
+    ss << "/" << id;
     ss << "/streams/";
-    ss << id << "/";
 
     switch (type)
     {
@@ -1531,17 +1569,23 @@ strava::stream::object<std::int64_t> strava::stream::integer_stream(const oauth&
         case integer_types::cadence: ss << "cadence"; break;
         case integer_types::watts: ss << "watts"; break;
         case integer_types::temp: ss << "temp"; break;
-        case integer_types::time: ss << "time"; break;
+        case integer_types::time: ss << "latlng"; break;
     }
 
     auto request = http_request
     {
-        Poco::Net::HTTPRequest::HTTP_GET, 
+        Poco::Net::HTTPRequest::HTTP_GET,
         ss.str(), auth.access_token,
         {}, {}, {}
     };
 
-    return{};
+    auto parser = [](auto& s, auto& c) { parse_from_json(s, c); };
+    auto resp = check(send(request));
+    auto json = resp.extract<json_object>();
+
+    object<std::int64_t> value;
+    parse_from_json(json, value);
+    return value;
 }
 
 strava::stream::object<std::int64_t> strava::stream::float_stream(const oauth& auth, source src, float_types type)
@@ -1557,14 +1601,4 @@ strava::stream::object<std::array<float, 2>> strava::stream::latlng_stream(const
 strava::stream::object<bool> strava::stream::bool_stream(const oauth& auth, source src)
 {
     return{};
-}
-
-strava::detailed::activity strava::activity::retrieve(const oauth& auth, std::int64_t id)
-{
-    return {};
-}
-
-std::vector<strava::summary::activity> strava::activity::list(const oauth& auth, time before, time after, pagination pagination)
-{
-    return {};
 }

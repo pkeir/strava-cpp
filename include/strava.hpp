@@ -274,7 +274,60 @@ namespace strava
 
         struct activity : public meta::activity
         {
+            int achievement_count;
+            int kudos_count;
+            int comment_count;
+            int athlete_count;
+            int photo_count;
+            int total_photo_count;
+            int upload_id;
+            int moving_time;
+            int eleapsed_time;
+            int max_watts;
+            int weighted_average_watts;
+            int max_heartrate;
+            int suffer_score;
+            int workout_type;
 
+            std::string external_id;
+            std::string name;
+            std::string description;
+            std::string type;
+            std::string gear_id;
+
+            summary::athlete athlete;
+          
+            time start_date;
+            time start_date_local;
+
+            std::string timezone;
+            std::array<float, 2> start_latlng;
+            std::array<float, 2> end_latlng;
+
+            polyline map;
+
+            bool trainer;
+            bool commute;
+            bool manual;
+            bool is_private;
+            bool flagged;
+
+            float distance;
+            float total_elevation_gain;
+            float elev_high;
+            float elev_low;
+            float kilojoules;
+            float average_speed;
+            float max_speed;
+            float average_cadence;
+            float average_temp;
+            float average_watts;
+            float average_heartrate;
+            float calories;
+
+            bool device_watts;
+            bool has_heartrate;
+            bool has_kudoed;
         };
 
         /// Club summary info
@@ -318,7 +371,7 @@ namespace strava
             summary::athlete organizing_athlete;
 
             std::array<std::string, 5> upcoming_occurrences;
-            std::array<std::int64_t, 2> start_latlng;
+            std::array<float, 2> start_latlng;
 
             bool woman_only;
             bool is_private;
@@ -354,8 +407,8 @@ namespace strava
             float elevation_high;
             float elevation_low;
 
-            std::array<int64_t, 2> start_latlng;
-            std::array<int64_t, 2> end_latlng;
+            std::array<float, 2> start_latlng;
+            std::array<float, 2> end_latlng;
 
             bool is_private;
             bool hazardous;
@@ -460,7 +513,17 @@ namespace strava
 
         struct activity : public summary::activity
         {
-
+            float calories;
+            std::string description;
+            summary::gear gear;
+            std::vector<summary::segment_effort> segment_efforts;
+            // splits_metric
+            // splits_standard
+            // laps summary
+            // best effort summaries
+            std::string device_name;
+            std::string embed_token;        
+            // photos 
         };
 
         /// Club detailed info
@@ -1056,7 +1119,7 @@ namespace strava
         {
             activity,
             segment,
-            effort,  
+            effort,
             route
         };
 
@@ -1065,9 +1128,9 @@ namespace strava
         ///
         enum class integer_types
         {
-            heartrate, 
-            cadence, 
-            watts, 
+            heartrate,
+            cadence,
+            watts,
             time,
             temp
         };
@@ -1079,8 +1142,8 @@ namespace strava
         {
             velocity_smooth,
             grade_smooth,
-            distance, 
-            altitude, 
+            distance,
+            altitude,
         };
 
         ///
