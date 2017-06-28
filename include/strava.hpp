@@ -476,14 +476,14 @@ namespace strava
         };
 
         struct club_event : public summary::club_event
-        {   
+        {
             viewer_permissions viewer_permissions;
             time start_datetime;
-            
+
             std::vector<std::string> days_of_week;
             std::string frequency;
             std::string day_of_week;
-            
+
             int week_of_month;
             int weekly_interval;
         };
@@ -796,12 +796,12 @@ namespace strava
         }
 
         ///
-        ///
+        /// Retrieves a club via id.
         ///
         detailed::club retrieve(const oauth& auth, int id);
 
         ///
-        ///
+        /// Announcment struct which mirrors json response.
         ///
         struct club_announcement
         {
@@ -814,27 +814,27 @@ namespace strava
         };
 
         ///
-        ///
+        /// Lists announcments in a given club
         ///
         std::vector<club_announcement> list_announcments(const oauth& auth, int club_id);
-        
+
         /// 
-        ///
+        /// Lists clubs for the current athlete
         ///
         std::vector<summary::club> list_athlete_clubs(const oauth& auth);
 
         ///
-        ///
+        /// Lists members in a club
         ///
         std::vector<summary::athlete> list_club_members(const oauth& auth, int club_id, pagination pagination);
-   
+
         /// 
-        ///
+        /// Lists admns in a club
         ///
         std::vector<summary::athlete> list_club_admin(const oauth& auth, int club_id, pagination pagination);
 
         ///
-        ///
+        /// Lists activities in a club
         ///
         std::vector<summary::activity> list_club_activities(const oauth& auth, int club_id, time before, pagination pagination);
 
@@ -857,12 +857,12 @@ namespace strava
         };
 
         ///
-        ///
+        /// Makes the current athlete join a club
         ///
         join_response join_club(const oauth& auth, int club_id);
 
         /// 
-        ///
+        /// Makes the current athlete leave a club
         ///
         leave_response leave_club(const oauth& auth, int club_id);
     }
@@ -1039,20 +1039,38 @@ namespace strava
     }
 
     ///
-    ///
+    /// Stream functionality wrapped into a namespace
     ///
     namespace stream
     {
         ///
-        /// Types namespace to denote vector type for 
-        /// stream::object<T>
+        /// Stream source enum, for determining 
+        /// data source
         ///
-        namespace types
+        enum class source
         {
-            struct latlng { using type = std::array<int64_t, 2>; };
-            struct time { using type = int64_t; };
-        }
+            activity, effort, segment, route
+        };
 
+        ///
+        /// Stream types which are integer values
+        ///
+        enum class integer_types
+        {
+            time, heartrate, cadence, watts, temp
+        };
+
+        ///
+        /// Stream types which are floating value
+        ///
+        enum class float_types
+        {
+            distance, altitude, velocity_smooth, grade_smooth
+        };
+
+        ///
+        /// Generic class for a stream
+        ///
         template<typename T>
         struct object
         {
@@ -1063,20 +1081,24 @@ namespace strava
             std::string resolution;
         };
 
-        template<typename T>
-        object<typename T::type> retrieve_activity() {
-            object<typename T::type> out;
-            out.data.push_back(typename T::type{});
-            return out;
-        }
+        ///
+        /// Gets a stream of integer from a stream source
+        ///
+        object<std::int64_t> integer_stream(const oauth& info, source src, integer_types type);
 
-        // retrieve effort stream
-        void retrieve_effort();
+        ///
+        /// Gets a stream of floats from a stream source
+        ///
+        object<std::int64_t> float_stream(const oauth& info, source src, float_types type);
 
-        // retrieve segment stream
-        void retrieve_segment();
+        ///
+        /// Gets a stream of latlng points from a stream source
+        ///
+        object<std::array<float, 2>> latlng_stream(const oauth& info, source src);
 
-        // retrieve route stream
-        void retrieve_route();
+        ///
+        /// Gets a stream of booleans from a stream source
+        ///
+        object<bool> bool_stream(const oauth& info, source src);
     }
 }
