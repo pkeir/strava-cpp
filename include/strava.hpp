@@ -787,6 +787,9 @@ namespace strava
     ///
     namespace activity
     {
+        ///
+        ///
+        ///
         struct comment
         {
             int id;
@@ -797,17 +800,21 @@ namespace strava
             summary::athlete athlete;
             time created_at;
         };
+    
+        ///
+        /// Lists comments attacked to an activity.
+        ///
+        std::vector<comment> list_comments(const oauth& auth, int id, pagination paging = {});
 
-        // list comments
-        //std::vector<comment> list_comments(const oauth& auth, int id, pagination paging = {});
+        ///
+        /// Lists kudos attached to an activity
+        ///
+        std::vector<summary::activity> list_kudos(const oauth& auth, int id, pagination paging = {});
 
-        // list kudos
-        //std::vector<summary::activity> list_kudos(const oauth& auth, int id, pagination paging = {});
-
-        // list photos
-        //std::vector<> list_photos()
-
-        // create activity
+        /// 
+        /// VERY COMPLEX COME BACK LATER
+        /// 
+        std::vector<int> list_photos();
 
         // retrieve activity
         detailed::activity retrieve(const oauth& auth, std::int64_t id);
@@ -1105,6 +1112,10 @@ namespace strava
         ///
         std::vector<summary::segment> explore(const oauth& auth, bounds bound, std::string activity_type = "", int64_t min_cat = 0, int64_t max_cat = 0);
     }
+
+    /// 
+    /// VERY COMPLEX COME BACK LATER
+    /// 
 
     ///
     /// Stream functionality wrapped into a namespace

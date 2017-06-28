@@ -3,7 +3,22 @@
 
 # Strava Cpp
 
-C++ API bindings to v3 of the Strava API. Currently a work in progress.
+C++ API bindings to V3 of the Strava API. This API supports reading and updating of the Strava Dataset however file uploads and webhook events are not yet supported. The following operations are supported.
+
+* Authentication
+* Athletes
+* Activities
+* Clubs
+* Routes
+* Running Races
+* Segments
+* Segment Efforts
+* Streams
+
+While the following sections are reserved for a later date.
+
+* Uploads (Revolves around bespoke file types)
+* Webhook Events (Need Strava inc permissions)
 
 ## Example 
 
@@ -11,52 +26,45 @@ C++ API bindings to v3 of the Strava API. Currently a work in progress.
 #include <strava.hpp>
 #include <iostream>
 
-int main(int argc, char* argv[])
-{
-    strava::authenticate({
-        "<access_token>",
-        "<redirect_url>",
-        "<client_secret>",
-        "<client_id>"
-    });
-    
-    strava::athlete me;
-    strava::athlete::current(me);
+using namespace strava;
 
-    std::cout << me.name << std::endl;
+int main()
+{
+    auto secret = "";   // <client_secret>
+    auto id = 0;        // <client_id>
+    auto web_url = request_access(id, scope_view_private_write);
+
+    // Open url to authenticate and get code
+    std::string code;
+    std::cout << web_url << std::endl;
+    std::cin >> code;
+    
+    // Acquire access token to access data
+    auto access_token = exchange_token(id, secret, code);
+    auto auth_info = oauth{ id, secret, access_token };
+    auto myself = athlete::current(auth_info);
+
+    std::cout << myself.firstname << std::endl;
+    std::cout << myself.lastname << std::endl;
+    std::cout << myself.country << std::endl;
 }
 ```
 
 ## Dependencies
 
-You can build via CMake or use the prebuilt binaries available in each release. The library relies on Poco for HTTPS support, Lest for unit testing and OpenSSL because it is required when building Poco with HTTPS support.
+You can build via CMake or use the prebuilt binaries available in each release. The library relies on Poco for HTTPS support, Lest for unit testing and OpenSSL as it is required when building Poco with HTTPS support.
 
 * [Poco](https://github.com/pocoproject/poco)
 * [Lest](https://github.com/martinmoene/lest)  
 * OpenSSL
 
-We have to use HTTPS for requests to Strava so the OpenSSL dependency is not optional. You can install it pretty easily though on MacOS and Linux. On Windows you can install via these [installers](http://slproweb.com/products/Win32OpenSSL.html).
+HTTPS is a hard requirement for requests to Strava so the OpenSSL dependency is not optional. You can install it pretty easily though on MacOS and Linux. On Windows you can install via these [installers](http://slproweb.com/products/Win32OpenSSL.html).
 
-**Linux**
+**Linux & MacOS**
 ```
 sudo apt-get install libssl-dev
-```
-
-**MacOS**
-```
 brew install openssl
 ```
-
-## Objectives
-
-* Athlete functionality
-* Athlete tests
-* Athlete sample
-
-## Documentation
-
-* [Project Specification](SPECIFICATION.md)
-* [Strava Documentation](http://strava.github.io/api/)
 
 ## License
 
