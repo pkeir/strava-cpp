@@ -4,27 +4,6 @@
 
 using namespace strava;
 
-int main()
-{
-    auto secret = "";   // <client_secret>
-    auto id = 0;        // <client_id>
-    auto web_url = request_access(id, scope_view_private_write);
-
-    // Open url to authenticate and get code
-    std::string code;
-    std::cout << web_url << std::endl;
-    std::cin >> code;
-    
-    // Acquire access token to access data
-    auto access_token = exchange_token(id, secret, code);
-    auto auth_info = oauth{ id, secret, access_token };
-    auto myself = athlete::current(auth_info);
-
-    std::cout << myself.firstname << std::endl;
-    std::cout << myself.lastname << std::endl;
-    std::cout << myself.country << std::endl;
-}
-
 int main(int argc, char* argv[])
 {
     auto code = std::string(argc > 3 ? argv[3] : "");

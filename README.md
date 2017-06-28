@@ -28,10 +28,10 @@ While the following sections are reserved for a later date.
 
 using namespace strava;
 
-int main()
+int main(int argc, char* argv[])
 {
-    auto secret = "";   // <client_secret>
     auto id = 0;        // <client_id>
+    auto secret = "";   // <client_secret>
     auto web_url = request_access(id, scope_view_private_write);
 
     // Open url to authenticate and get code
