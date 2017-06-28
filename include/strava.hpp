@@ -274,20 +274,20 @@ namespace strava
 
         struct activity : public meta::activity
         {
-            int achievement_count;
-            int kudos_count;
-            int comment_count;
-            int athlete_count;
-            int photo_count;
-            int total_photo_count;
-            int upload_id;
-            int moving_time;
-            int eleapsed_time;
-            int max_watts;
-            int weighted_average_watts;
-            int max_heartrate;
-            int suffer_score;
-            int workout_type;
+            std::int64_t achievement_count;
+            std::int64_t kudos_count;
+            std::int64_t comment_count;
+            std::int64_t athlete_count;
+            std::int64_t photo_count;
+            std::int64_t total_photo_count;
+            std::int64_t upload_id;
+            std::int64_t moving_time;
+            std::int64_t eleapsed_time;
+            std::int64_t max_watts;
+            std::int64_t weighted_average_watts;
+            std::int64_t max_heartrate;
+            std::int64_t suffer_score;
+            std::int64_t workout_type;
 
             std::string external_id;
             std::string name;
@@ -296,7 +296,7 @@ namespace strava
             std::string gear_id;
 
             summary::athlete athlete;
-          
+
             time start_date;
             time start_date_local;
 
@@ -522,7 +522,7 @@ namespace strava
             // laps summary
             // best effort summaries
             std::string device_name;
-            std::string embed_token;        
+            std::string embed_token;
             // photos 
         };
 
@@ -547,8 +547,8 @@ namespace strava
             std::string frequency;
             std::string day_of_week;
 
-            int week_of_month;
-            int weekly_interval;
+            std::int64_t week_of_month;
+            std::int64_t weekly_interval;
         };
 
         /// Gear detailed info
@@ -792,41 +792,162 @@ namespace strava
         ///
         struct comment
         {
-            int id;
-            int resource_state;
-            int activity_id;
+            std::int64_t id;
+            std::int64_t resource_state;
+            std::int64_t activity_id;
 
             std::string text;
             summary::athlete athlete;
             time created_at;
         };
-    
+
+        ///
+        ///
+        ///
+        struct lap_effort
+        {
+            std::int64_t id;
+            std::int64_t resource_state;
+            std::string name;
+
+            meta::activity activity;
+            meta::athlete athlete;
+
+            std::int64_t elapsed_time;
+            std::int64_t moving_time;
+            std::int64_t start_index;
+            std::int64_t lap_index;
+            std::int64_t end_index;
+
+            time start_date;
+            time start_date_local;
+
+            float distance;
+            float total_elevation_gain;
+            float average_speed;
+            float max_speed;
+            float average_cadence;
+            float average_watts;
+            float average_heartrate;
+            float max_heartrate;
+        };
+
+        struct photo
+        {
+            std::int64_t id;
+            std::int64_t activity_id;
+            std::int64_t resource_state;
+
+            std::string ref;
+            std::string uid;
+            std::string caption;
+            std::string type;
+            std::string uploaded_at;
+            std::string created_at;
+
+            std::array<float, 2> location;
+        };
+
+        ///
+        ///
+        ///
+        struct splits_standard
+        {
+            std::int64_t elapsed_time;
+            std::int64_t moving_time;
+            std::int64_t split;
+
+            float elevation_difference;
+            float distance;
+        };
+
+        ///
+        ///
+        ///
+        struct splits_metric : public splits_standard
+        {
+        };
+
+
+        ///
+        ///
+        ///
+        struct distribution_bucket
+        {
+            std::int64_t max;
+            std::int64_t min;
+            std::int64_t time;
+        };
+
+        ///
+        ///
+        ///
+        struct zone
+        {
+            std::int64_t score;
+            std::int64_t resource_state;
+            std::int64_t points;
+            std::int64_t max;
+
+            std::vector<distribution_bucket> distribution_buckets;
+            std::string type;
+
+            bool sensor_based;
+            bool custom_zones;
+
+            double bike_weight;
+            double athlete_weight;
+        };
+
         ///
         /// Lists comments attacked to an activity.
         ///
-        std::vector<comment> list_comments(const oauth& auth, int id, pagination paging = {});
+        std::vector<comment> list_comments(const oauth& auth, std::int64_t id, pagination paging = {});
 
         ///
         /// Lists kudos attached to an activity
         ///
-        std::vector<summary::activity> list_kudos(const oauth& auth, int id, pagination paging = {});
+        std::vector<summary::activity> list_kudos(const oauth& auth, std::int64_t id, pagination paging = {});
 
         /// 
-        /// VERY COMPLEX COME BACK LATER
+        /// List photos associated with an activity
         /// 
-        std::vector<int> list_photos();
+        std::vector<photo> list_photos(const oauth& auth, std::int64_t id, bool photo_source, std::int64_t size);
 
-        // retrieve activity
+        ///
+        /// Retrieves an activity by id
+        ///
         detailed::activity retrieve(const oauth& auth, std::int64_t id);
 
-        // update an activity
-        // list athlete activities  
+        ///
+        /// Updates an activity by id
+        ///
+        detailed::activity update(const oauth& auth, std::int64_t id, std::map<std::string, std::string> updates);
+
+        ///
+        /// Lists activities for the current user.
+        /// 
         std::vector<summary::activity> list(const oauth& auth, time before = {}, time after = {}, pagination pagination = {});
 
-        // list related activities
-        // list friends activities
-        // list activity zones
-        // list activity laps
+        ///
+        /// Lists related activities for the current user
+        ///
+        std::vector<summary::activity> list_related(const oauth& auth, std::int64_t id, pagination pagination = {});
+
+        ///
+        /// Lists friends activities for the current user
+        ///
+        std::vector<summary::activity> list_friends(const oauth& auth);
+
+        ///
+        /// Lists zones for an activity
+        ///
+        std::vector<zone> list_zones(const oauth& auth, std::int64_t id);
+
+        ///
+        /// Lists laps for an activity
+        ///
+        std::vector<lap_effort> list_laps(const oauth& auth, std::int64_t id);
     }
 
     ///
@@ -842,47 +963,47 @@ namespace strava
             ///
             /// Retrieves a club event via id
             ///
-            summary::club_event retrieve(const oauth& auth, int group_event_id);
+            summary::club_event retrieve(const oauth& auth, std::int64_t group_event_id);
 
             ///
             /// Lists all events tied to a club.
             ///
-            std::vector<summary::club_event> list(const oauth& auth, int club_id, bool upcoming = false);
+            std::vector<summary::club_event> list(const oauth& auth, std::int64_t club_id, bool upcoming = false);
 
             ///
             /// Joins the current athlete to an event
             ///
-            bool join_event(const oauth& auth, int event_id);
+            bool join_event(const oauth& auth, std::int64_t event_id);
 
             ///
             /// Makes the current athlete leave an event
             ///
-            bool leave_event(const oauth& auth, int event_id);
+            bool leave_event(const oauth& auth, std::int64_t event_id);
 
             ///
             /// Deletes an event 
             /// 
-            void delete_event(const oauth& auth, int event_id);
+            void delete_event(const oauth& auth, std::int64_t event_id);
 
             ///
             /// Lists athletes who have joined the event
             ///
-            std::vector<summary::athlete> list_joined_athletes(const oauth& auth, int event_id, pagination pagination);
+            std::vector<summary::athlete> list_joined_athletes(const oauth& auth, std::int64_t event_id, pagination pagination);
         }
 
         ///
         /// Retrieves a club via id.
         ///
-        detailed::club retrieve(const oauth& auth, int id);
+        detailed::club retrieve(const oauth& auth, std::int64_t id);
 
         ///
         /// Announcment struct which mirrors json response.
         ///
         struct club_announcement
         {
-            int id;
-            int resource_state;
-            int club_id;
+            std::int64_t id;
+            std::int64_t resource_state;
+            std::int64_t club_id;
             summary::athlete athlete;
             time created_at;
             std::string message;
@@ -891,7 +1012,7 @@ namespace strava
         ///
         /// Lists announcments in a given club
         ///
-        std::vector<club_announcement> list_announcments(const oauth& auth, int club_id);
+        std::vector<club_announcement> list_announcments(const oauth& auth, std::int64_t club_id);
 
         /// 
         /// Lists clubs for the current athlete
@@ -901,17 +1022,17 @@ namespace strava
         ///
         /// Lists members in a club
         ///
-        std::vector<summary::athlete> list_club_members(const oauth& auth, int club_id, pagination pagination);
+        std::vector<summary::athlete> list_club_members(const oauth& auth, std::int64_t club_id, pagination pagination);
 
         /// 
         /// Lists admns in a club
         ///
-        std::vector<summary::athlete> list_club_admin(const oauth& auth, int club_id, pagination pagination);
+        std::vector<summary::athlete> list_club_admin(const oauth& auth, std::int64_t club_id, pagination pagination);
 
         ///
         /// Lists activities in a club
         ///
-        std::vector<summary::activity> list_club_activities(const oauth& auth, int club_id, time before, pagination pagination);
+        std::vector<summary::activity> list_club_activities(const oauth& auth, std::int64_t club_id, time before, pagination pagination);
 
         ///
         /// When leaving a group this struct is returned
@@ -934,12 +1055,12 @@ namespace strava
         ///
         /// Makes the current athlete join a club
         ///
-        join_response join_club(const oauth& auth, int club_id);
+        join_response join_club(const oauth& auth, std::int64_t club_id);
 
         /// 
         /// Makes the current athlete leave a club
         ///
-        leave_response leave_club(const oauth& auth, int club_id);
+        leave_response leave_club(const oauth& auth, std::int64_t club_id);
     }
 
     ///

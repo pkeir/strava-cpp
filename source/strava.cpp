@@ -745,13 +745,6 @@ void parse_from_json(json_object json, strava::stream::object<std::int64_t>& val
     value = {};
 }
 
-///
-///
-///
-///
-///
-///
-
 std::string strava::request_access(int64_t client_id, oauth_scope scope)
 {
     std::stringstream url_builder;
@@ -1269,7 +1262,7 @@ std::vector<strava::summary::segment> strava::segments::explore(const oauth& aut
     return json_to_vector<summary::segment>(array, parser);
 }
 
-strava::summary::club_event strava::clubs::events::retrieve(const oauth& auth, int id)
+strava::summary::club_event strava::clubs::events::retrieve(const oauth& auth, std::int64_t id)
 {
     auto request = http_request
     {
@@ -1287,7 +1280,7 @@ strava::summary::club_event strava::clubs::events::retrieve(const oauth& auth, i
     return value;
 }
 
-std::vector<strava::summary::club_event> strava::clubs::events::list(const oauth& auth, int club_id, bool upcoming)
+std::vector<strava::summary::club_event> strava::clubs::events::list(const oauth& auth, std::int64_t club_id, bool upcoming)
 {
     auto data = std::map<std::string, std::string>{};
 
@@ -1311,7 +1304,7 @@ std::vector<strava::summary::club_event> strava::clubs::events::list(const oauth
     return json_to_vector<summary::club_event>(json, parser);
 }
 
-bool strava::clubs::events::join_event(const oauth& auth, int event_id)
+bool strava::clubs::events::join_event(const oauth& auth, std::int64_t event_id)
 {
     auto request = http_request
     {
@@ -1327,7 +1320,7 @@ bool strava::clubs::events::join_event(const oauth& auth, int event_id)
     return cast<bool>(json, "joined");
 }
 
-bool strava::clubs::events::leave_event(const oauth& auth, int event_id)
+bool strava::clubs::events::leave_event(const oauth& auth, std::int64_t event_id)
 {
     auto request = http_request
     {
@@ -1343,7 +1336,7 @@ bool strava::clubs::events::leave_event(const oauth& auth, int event_id)
     return cast<bool>(json, "joined");
 }
 
-void strava::clubs::events::delete_event(const oauth& auth, int event_id)
+void strava::clubs::events::delete_event(const oauth& auth, std::int64_t event_id)
 {
     auto request = http_request
     {
@@ -1356,7 +1349,7 @@ void strava::clubs::events::delete_event(const oauth& auth, int event_id)
     check(send(request));
 }
 
-strava::detailed::club strava::clubs::retrieve(const oauth& auth, int id)
+strava::detailed::club strava::clubs::retrieve(const oauth& auth, std::int64_t id)
 {
     auto request = http_request
     {
@@ -1374,7 +1367,7 @@ strava::detailed::club strava::clubs::retrieve(const oauth& auth, int id)
     return value;
 }
 
-std::vector<strava::clubs::club_announcement> strava::clubs::list_announcments(const oauth& auth, int club_id)
+std::vector<strava::clubs::club_announcement> strava::clubs::list_announcments(const oauth& auth, std::int64_t club_id)
 {
     auto request = http_request
     {
@@ -1391,7 +1384,7 @@ std::vector<strava::clubs::club_announcement> strava::clubs::list_announcments(c
     return json_to_vector<club_announcement>(json, parser);
 }
 
-std::vector<strava::summary::athlete> strava::clubs::events::list_joined_athletes(const oauth& auth, int event_id, pagination pagination)
+std::vector<strava::summary::athlete> strava::clubs::events::list_joined_athletes(const oauth& auth, std::int64_t event_id, pagination pagination)
 {
     auto request = http_request
     {
@@ -1425,7 +1418,7 @@ std::vector<strava::summary::club> strava::clubs::list_athlete_clubs(const oauth
     return json_to_vector<summary::club>(json, parser);
 }
 
-std::vector<strava::summary::athlete> strava::clubs::list_club_members(const oauth& auth, int club_id, pagination pagination)
+std::vector<strava::summary::athlete> strava::clubs::list_club_members(const oauth& auth, std::int64_t club_id, pagination pagination)
 {
     auto request = http_request
     {
@@ -1442,7 +1435,7 @@ std::vector<strava::summary::athlete> strava::clubs::list_club_members(const oau
     return json_to_vector<summary::athlete>(json, parser);
 }
 
-std::vector<strava::summary::athlete> strava::clubs::list_club_admin(const oauth& auth, int club_id, pagination pagination)
+std::vector<strava::summary::athlete> strava::clubs::list_club_admin(const oauth& auth, std::int64_t club_id, pagination pagination)
 {
     auto request = http_request
     {
@@ -1459,7 +1452,7 @@ std::vector<strava::summary::athlete> strava::clubs::list_club_admin(const oauth
     return json_to_vector<summary::athlete>(json, parser);
 }
 
-std::vector<strava::summary::activity> strava::clubs::list_club_activities(const oauth& auth, int club_id, time before, pagination pagination)
+std::vector<strava::summary::activity> strava::clubs::list_club_activities(const oauth& auth, std::int64_t club_id, time before, pagination pagination)
 {
     auto request = http_request
     {
@@ -1476,7 +1469,7 @@ std::vector<strava::summary::activity> strava::clubs::list_club_activities(const
     return json_to_vector<summary::activity>(json, parser);
 }
 
-strava::clubs::join_response strava::clubs::join_club(const oauth& auth, int club_id)
+strava::clubs::join_response strava::clubs::join_club(const oauth& auth, std::int64_t club_id)
 {
     auto request = http_request
     {
@@ -1494,7 +1487,7 @@ strava::clubs::join_response strava::clubs::join_club(const oauth& auth, int clu
     return value;
 }
 
-strava::clubs::leave_response strava::clubs::leave_club(const oauth& auth, int club_id)
+strava::clubs::leave_response strava::clubs::leave_club(const oauth& auth, std::int64_t club_id)
 {
     auto request = http_request
     {
@@ -1510,6 +1503,21 @@ strava::clubs::leave_response strava::clubs::leave_club(const oauth& auth, int c
     leave_response value;
     parse_from_json(json, value);
     return value;
+}
+
+std::vector<strava::activity::comment> strava::activity::list_comments(const oauth& auth, std::int64_t id, pagination paging)
+{
+    return{};
+}
+
+std::vector<strava::summary::activity> strava::activity::list_kudos(const oauth& auth, std::int64_t id, pagination paging)
+{
+    return{};
+}
+
+std::vector<strava::activity::photo> strava::activity::list_photos(const oauth& auth, std::int64_t id, bool photo_source, std::int64_t size)
+{
+    return{};
 }
 
 strava::detailed::activity strava::activity::retrieve(const oauth& auth, std::int64_t id)
@@ -1547,6 +1555,26 @@ std::vector<strava::summary::activity> strava::activity::list(const oauth& auth,
     return json_to_vector<summary::activity>(json, parser);
 }
 
+std::vector<strava::summary::activity> strava::activity::list_related(const oauth& auth, std::int64_t id, pagination pagination)
+{
+    return{};
+}
+
+std::vector<strava::summary::activity> strava::activity::list_friends(const oauth& auth)
+{
+    return{};
+}
+
+std::vector<strava::activity::zone> strava::activity::list_zones(const oauth& auth, std::int64_t id)
+{
+    return{};
+}
+
+std::vector<strava::activity::lap_effort> strava::activity::list_laps(const oauth& auth, std::int64_t id)
+{
+    return{};
+}
+
 strava::stream::object<std::int64_t> strava::stream::integer_stream(const oauth& auth, std::int64_t id, source src, integer_types type)
 {
     std::stringstream ss;
@@ -1554,10 +1582,10 @@ strava::stream::object<std::int64_t> strava::stream::integer_stream(const oauth&
 
     switch (src)
     {
-        case source::activity: ss << "activities"; break;
-        case source::segment: ss << "segments"; break;
-        case source::effort: ss << "efforts"; break;
-        case source::route: ss << "routes"; break;
+    case source::activity: ss << "activities"; break;
+    case source::segment: ss << "segments"; break;
+    case source::effort: ss << "efforts"; break;
+    case source::route: ss << "routes"; break;
     };
 
     ss << "/" << id;
@@ -1565,11 +1593,11 @@ strava::stream::object<std::int64_t> strava::stream::integer_stream(const oauth&
 
     switch (type)
     {
-        case integer_types::heartrate: ss << "heartrate"; break;
-        case integer_types::cadence: ss << "cadence"; break;
-        case integer_types::watts: ss << "watts"; break;
-        case integer_types::temp: ss << "temp"; break;
-        case integer_types::time: ss << "latlng"; break;
+    case integer_types::heartrate: ss << "heartrate"; break;
+    case integer_types::cadence: ss << "cadence"; break;
+    case integer_types::watts: ss << "watts"; break;
+    case integer_types::temp: ss << "temp"; break;
+    case integer_types::time: ss << "latlng"; break;
     }
 
     auto request = http_request
