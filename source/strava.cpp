@@ -560,7 +560,7 @@ void segment_from_json(Poco::JSON::Object::Ptr json, strava::detailed::segment& 
 
     out.created_at = strava::time(cast<std::string>(json, "created_at"));
     out.updated_at = strava::time(cast<std::string>(json, "updated_at"));
-    out.total_elevation_gain = cast<int64_t>(json, "total_elevation_gain");
+    out.total_elevation_gain = cast<float>(json, "total_elevation_gain");
     out.athlete_count = cast<int64_t>(json, "athlete_count");
     out.effort_count = cast<int64_t>(json, "effort_count");
     out.star_count = cast<int64_t>(json, "star_count");
@@ -1235,32 +1235,118 @@ std::vector<strava::summary::segment> strava::segments::explore(const oauth& aut
     return json_to_vector<summary::segment>(array, parser);
 }
 
-strava::summary::club_event strava::clubs::events::retrieve(const oauth& auth, int group_event_id)
+void parse_from_json(json_object json, strava::summary::club_event& out)
 {
-    return{};
+    out = {};
+    out.id = cast<int>(json, "id");
+    out.resource_state = cast<int>(json, "resource_state");
 }
 
-std::vector<strava::summary::club_event> strava::clubs::events::list(const oauth& auth, int club_id, bool upcoming = false)
+void parse_from_json(json_object json, strava::detailed::club_event& out)
 {
-    return{};
+    parse_from_json(json, (strava::summary::club_event&)out);
 }
 
-bool strava::clubs::events::join(const oauth& auth, int event_id)
+strava::summary::club_event strava::clubs::events::retrieve(const oauth& auth, int id)
 {
-    return {};
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_GET,
+        join("/api/v3/group_events/", id),
+        auth.access_token,
+        {}, {}, {}
+    };
+
+    auto resp = check(send(request));
+    auto json = resp.extract<json_object>();
+
+    strava::summary::club_event value;
+    parse_from_json(json, value);
+    return value;
 }
 
-bool strava::clubs::events::leave(const oauth& auth, int event_id)
+std::vector<strava::summary::club_event> strava::clubs::events::list(const oauth& auth, int club_id, bool upcoming)
 {
-    return{};
+    auto data = std::map<std::string, std::string>{};
+
+    if (upcoming)
+    {
+        data["upcoming"] = "true";
+    }
+
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_GET,
+        join("/api/v3/clubs/", club_id, "/group_events"),
+        auth.access_token,
+        {}, data, {}
+    };
+
+    auto parser = [](auto& s, auto& c) { parse_from_json(s, c); };
+    auto resp = check(send(request));
+    auto json = resp.extract<json_array>();
+
+    return json_to_vector<summary::club_event>(json, parser);
 }
 
-bool strava::clubs::events::remove(const oauth& auth, int event_id)
+bool strava::clubs::events::join_event(const oauth& auth, int event_id)
 {
-    return{};
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_POST,
+        join("/api/v3/group_events/", event_id, "/rsvps"),
+        auth.access_token,
+        {},{},{}
+    };
+
+    auto resp = check(send(request));
+    auto json = resp.extract<json_object>();
+
+    return cast<bool>(json, "joined");
+}
+
+bool strava::clubs::events::leave_event(const oauth& auth, int event_id)
+{
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_DELETE,
+        join("/api/v3/group_events/", event_id, "/rsvps"),
+        auth.access_token,
+        {},{},{}
+    };
+
+    auto resp = check(send(request));
+    auto json = resp.extract<json_object>();
+
+    return cast<bool>(json, "joined");
+}
+
+void strava::clubs::events::delete_event(const oauth& auth, int event_id)
+{
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_DELETE,
+        join("/api/v3/group_events/", event_id),
+        auth.access_token,
+        {},{},{}
+    };
+
+    check(send(request));
 }
 
 std::vector<strava::summary::athlete> strava::clubs::events::list_joined_athletes(const oauth& auth, int event_id, pagination pagination)
 {
-    return{};
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_GET,
+        join("/api/v3/group_events/", event_id, "/athletes"),
+        auth.access_token, {}, {},
+        pagination
+    };
+
+    auto parser = [](auto& s, auto& c) { parse_from_json(s, c); };
+    auto resp = check(send(request));
+    auto json = resp.extract<json_array>();
+
+    return json_to_vector<summary::athlete>(json, parser);
 }

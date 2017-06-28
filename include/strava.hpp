@@ -777,17 +777,17 @@ namespace strava
             ///
             /// Joins the current athlete to an event
             ///
-            bool join(const oauth& auth, int event_id);
+            bool join_event(const oauth& auth, int event_id);
 
             ///
             /// Makes the current athlete leave an event
             ///
-            bool leave(const oauth& auth, int event_id);
+            bool leave_event(const oauth& auth, int event_id);
 
             ///
             /// Deletes an event 
             /// 
-            bool remove(const oauth& auth, int event_id);
+            void delete_event(const oauth& auth, int event_id);
 
             ///
             /// Lists athletes who have joined the event
