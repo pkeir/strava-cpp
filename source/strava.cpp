@@ -1234,3 +1234,33 @@ std::vector<strava::summary::segment> strava::segments::explore(const oauth& aut
 
     return json_to_vector<summary::segment>(array, parser);
 }
+
+strava::summary::club_event strava::clubs::events::retrieve(const oauth& auth, int group_event_id)
+{
+    return{};
+}
+
+std::vector<strava::summary::club_event> strava::clubs::events::list(const oauth& auth, int club_id, bool upcoming = false)
+{
+    return{};
+}
+
+bool strava::clubs::events::join(const oauth& auth, int event_id)
+{
+    return {};
+}
+
+bool strava::clubs::events::leave(const oauth& auth, int event_id)
+{
+    return{};
+}
+
+bool strava::clubs::events::remove(const oauth& auth, int event_id)
+{
+    return{};
+}
+
+std::vector<strava::summary::athlete> strava::clubs::events::list_joined_athletes(const oauth& auth, int event_id, pagination pagination)
+{
+    return{};
+}

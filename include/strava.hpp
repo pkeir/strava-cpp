@@ -133,6 +133,15 @@ namespace strava
     };
 
     ///
+    /// Viewer permissions struct for club
+    /// events.
+    ///
+    struct viewer_permissions
+    {
+        bool edit;
+    };
+
+    ///
     /// Generates a url for you to view in a browser
     /// to grant access to your data.
     ///
@@ -263,6 +272,11 @@ namespace strava
             time updated_at;
         };
 
+        struct activity : public meta::activity
+        {
+
+        };
+
         /// Club summary info
         struct club : public meta::club
         {
@@ -281,6 +295,34 @@ namespace strava
             bool is_private;
             bool verified;
             bool featured;
+        };
+
+        struct club_event
+        {
+            std::int64_t id;
+            std::int64_t resource_state;
+            std::int64_t skill_levels;
+            std::int64_t terrain;
+
+            time created_at;
+
+            std::string title;
+            std::string description;
+            std::string activity_type;
+            std::string zone;
+            std::string address;
+
+            meta::route route;
+            meta::club club;
+
+            summary::athlete organizing_athlete;
+
+            std::array<std::string, 5> upcoming_occurrences;
+            std::array<std::int64_t, 2> start_latlng;
+
+            bool woman_only;
+            bool is_private;
+            bool joined;
         };
 
         /// Gear summary info
@@ -416,6 +458,11 @@ namespace strava
             std::vector<summary::gear> shoes;
         };
 
+        struct activity : public summary::activity
+        {
+
+        };
+
         /// Club detailed info
         struct club : public summary::club
         {
@@ -426,6 +473,19 @@ namespace strava
 
             bool admin;
             bool owner;
+        };
+
+        struct club_event : public summary::club_event
+        {   
+            viewer_permissions viewer_permissions;
+            time start_datetime;
+            
+            std::vector<std::string> days_of_week;
+            std::string frequency;
+            std::string day_of_week;
+            
+            int week_of_month;
+            int weekly_interval;
         };
 
         /// Gear detailed info
@@ -664,9 +724,26 @@ namespace strava
     ///
     namespace activity
     {
-        // list photos
+        struct comment
+        {
+            int id;
+            int resource_state;
+            int activity_id;
+
+            std::string text;
+            summary::athlete athlete;
+            time created_at;
+        };
+
         // list comments
+        std::vector<comment> list_comments(const oauth& auth, int id, pagination paging = {});
+
         // list kudos
+        std::vector<summary::activity> list_kudos(const oauth& auth, int id, pagination paging = {});
+
+        // list photos
+        //std::vector<> list_photos()
+
         // create activity
         // retrieve activity
         // update an activity
@@ -682,6 +759,42 @@ namespace strava
     ///
     namespace clubs
     {
+        ///
+        /// Club events functionality is wrapper in its own namespace
+        ///
+        namespace events
+        {
+            ///
+            /// Retrieves a club event via id
+            ///
+            summary::club_event retrieve(const oauth& auth, int group_event_id);
+
+            ///
+            /// Lists all events tied to a club.
+            ///
+            std::vector<summary::club_event> list(const oauth& auth, int club_id, bool upcoming = false);
+
+            ///
+            /// Joins the current athlete to an event
+            ///
+            bool join(const oauth& auth, int event_id);
+
+            ///
+            /// Makes the current athlete leave an event
+            ///
+            bool leave(const oauth& auth, int event_id);
+
+            ///
+            /// Deletes an event 
+            /// 
+            bool remove(const oauth& auth, int event_id);
+
+            ///
+            /// Lists athletes who have joined the event
+            ///
+            std::vector<summary::athlete> list_joined_athletes(const oauth& auth, int event_id, pagination pagination);
+        }
+
         // retrieve club
         // list club announcments
         // list athlete clubs
