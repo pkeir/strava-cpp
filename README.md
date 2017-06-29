@@ -46,12 +46,12 @@ The API provides access to the most prominant areas of the dataset. If you are j
 * Running Races
 * Segments
 * Segment Efforts
-* Streams
 
 ## Not Supported
 
 The following sections of the API are reserved for a later date.
 
+* Streams (Unable to get test set)
 * Uploads (Revolves around bespoke file types)
 * Webhook Events (Need Strava inc permissions)
 

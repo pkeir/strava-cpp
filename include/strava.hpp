@@ -486,6 +486,118 @@ namespace strava
     }
 
     ///
+    ///
+    ///
+    struct comment
+    {
+        std::int64_t id;
+        std::int64_t resource_state;
+        std::int64_t activity_id;
+
+        std::string text;
+        summary::athlete athlete;
+        time created_at;
+    };
+
+    ///
+    ///
+    ///
+    struct lap_effort
+    {
+        std::int64_t id;
+        std::int64_t resource_state;
+        std::string name;
+
+        meta::activity activity;
+        meta::athlete athlete;
+
+        std::int64_t elapsed_time;
+        std::int64_t moving_time;
+        std::int64_t start_index;
+        std::int64_t lap_index;
+        std::int64_t end_index;
+
+        time start_date;
+        time start_date_local;
+
+        float distance;
+        float total_elevation_gain;
+        float average_speed;
+        float max_speed;
+        float average_cadence;
+        float average_watts;
+        float average_heartrate;
+        float max_heartrate;
+    };
+
+    struct photo
+    {
+        std::int64_t id;
+        std::int64_t activity_id;
+        std::int64_t resource_state;
+
+        std::string ref;
+        std::string uid;
+        std::string caption;
+        std::string type;
+        std::string uploaded_at;
+        std::string created_at;
+
+        std::array<float, 2> location;
+    };
+
+    ///
+    ///
+    ///
+    struct splits_standard
+    {
+        std::int64_t elapsed_time;
+        std::int64_t moving_time;
+        std::int64_t split;
+
+        float elevation_difference;
+        float distance;
+    };
+
+    ///
+    ///
+    ///
+    struct splits_metric : public splits_standard
+    {
+    };
+
+
+    ///
+    ///
+    ///
+    struct distribution_bucket
+    {
+        std::int64_t max;
+        std::int64_t min;
+        std::int64_t time;
+    };
+
+    ///
+    ///
+    ///
+    struct zone
+    {
+        std::int64_t score;
+        std::int64_t resource_state;
+        std::int64_t points;
+        std::int64_t max;
+
+        std::vector<distribution_bucket> distribution_buckets;
+        std::string type;
+
+        bool sensor_based;
+        bool custom_zones;
+
+        double bike_weight;
+        double athlete_weight;
+    };
+
+    ///
     /// You get three types of representation with strava, a meta repr a summary repr and
     /// a detailed repr. Here they are split int64_to seperate namespaces
     /// for clarity.
@@ -521,6 +633,7 @@ namespace strava
             // splits_standard
             // laps summary
             // best effort summaries
+            std::vector<summary::segment_effort> best_efforts;
             std::string device_name;
             std::string embed_token;
             // photos 
@@ -787,118 +900,6 @@ namespace strava
     ///
     namespace activity
     {
-        ///
-        ///
-        ///
-        struct comment
-        {
-            std::int64_t id;
-            std::int64_t resource_state;
-            std::int64_t activity_id;
-
-            std::string text;
-            summary::athlete athlete;
-            time created_at;
-        };
-
-        ///
-        ///
-        ///
-        struct lap_effort
-        {
-            std::int64_t id;
-            std::int64_t resource_state;
-            std::string name;
-
-            meta::activity activity;
-            meta::athlete athlete;
-
-            std::int64_t elapsed_time;
-            std::int64_t moving_time;
-            std::int64_t start_index;
-            std::int64_t lap_index;
-            std::int64_t end_index;
-
-            time start_date;
-            time start_date_local;
-
-            float distance;
-            float total_elevation_gain;
-            float average_speed;
-            float max_speed;
-            float average_cadence;
-            float average_watts;
-            float average_heartrate;
-            float max_heartrate;
-        };
-
-        struct photo
-        {
-            std::int64_t id;
-            std::int64_t activity_id;
-            std::int64_t resource_state;
-
-            std::string ref;
-            std::string uid;
-            std::string caption;
-            std::string type;
-            std::string uploaded_at;
-            std::string created_at;
-
-            std::array<float, 2> location;
-        };
-
-        ///
-        ///
-        ///
-        struct splits_standard
-        {
-            std::int64_t elapsed_time;
-            std::int64_t moving_time;
-            std::int64_t split;
-
-            float elevation_difference;
-            float distance;
-        };
-
-        ///
-        ///
-        ///
-        struct splits_metric : public splits_standard
-        {
-        };
-
-
-        ///
-        ///
-        ///
-        struct distribution_bucket
-        {
-            std::int64_t max;
-            std::int64_t min;
-            std::int64_t time;
-        };
-
-        ///
-        ///
-        ///
-        struct zone
-        {
-            std::int64_t score;
-            std::int64_t resource_state;
-            std::int64_t points;
-            std::int64_t max;
-
-            std::vector<distribution_bucket> distribution_buckets;
-            std::string type;
-
-            bool sensor_based;
-            bool custom_zones;
-
-            double bike_weight;
-            double athlete_weight;
-        };
-
         ///
         /// Lists comments attacked to an activity.
         ///
@@ -1232,83 +1233,5 @@ namespace strava
         /// Finds segments in a given latlng bounding box.
         ///
         std::vector<summary::segment> explore(const oauth& auth, bounds bound, std::string activity_type = "", int64_t min_cat = 0, int64_t max_cat = 0);
-    }
-
-    /// 
-    /// VERY COMPLEX COME BACK LATER
-    /// 
-
-    ///
-    /// Stream functionality wrapped into a namespace
-    ///
-    namespace stream
-    {
-        ///
-        /// Stream source enum, for determining 
-        /// data source
-        ///
-        enum class source
-        {
-            activity,
-            segment,
-            effort,
-            route
-        };
-
-        ///
-        /// Stream types which are integer values
-        ///
-        enum class integer_types
-        {
-            heartrate,
-            cadence,
-            watts,
-            time,
-            temp
-        };
-
-        ///
-        /// Stream types which are floating value
-        ///
-        enum class float_types
-        {
-            velocity_smooth,
-            grade_smooth,
-            distance,
-            altitude,
-        };
-
-        ///
-        /// Generic class for a stream
-        ///
-        template<typename T>
-        struct object
-        {
-            std::string type;
-            std::vector<T> data;
-            std::string series_type;
-            int64_t original_size;
-            std::string resolution;
-        };
-
-        ///
-        /// Gets a stream of integer from a stream source
-        ///
-        object<std::int64_t> integer_stream(const oauth& info, std::int64_t id, source src, integer_types type);
-
-        ///
-        /// Gets a stream of floats from a stream source
-        ///
-        object<std::int64_t> float_stream(const oauth& info, source src, float_types type);
-
-        ///
-        /// Gets a stream of latlng points from a stream source
-        ///
-        object<std::array<float, 2>> latlng_stream(const oauth& info, source src);
-
-        ///
-        /// Gets a stream of booleans from a stream source
-        ///
-        object<bool> bool_stream(const oauth& info, source src);
     }
 }
