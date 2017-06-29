@@ -30,7 +30,6 @@ int main(int argc, char* argv[])
     auto my_activities = activity::list(auth_info);
     auto my_activity = activity::retrieve(auth_info, my_activities.front().id);
 
-    auto stream = stream::integer_stream(auth_info, 123, stream::source::activity, strava::stream::integer_types::time);
     
     std::cin.get();
 }

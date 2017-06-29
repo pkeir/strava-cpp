@@ -740,11 +740,6 @@ void parse_from_json(json_object json, strava::segments::leaderboard& out)
     }
 }
 
-void parse_from_json(json_object json, strava::stream::object<std::int64_t>& value)
-{
-    value = {};
-}
-
 std::string strava::request_access(int64_t client_id, oauth_scope scope)
 {
     std::stringstream url_builder;
@@ -1505,7 +1500,7 @@ strava::clubs::leave_response strava::clubs::leave_club(const oauth& auth, std::
     return value;
 }
 
-std::vector<strava::activity::comment> strava::activity::list_comments(const oauth& auth, std::int64_t id, pagination paging)
+std::vector<strava::comment> strava::activity::list_comments(const oauth& auth, std::int64_t id, pagination paging)
 {
     return{};
 }
@@ -1515,7 +1510,7 @@ std::vector<strava::summary::activity> strava::activity::list_kudos(const oauth&
     return{};
 }
 
-std::vector<strava::activity::photo> strava::activity::list_photos(const oauth& auth, std::int64_t id, bool photo_source, std::int64_t size)
+std::vector<strava::photo> strava::activity::list_photos(const oauth& auth, std::int64_t id, bool photo_source, std::int64_t size)
 {
     return{};
 }
@@ -1565,12 +1560,12 @@ std::vector<strava::summary::activity> strava::activity::list_friends(const oaut
     return{};
 }
 
-std::vector<strava::activity::zone> strava::activity::list_zones(const oauth& auth, std::int64_t id)
+std::vector<strava::zone> strava::activity::list_zones(const oauth& auth, std::int64_t id)
 {
     return{};
 }
 
-std::vector<strava::activity::lap_effort> strava::activity::list_laps(const oauth& auth, std::int64_t id)
+std::vector<strava::lap_effort> strava::activity::list_laps(const oauth& auth, std::int64_t id)
 {
     return{};
 }

@@ -486,7 +486,7 @@ namespace strava
     }
 
     ///
-    ///
+    /// Activity Comment Struct
     ///
     struct comment
     {
@@ -500,7 +500,7 @@ namespace strava
     };
 
     ///
-    ///
+    /// Lap Effort Struct
     ///
     struct lap_effort
     {
@@ -530,6 +530,9 @@ namespace strava
         float max_heartrate;
     };
 
+    ///
+    /// Photo Struct
+    ///
     struct photo
     {
         std::int64_t id;
@@ -547,7 +550,7 @@ namespace strava
     };
 
     ///
-    ///
+    /// Splits Standard Zone
     ///
     struct splits_standard
     {
@@ -560,7 +563,7 @@ namespace strava
     };
 
     ///
-    ///
+    /// Splits Metric Zone
     ///
     struct splits_metric : public splits_standard
     {
@@ -568,7 +571,7 @@ namespace strava
 
 
     ///
-    ///
+    /// Distribution Struct
     ///
     struct distribution_bucket
     {
@@ -578,7 +581,7 @@ namespace strava
     };
 
     ///
-    ///
+    /// Zone struct
     ///
     struct zone
     {
@@ -623,20 +626,19 @@ namespace strava
             std::vector<summary::gear> shoes;
         };
 
+        /// Activity detailed info
         struct activity : public summary::activity
         {
             float calories;
             std::string description;
             summary::gear gear;
             std::vector<summary::segment_effort> segment_efforts;
-            // splits_metric
-            // splits_standard
-            // laps summary
-            // best effort summaries
             std::vector<summary::segment_effort> best_efforts;
+            std::vector<splits_standard> splits_standard;
+            std::vector<splits_metric> splits_metric;
+            std::vector<lap_effort> laps;
             std::string device_name;
             std::string embed_token;
-            // photos 
         };
 
         /// Club detailed info
