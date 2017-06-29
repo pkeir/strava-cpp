@@ -41,12 +41,11 @@ const auto routes_url = "/api/v3/routes"s;
 const auto clubs_url = "/api/v3/clubs"s;
 const auto gear_url = "/api/v3/gear"s;
 
-
-///
-/// Client struct which keeps
-/// a Poco https session and the context
-/// for SSL https server/client
-///
+//
+// Client struct which keeps
+// a Poco https session and the context
+// for SSL https server/client
+//
 struct poco_client
 {
     Poco::SharedPtr<Poco::Net::HTTPSClientSession> client;
@@ -54,9 +53,9 @@ struct poco_client
 } client;
 
 
-///
-///
-///
+//
+//
+//
 struct http_request
 {
     std::string method, url, access_token;
@@ -66,29 +65,29 @@ struct http_request
 };
 
 
-///
-/// Constructor for setting the default values
-/// allowing overwriting when wanting pagination
-/// functionality
-///
+//
+// Constructor for setting the default values
+// allowing overwriting when wanting pagination
+// functionality
+//
 strava::pagination::pagination(int64_t page, int64_t per_page) :
     per_page(per_page),
     page(page)
 {
 }
 
-///
-/// Tells if the user passed in paginatino parameters
-///
+//
+// Tells if the user passed in paginatino parameters
+//
 bool strava::pagination::enabled()
 {
     return page != 0;
 }
 
-///
-/// Error constructor takes a vector of error codes from Strava API
-/// and the error message as well.
-///
+//
+// Error constructor takes a vector of error codes from Strava API
+// and the error message as well.
+//
 strava::error::error(const std::string& msg, const std::vector<error_code>& codes) :
     std::runtime_error(msg),
     error_codes(codes),
@@ -96,43 +95,43 @@ strava::error::error(const std::string& msg, const std::vector<error_code>& code
 {
 }
 
-///
-/// Returns the message given by the Strava API.
-///
+//
+// Returns the message given by the Strava API.
+//
 const char* strava::error::what() const
 {
     return message.c_str();
 }
 
-///
-/// Returns the error codes given by the Strava API.
-///
+//
+// Returns the error codes given by the Strava API.
+//
 const std::vector<strava::error::error_code>& strava::error::codes()
 {
     return error_codes;
 }
 
-///
-/// Constructor for time object from ISO 8601 standard.
-///
-strava::time::time(std::string timestr)
+//
+// Constructor for time object from ISO 8601 standard.
+//
+strava::datetime::datetime(std::string timestr)
 {
-    std::tm time;
+    std::tm datetime;
     std::istringstream input(timestr);
     input.imbue(std::locale(setlocale(LC_ALL, nullptr)));
-    input >> std::get_time(&time, "%Y-%m-%dT%H:%M:%SZ");
+    input >> std::get_time(&datetime, "%Y-%m-%dT%H:%M:%SZ");
 
     auto failed = input.fail();
     time_string = failed ? "" : timestr;
-    time_epoch = failed ? 0 : mktime(&time);
+    time_epoch = failed ? 0 : mktime(&datetime);
 }
 
-///
-/// Constructor for time object from std::time_t
-///
-strava::time::time(std::time_t num)
+//
+// Constructor for time object from std::time_t
+//
+strava::datetime::datetime(std::time_t num)
 {
-    const auto format = "%Y-%m-%dT%H:%M:%SZ";//"%Y-%m-%d %H:%M:%S";
+    const auto format = "%Y-%m-%dT%H:%M:%S";
     const auto size = 20;
 
     char buffer[size];
@@ -141,9 +140,9 @@ strava::time::time(std::time_t num)
     time_epoch = num;
 }
 
-///
-///
-///
+//
+//
+//
 void lazy_start_session()
 {
     using namespace Poco::Net;
@@ -307,12 +306,12 @@ Poco::Dynamic::Var& check(Poco::Dynamic::Var& response)
     return response;
 }
 
-///
-///
-///
-///
-///
-///
+//
+//
+//
+//
+//
+//
 
 void parse_from_json(Poco::JSON::Object::Ptr json, strava::summary::club& club)
 {
@@ -381,8 +380,8 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::summary::athlete& ath
 
     athlete.premium = cast<bool>(json, "premium");
 
-    athlete.created_at = strava::time(cast<std::string>(json, "created_at"));
-    athlete.updated_at = strava::time(cast<std::string>(json, "updated_at"));
+    athlete.created_at = strava::datetime(cast<std::string>(json, "created_at"));
+    athlete.updated_at = strava::datetime(cast<std::string>(json, "updated_at"));
 }
 
 void parse_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& athlete)
@@ -509,11 +508,12 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::athlete::stats& out)
     parse_from_json(json->getObject("all_run_totals"), out.all_run_totals);
 }
 
-void parse_from_json(Poco::JSON::Object::Ptr json, strava::polyline& out)
+void parse_from_json(Poco::JSON::Object::Ptr json, strava::map_polyline& out)
 {
     out = {};
     out.id = cast<std::string>(json, "id");
-    out.line = cast<std::string>(json, "polyline");
+    out.polyline = cast<std::string>(json, "polyline");
+    out.summary_polyline = cast<std::string>(json, "summary_polyline");
     out.resource_state = cast<int64_t>(json, "resource_state");
 }
 
@@ -554,8 +554,8 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::detailed::segment& ou
     parse_from_json(json, (strava::summary::segment&) out);
     parse_from_json(json, out.map);
 
-    out.created_at = strava::time(cast<std::string>(json, "created_at"));
-    out.updated_at = strava::time(cast<std::string>(json, "updated_at"));
+    out.created_at = strava::datetime(cast<std::string>(json, "created_at"));
+    out.updated_at = strava::datetime(cast<std::string>(json, "updated_at"));
     out.total_elevation_gain = cast<float>(json, "total_elevation_gain");
     out.athlete_count = cast<int64_t>(json, "athlete_count");
     out.effort_count = cast<int64_t>(json, "effort_count");
@@ -577,8 +577,8 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::detailed::segment_eff
     parse_from_json(json, out.athlete);
     parse_from_json(json, out.segment);
 
-    out.start_date_local = strava::time(cast<std::string>(json, "start_date_local"));
-    out.start_date = strava::time(cast<std::string>(json, "start_date"));
+    out.start_date_local = strava::datetime(cast<std::string>(json, "start_date_local"));
+    out.start_date = strava::datetime(cast<std::string>(json, "start_date"));
     out.average_heartrate = cast<float>(json, "average_heartrate");
     out.average_cadence = cast<float>(json, "average_cadence");
     out.average_watts = cast<float>(json, "average_watts");
@@ -638,7 +638,7 @@ void parse_from_json(json_object json, strava::summary::race& out)
     out.name = cast<std::string>(json, "name");
     out.url = cast<std::string>(json, "url");
 
-    out.start_date_local = strava::time(cast<std::string>(json, "start_date_local"));
+    out.start_date_local = strava::datetime(cast<std::string>(json, "start_date_local"));
     out.distance = cast<float>(json, "distance");
 }
 
@@ -663,7 +663,7 @@ void parse_from_json(json_object json, strava::meta::route& route)
     route.resource_state = cast<int64_t>(json, "resource_state");
     route.name = cast<std::string>(json, "name");
 
-    parse_from_json(json, route.map); // fix this
+    parse_from_json(json->getObject("map"), route.map);
 }
 
 void parse_from_json(json_object json, strava::summary::route& route)
@@ -720,8 +720,8 @@ void parse_from_json(json_object json, strava::segments::leaderboard::entry& out
     out.effort_id = cast<int64_t>(json, "effort_id");
     out.rank = cast<int64_t>(json, "rank");
 
-    out.start_date_local = strava::time(cast<std::string>(json, "start_date_local"));
-    out.start_date = strava::time(cast<std::string>(json, "start_date"));
+    out.start_date_local = strava::datetime(cast<std::string>(json, "start_date_local"));
+    out.start_date = strava::datetime(cast<std::string>(json, "start_date"));
 }
 
 void parse_from_json(json_object json, strava::segments::leaderboard& out)
@@ -1179,7 +1179,7 @@ strava::detailed::segment strava::segments::star(const oauth& auth, int64_t id, 
     return value;
 }
 
-std::vector<strava::summary::segment_effort> strava::segments::efforts(const oauth& auth, int64_t id, int64_t athlete, time_range range, pagination paging)
+std::vector<strava::summary::segment_effort> strava::segments::efforts(const oauth& auth, int64_t id, int64_t athlete, datetime_range range, pagination paging)
 {
     auto data = std::map<std::string, std::string>{};
 
@@ -1447,7 +1447,7 @@ std::vector<strava::summary::athlete> strava::clubs::list_club_admin(const oauth
     return json_to_vector<summary::athlete>(json, parser);
 }
 
-std::vector<strava::summary::activity> strava::clubs::list_club_activities(const oauth& auth, std::int64_t club_id, time before, pagination pagination)
+std::vector<strava::summary::activity> strava::clubs::list_club_activities(const oauth& auth, std::int64_t club_id, datetime before, pagination pagination)
 {
     auto request = http_request
     {
@@ -1533,7 +1533,7 @@ strava::detailed::activity strava::activity::retrieve(const oauth& auth, std::in
     return value;
 }
 
-std::vector<strava::summary::activity> strava::activity::list(const oauth& auth, time before, time after, pagination pagination)
+std::vector<strava::summary::activity> strava::activity::list(const oauth& auth, datetime before, datetime after, pagination pagination)
 {
     auto request = http_request
     {
