@@ -14,8 +14,14 @@ add_executable(race-tests       race-tests/main.cpp)
 add_executable(route-tests      route-tests/main.cpp)
 add_executable(segment-tests    segment-tests/main.cpp)
 
-target_link_libraries(athlete-tests ${STRAVA_LIB})
 target_link_libraries(auth-tests ${STRAVA_LIB})
+target_link_libraries(athlete-tests ${STRAVA_LIB})
+target_link_libraries(activity-tests ${STRAVA_LIB})
+target_link_libraries(club-tests ${STRAVA_LIB})
+target_link_libraries(gear-tests ${STRAVA_LIB})
+target_link_libraries(race-tests ${STRAVA_LIB})
+target_link_libraries(route-tests ${STRAVA_LIB})
+target_link_libraries(segment-tests ${STRAVA_LIB})
 
 # add to ctest
 add_test(NAME auth-tests        COMMAND auth-tests)

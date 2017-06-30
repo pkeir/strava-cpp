@@ -3,11 +3,9 @@
 #include <lest.hpp>
 #include <string>
 
-using namespace std;
-
 const lest::test specification[] =
 {
-    CASE("request_access() public test url")
+    CASE("request_access function test (public)")
     {
         auto url = strava::request_access(0, strava::scope_public);
         
@@ -16,7 +14,7 @@ const lest::test specification[] =
         EXPECT(url.empty() == false);
     },
 
-    CASE("request_access() write test url")
+    CASE("request_access function test (write)")
     {
         auto url = strava::request_access(0, strava::scope_write);
         
