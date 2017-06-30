@@ -313,6 +313,20 @@ Poco::Dynamic::Var check(Poco::Dynamic::Var response)
 //
 //
 
+void parse_from_json(Poco::JSON::Object::Ptr json, strava::map_polyline& out)
+{
+    if (json.isNull())
+    {
+        return;
+    }
+
+    out = {};
+    out.id = cast<std::string>(json, "id");
+    out.polyline = cast<std::string>(json, "polyline");
+    out.summary_polyline = cast<std::string>(json, "summary_polyline");
+    out.resource_state = cast<int64_t>(json, "resource_state");
+}
+
 void parse_from_json(Poco::JSON::Object::Ptr json, strava::meta::club& out)
 {
     if (json.isNull())
@@ -480,66 +494,6 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::split_standard& out)
     out.elapsed_time = cast<std::int64_t>(json, "elapsed_time");
     out.moving_time = cast<std::int64_t>(json, "moving_time");
     out.split = cast<std::int64_t>(json, "split");
-}
-
-void parse_from_json(Poco::JSON::Object::Ptr json, strava::detailed::activity& out)
-{
-    if (json.isNull())
-    {
-        return;
-    }
-
-    parse_from_json(json, (strava::summary::activity&)out);
-    parse_from_json(json, out.gear);
-
-    out.calories = cast<float>(json, "calories");
-    out.description = cast<std::string>(json, "description");
-    out.device_name = cast<std::string>(json, "device_name");
-    out.embed_token = cast<std::string>(json, "embed_token");
-
-    for (auto& se : *json->getArray("segment_efforts"))
-    {
-        strava::summary::segment_effort value;
-        parse_from_json(json, value);
-        out.segment_efforts.push_back(value);
-    }
-
-    for (auto& se : *json->getArray("best_efforts"))
-    {
-        strava::summary::segment_effort value;
-        parse_from_json(json, value);
-        out.best_efforts.push_back(value);
-    }
-
-    for (auto& se : *json->getArray("splits_standard"))
-    {
-        strava::split_standard value;
-        parse_from_json(json, value);
-        out.splits_standard.push_back(value);
-    }
-
-    for (auto& se : *json->getArray("splits_metric"))
-    {
-        strava::split_metric value;
-        parse_from_json(json, value);
-        out.splits_metric.push_back(value);
-    }
-
-    for (auto& se : *json->getArray("laps"))
-    {
-        strava::lap_effort value;
-        parse_from_json(json, value);
-        out.laps.push_back(value);
-    }
-
-    /*
-
-    std::vector<summary::segment_effort> segment_efforts;
-    std::vector<summary::segment_effort> best_efforts;
-    std::vector<split_standard> splits_standard;
-    std::vector<split_metric> splits_metric;
-    std::vector<lap_effort> laps;
-    */
 }
 
 void parse_from_json(Poco::JSON::Object::Ptr json, strava::summary::athlete& athlete)
@@ -716,20 +670,6 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::athlete::stats& out)
     parse_from_json(json->getObject("all_ride_totals"), out.all_ride_totals);
     parse_from_json(json->getObject("all_swim_totals"), out.all_swim_totals);
     parse_from_json(json->getObject("all_run_totals"), out.all_run_totals);
-}
-
-void parse_from_json(Poco::JSON::Object::Ptr json, strava::map_polyline& out)
-{
-    if (json.isNull())
-    {
-        return;
-    }
-
-    out = {};
-    out.id = cast<std::string>(json, "id");
-    out.polyline = cast<std::string>(json, "polyline");
-    out.summary_polyline = cast<std::string>(json, "summary_polyline");
-    out.resource_state = cast<int64_t>(json, "resource_state");
 }
 
 void parse_from_json(Poco::JSON::Object::Ptr json, strava::summary::segment& out)
@@ -1178,6 +1118,57 @@ void parse_from_json(json_object json, strava::lap_effort& out)
 
     parse_from_json(json, out.activity);
     parse_from_json(json, out.athlete);
+}
+
+void parse_from_json(Poco::JSON::Object::Ptr json, strava::detailed::activity& out)
+{
+    if (json.isNull())
+    {
+        return;
+    }
+
+    parse_from_json(json, (strava::summary::activity&)out);
+    parse_from_json(json, out.gear);
+
+    out.calories = cast<float>(json, "calories");
+    out.description = cast<std::string>(json, "description");
+    out.device_name = cast<std::string>(json, "device_name");
+    out.embed_token = cast<std::string>(json, "embed_token");
+
+    for (auto& se : *json->getArray("segment_efforts"))
+    {
+        strava::summary::segment_effort value;
+        parse_from_json(json, value);
+        out.segment_efforts.push_back(value);
+    }
+
+    for (auto& se : *json->getArray("best_efforts"))
+    {
+        strava::summary::segment_effort value;
+        parse_from_json(json, value);
+        out.best_efforts.push_back(value);
+    }
+
+    for (auto& se : *json->getArray("splits_standard"))
+    {
+        strava::split_standard value;
+        parse_from_json(json, value);
+        out.splits_standard.push_back(value);
+    }
+
+    for (auto& se : *json->getArray("splits_metric"))
+    {
+        strava::split_metric value;
+        parse_from_json(json, value);
+        out.splits_metric.push_back(value);
+    }
+
+    for (auto& se : *json->getArray("laps"))
+    {
+        strava::lap_effort value;
+        parse_from_json(json, value);
+        out.laps.push_back(value);
+    }
 }
 
 void parse_from_json(json_object json, strava::distribution_bucket& out)
