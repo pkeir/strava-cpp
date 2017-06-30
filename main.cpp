@@ -28,8 +28,8 @@ int main(int argc, char* argv[])
     auto auth_info = oauth{ client_id, client_secret, access_token };
 
     auto myself = athlete::current(auth_info);
-    auto routes = routes::list(auth_info, myself.id);
-
-    std::cout << myself.firstname << ", " << myself.lastname << std::endl; 
+    auto my_activity = activity::list(auth_info).front();
+    auto comments = activity::list_comments(auth_info, my_activity.id);
+    
     std::cin.get();
 }

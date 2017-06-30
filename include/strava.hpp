@@ -363,8 +363,8 @@ namespace strava
             std::string title;
             std::string description;
             std::string activity_type;
-            std::string zone;
             std::string address;
+            std::string zone;
 
             meta::route route;
             meta::club club;
@@ -427,11 +427,11 @@ namespace strava
             meta::athlete athlete;
 
             int64_t resource_state;
+            int64_t max_heartrate;
             int64_t elapsed_time;
             int64_t moving_time;
             int64_t start_index;
             int64_t end_index;
-            int64_t max_heartrate;
             int64_t kom_rank;
             int64_t pr_rank;
 
@@ -611,8 +611,8 @@ namespace strava
         // Athlete detailed info
         struct athlete : public summary::athlete
         {
-            int64_t follower_count;
             int64_t mutual_friend_count;
+            int64_t follower_count;
             int64_t friend_count;
             int64_t athlete_type;
             int64_t weight;
@@ -941,7 +941,7 @@ namespace strava
         //
         // Lists friends activities for the current user
         //
-        std::vector<summary::activity> list_friends(const oauth& auth);
+        std::vector<summary::activity> list_friends(const oauth& auth, pagination pagination = {});
 
         //
         // Lists zones for an activity
@@ -1158,17 +1158,23 @@ namespace strava
             //
             struct entry
             {
-                int64_t athlete_id, activity_id, effort_id;
-                int64_t elapsed_time, moving_time, rank;
+                int64_t athlete_id;
+                int64_t activity_id;
+                int64_t effort_id;
+                int64_t elapsed_time;
+                int64_t moving_time;
+                int64_t rank;
 
                 std::string athlete_name;
                 std::string athlete_gender;
                 std::string athlete_profile;
 
-                double average_watts, average_hr;
+                double average_watts;
+                double average_hr;
                 double distance;
 
-                datetime start_date, start_date_local;
+                datetime start_date;
+                datetime start_date_local;
             };
 
             int64_t entry_count;
