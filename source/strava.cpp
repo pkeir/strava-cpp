@@ -98,7 +98,7 @@ strava::error::error(const std::string& msg, const std::vector<error_code>& code
 //
 // Returns the message given by the Strava API.
 //
-const char* strava::error::what() const
+const char* strava::error::what() const throw()
 {
     return message.c_str();
 }
@@ -277,7 +277,7 @@ std::vector<T> json_to_vector(Poco::JSON::Array::Ptr list, F functor)
     return elements;
 }
 
-Poco::Dynamic::Var& check(Poco::Dynamic::Var& response)
+Poco::Dynamic::Var check(Poco::Dynamic::Var response)
 {
     if (response.type() == typeid(Poco::JSON::Object::Ptr))
     {

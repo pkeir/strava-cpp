@@ -30,6 +30,6 @@ int main(int argc, char* argv[])
     auto myself = athlete::current(auth_info);
     auto routes = routes::list(auth_info, myself.id);
 
-    
+    std::cout << myself.firstname << ", " << myself.lastname << std::endl; 
     std::cin.get();
 }

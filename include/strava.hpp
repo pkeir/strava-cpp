@@ -106,7 +106,7 @@ namespace strava
         std::string message;
     public:
         error(const std::string& msg, const std::vector<error_code>& codes);
-        const char* what() const override;
+        const char* what() const throw() override;
         const std::vector<error_code>& codes();
     };
 
@@ -137,7 +137,7 @@ namespace strava
     // Viewer permissions struct for club
     // events.
     //
-    struct viewer_permissions
+    struct permissions
     {
         bool edit;
     };
@@ -551,9 +551,9 @@ namespace strava
     };
 
     //
-    // Splits Standard Zone
+    // Split Standard Zone
     //
-    struct splits_standard
+    struct split_standard
     {
         std::int64_t elapsed_time;
         std::int64_t moving_time;
@@ -564,9 +564,9 @@ namespace strava
     };
 
     //
-    // Splits Metric Zone
+    // Split Metric Zone
     //
-    struct splits_metric : public splits_standard
+    struct split_metric : public split_standard
     {
     };
 
@@ -635,8 +635,8 @@ namespace strava
             summary::gear gear;
             std::vector<summary::segment_effort> segment_efforts;
             std::vector<summary::segment_effort> best_efforts;
-            std::vector<splits_standard> splits_standard;
-            std::vector<splits_metric> splits_metric;
+            std::vector<split_standard> splits_standard;
+            std::vector<split_metric> splits_metric;
             std::vector<lap_effort> laps;
             std::string device_name;
             std::string embed_token;
@@ -656,7 +656,7 @@ namespace strava
 
         struct club_event : public summary::club_event
         {
-            viewer_permissions viewer_permissions;
+            permissions viewer_permissions;
             datetime start_datetime;
 
             std::vector<std::string> days_of_week;
