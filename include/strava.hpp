@@ -544,8 +544,9 @@ namespace strava
         std::string uid;
         std::string caption;
         std::string type;
-        std::string uploaded_at;
-        std::string created_at;
+
+        datetime uploaded_at;
+        datetime created_at;
 
         std::array<float, 2> location;
     };
@@ -578,7 +579,7 @@ namespace strava
     {
         std::int64_t max;
         std::int64_t min;
-        std::int64_t datetime;
+        std::int64_t time;
     };
 
     //
