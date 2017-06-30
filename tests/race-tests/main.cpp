@@ -11,9 +11,11 @@ strava::oauth auth = {
 
 const lest::test specification[] =
 {
-    CASE("Basic Zero Test")
+    CASE("races length test")
     {
-        EXPECT(0 == 0);
+        auto races = strava::races::list(auth);
+
+        EXPECT(races.size() > 0);
     }
 };
 

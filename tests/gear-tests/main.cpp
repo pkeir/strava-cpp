@@ -11,9 +11,18 @@ strava::oauth auth = {
 
 const lest::test specification[] =
 {
-    CASE("Basic Zero Test")
+    CASE("gear name test")
     {
-        EXPECT(0 == 0);
+        auto me = strava::athlete::current(auth);
+
+        EXPECT(me.shoes.size() > 0);
+
+        if(me.shoes.size() > 0)
+        {
+            auto my_shoes = strava::gear::retrieve(auth, me.shoes[0].id);
+
+            EXPECT(my_shoes.name.size() > 0);
+        }
     }
 };
 

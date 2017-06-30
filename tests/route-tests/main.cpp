@@ -11,9 +11,12 @@ strava::oauth auth = {
 
 const lest::test specification[] =
 {
-    CASE("Basic Zero Test")
+    CASE("routes length test")
     {
-        EXPECT(0 == 0);
+        auto me = strava::athlete::current(auth);
+        auto routes = strava::routes::list(auth, me.id);
+
+        EXPECT(routes.size() > 0);
     }
 };
 

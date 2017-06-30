@@ -11,9 +11,11 @@ strava::oauth auth = {
 
 const lest::test specification[] =
 {
-    CASE("Basic Zero Test")
+    CASE("club length test")
     {
-        EXPECT(0 == 0);
+        auto clubs = strava::clubs::list_athlete_clubs(auth);
+
+        EXPECT(clubs.size() >= 0);
     }
 };
 

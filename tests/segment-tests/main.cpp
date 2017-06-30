@@ -11,9 +11,11 @@ strava::oauth auth = {
 
 const lest::test specification[] =
 {
-    CASE("Basic Zero Test")
+    CASE("segments length test")
     {
-        EXPECT(0 == 0);
+        auto segments = strava::segments::explore(auth, { 37.821362,-122.505373,37.842038,-122.465977 });
+        
+        EXPECT(segments.size() > 0);
     }
 };
 
