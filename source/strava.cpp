@@ -431,11 +431,17 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::summary::activity& ou
     auto start_latlng = json->getArray("start_latlng");
     auto end_latlng = json->getArray("end_latlng");
 
-    out.start_latlng[0] = start_latlng->get(0).extract<float>();
-    out.start_latlng[1] = start_latlng->get(1).extract<float>();
+    if (!start_latlng.isNull())
+    {
+        out.start_latlng[0] = start_latlng->get(0).extract<float>();
+        out.start_latlng[1] = start_latlng->get(1).extract<float>();
+    }
 
-    out.end_latlng[0] = end_latlng->get(0).extract<float>();
-    out.end_latlng[1] = end_latlng->get(1).extract<float>();
+    if (!end_latlng.isNull())
+    {
+        out.end_latlng[0] = end_latlng->get(0).extract<float>();
+        out.end_latlng[1] = end_latlng->get(1).extract<float>();
+    }
 
     out.external_id = cast<std::string>(json, "external_id");
     out.name = cast<std::string>(json, "name");
@@ -698,11 +704,17 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::summary::segment& out
     auto start_elements = json->getArray("start_latlng");
     auto end_elements = json->getArray("start_latlng");
 
-    out.start_latlng[0] = start_elements->get(0).convert<float>();
-    out.start_latlng[1] = start_elements->get(1).convert<float>();
+    if (!start_elements.isNull())
+    {
+        out.start_latlng[0] = start_elements->get(0).convert<float>();
+        out.start_latlng[1] = start_elements->get(1).convert<float>();
+    }
 
-    out.end_latlng[0] = end_elements->get(0).convert<float>();
-    out.end_latlng[1] = end_elements->get(1).convert<float>();
+    if (!end_elements.isNull())
+    {
+        out.end_latlng[0] = end_elements->get(0).convert<float>();
+        out.end_latlng[1] = end_elements->get(1).convert<float>();
+    }
 
     out.is_private = cast<bool>(json, "is_private");
     out.hazardous = cast<bool>(json, "hazardous");
@@ -881,8 +893,13 @@ void parse_from_json(json_object json, strava::summary::club_event& out)
     }
 
     auto latlng = json->getArray("start_latlng");
-    out.start_latlng[0] = latlng->get(0).extract<float>();
-    out.start_latlng[1] = latlng->get(1).extract<float>();
+
+    if (!latlng.isNull())
+    {
+        out.start_latlng[0] = latlng->get(0).extract<float>();
+        out.start_latlng[1] = latlng->get(1).extract<float>();
+    }
+
     out.woman_only = cast<bool>(json, "woman_only");
     out.is_private = cast<bool>(json, "private");
     out.joined = cast<bool>(json, "joined");
@@ -1082,8 +1099,11 @@ void parse_from_json(json_object json, strava::photo& out)
 
     auto array = json->getArray("location");
 
-    out.location[0] = array->get(0).extract<float>();
-    out.location[1] = array->get(1).extract<float>();
+    if (!array.isNull())
+    {
+        out.location[0] = array->get(0).extract<float>();
+        out.location[1] = array->get(1).extract<float>();
+    }
 }
 
 void parse_from_json(json_object json, strava::lap_effort& out)
@@ -1875,7 +1895,7 @@ std::vector<strava::summary::club> strava::clubs::list_athlete_clubs(const oauth
     auto request = http_request
     {
         Poco::Net::HTTPRequest::HTTP_GET,
-        "/api/v3/athlete/clubs/",
+        "/api/v3/athlete/clubs",
         auth.access_token,
         {},{},{}
     };
