@@ -77,7 +77,7 @@ strava::pagination::pagination(int64_t page, int64_t per_page) :
 }
 
 //
-// Tells if the user passed in paginatino parameters
+// Tells if the user passed in pagination parameters
 //
 bool strava::pagination::enabled()
 {
@@ -414,7 +414,7 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::meta::activity& out)
     }
 
     out.id = cast<int64_t>(json, "id");
-    out.resouce_state = cast<int64_t>(json, "resource_state");
+    out.resource_state = cast<int64_t>(json, "resource_state");
 }
 
 void parse_from_json(Poco::JSON::Object::Ptr json, strava::summary::activity& out)
@@ -461,7 +461,7 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::summary::activity& ou
     out.total_photo_count = cast<std::int64_t>(json, "total_photo_count");
     out.upload_id = cast<std::int64_t>(json, "upload_id");
     out.moving_time = cast<std::int64_t>(json, "moving_time");
-    out.eleapsed_time = cast<std::int64_t>(json, "eleapsed_time");
+    out.elapsed_time = cast<std::int64_t>(json, "elapsed_time");
     out.max_watts = cast<std::int64_t>(json, "max_watts");
     out.weighted_average_watts = cast<std::int64_t>(json, "weighted_average_watts");
     out.max_heartrate = cast<std::int64_t>(json, "max_heartrate");
@@ -638,7 +638,7 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::athlete::stats::total
     total = {};
     total.distance = cast<double>(json, "distance");
     total.elevation_gain = cast<double>(json, "elevation_gain");
-    total.eleapsed_time = cast<int64_t>(json, "eleapsed_time");
+    total.elapsed_time = cast<int64_t>(json, "elapsed_time");
     total.moving_time = cast<int64_t>(json, "moving_time");
     total.count = cast<int64_t>(json, "count");
 }
@@ -1703,7 +1703,7 @@ std::vector<strava::summary::segment_effort> strava::segments::efforts(const oau
     return json_to_vector<summary::segment_effort>(json, parser);
 }
 
-strava::segments::leaderboard strava::segments::get_leaderboard(const oauth& auth, int64_t id, leaderbord_params params, pagination paging)
+strava::segments::leaderboard strava::segments::get_leaderboard(const oauth& auth, int64_t id, leaderboard_params params, pagination paging)
 {
     auto data = std::map<std::string, std::string>{};
     auto request = http_request
@@ -1856,7 +1856,7 @@ strava::detailed::club strava::clubs::retrieve(const oauth& auth, std::int64_t i
     return value;
 }
 
-std::vector<strava::clubs::club_announcement> strava::clubs::list_announcments(const oauth& auth, std::int64_t club_id)
+std::vector<strava::clubs::club_announcement> strava::clubs::list_announcements(const oauth& auth, std::int64_t club_id)
 {
     auto request = http_request
     {

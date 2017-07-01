@@ -33,7 +33,7 @@
 
 //
 // Entire API is found in the strava namespace,
-// don't import it int64_to the global namespace,
+// don't import it into the global namespace,
 // as many objects and methods have opaque
 // names which could lead to conflicts
 //
@@ -77,7 +77,7 @@ namespace strava
     };
 
     //
-    // Polyline struct whic details a path
+    // Polyline struct which details a path
     //
     struct map_polyline
     {
@@ -188,9 +188,9 @@ namespace strava
     }
 
     //
-    // You get three types of representation with strava, a meta repr a summary repr and
-    // a detailed repr. Here they are split int64_to seperate namespaces
-    // for clarity.
+    // You get three types of representation with strava, a meta representation 
+    // a summary representation and a detailed representation. Here they are 
+    // split into seperate namespaces for clarity.
     //
     namespace meta
     {
@@ -205,7 +205,7 @@ namespace strava
         struct activity
         {
             int64_t id;
-            int64_t resouce_state;
+            int64_t resource_state;
         };
 
         // Club metadata info
@@ -283,7 +283,7 @@ namespace strava
             std::int64_t total_photo_count;
             std::int64_t upload_id;
             std::int64_t moving_time;
-            std::int64_t eleapsed_time;
+            std::int64_t elapsed_time;
             std::int64_t max_watts;
             std::int64_t weighted_average_watts;
             std::int64_t max_heartrate;
@@ -603,9 +603,9 @@ namespace strava
     };
 
     //
-    // You get three types of representation with strava, a meta repr a summary repr and
-    // a detailed repr. Here they are split int64_to seperate namespaces
-    // for clarity.
+    // You get three types of representation with strava, a meta representation
+    // a summary representation and a detailed representation. Here they are 
+    // split int64_to seperate namespaces for clarity.
     //
     namespace detailed
     {
@@ -840,7 +840,7 @@ namespace strava
         //
         struct stats
         {
-            // Two types of entries one with an achievment count,
+            // Two types of entries one with an achievement count,
             // and one without. These are split int64_to two structs
             // total and detailed_total.
             struct total
@@ -850,7 +850,7 @@ namespace strava
 
                 int64_t count;
                 int64_t moving_time;
-                int64_t eleapsed_time;
+                int64_t elapsed_time;
                 int64_t achievement_count;
             };
 
@@ -1002,7 +1002,7 @@ namespace strava
         detailed::club retrieve(const oauth& auth, std::int64_t id);
 
         //
-        // Announcment struct which mirrors json response.
+        // Announcement struct which mirrors json response.
         //
         struct club_announcement
         {
@@ -1015,9 +1015,9 @@ namespace strava
         };
 
         //
-        // Lists announcments in a given club
+        // Lists announcement in a given club
         //
-        std::vector<club_announcement> list_announcments(const oauth& auth, std::int64_t club_id);
+        std::vector<club_announcement> list_announcements(const oauth& auth, std::int64_t club_id);
 
         // 
         // Lists clubs for the current athlete
@@ -1030,7 +1030,7 @@ namespace strava
         std::vector<summary::athlete> list_club_members(const oauth& auth, std::int64_t club_id, pagination pagination);
 
         // 
-        // Lists admns in a club
+        // Lists admins in a club
         //
         std::vector<summary::athlete> list_club_admin(const oauth& auth, std::int64_t club_id, pagination pagination);
 
@@ -1194,7 +1194,7 @@ namespace strava
         //
         // Params for querying the leaderboard endpoint.
         //
-        struct leaderbord_params
+        struct leaderboard_params
         {
             int64_t club_id;
             int64_t context_entries;
@@ -1237,7 +1237,7 @@ namespace strava
         //
         // Gets leaderboard for a given segment
         //
-        leaderboard get_leaderboard(const oauth& auth, int64_t id, leaderbord_params params = {}, pagination page_option = {});
+        leaderboard get_leaderboard(const oauth& auth, int64_t id, leaderboard_params params = {}, pagination page_option = {});
 
         //
         // Finds segments in a given latlng bounding box.
