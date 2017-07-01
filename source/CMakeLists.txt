@@ -25,6 +25,8 @@ set(STRAVA_LIB
     CACHE INTERNAL ""
 )
 
+message(${POCO_LIBS})
+
 set(STRAVA_INC 
     ../include
     ${LEST_INCLUDE}

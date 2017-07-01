@@ -33,7 +33,5 @@ else()
     ${prefix}PocoFoundation${suffix}
     CACHE INTERNAL ""
 )
-
-    
 endif()
 

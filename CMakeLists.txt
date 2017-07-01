@@ -26,7 +26,7 @@ set(CMAKE_CXX_STANDARD 14)
 option(ENABLE_SAMPLES "Enable Samples" ON)
 option(ENABLE_TESTS "Enable Tests" ON)
 
-# ESub directories
+# Sub directories
 add_subdirectory(external/lest)
 add_subdirectory(external/poco)
 add_subdirectory(source)
