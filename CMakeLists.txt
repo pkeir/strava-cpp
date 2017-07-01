@@ -37,13 +37,3 @@ if(ENABLE_TESTS)
     add_subdirectory(tests)
     message(STATUS "Including Tests")
 endif(ENABLE_TESTS)
-
-# For development only!
-include_directories(include ${STRAVA_INC})
-
-link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-link_directories(${POCO_LIB_DIR})
-
-add_executable(dev main.cpp)
-
-target_link_libraries(dev ${STRAVA_LIB})
