@@ -14,6 +14,7 @@ link_directories(${POCO_LIB_DIR})
 set(STRAVA_SRC strava.cpp ../include/strava.hpp)
 
 add_library(STRAVA ${STRAVA_SRC})
+add_dependencies(STRAVA POCO)
 
 set(STRAVA_LIB 
     STRAVA 
