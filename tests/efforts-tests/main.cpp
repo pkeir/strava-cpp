@@ -28,8 +28,8 @@ const lest::test specification[] =
         auto route = strava::routes::retrieve(auth, routes.front().id);
         auto effort = route.segments.front();
 
-        EXPECT(effort.id != 0);
-        EXPECT(effort.resource_state != 0);
+        EXPECT(effort.id != int{});
+        EXPECT(effort.resource_state != int{});
     },
 
     CASE("efforts misc test")

@@ -35,7 +35,7 @@ const lest::test specification[] =
         auto routes = strava::routes::list(auth, me.id);
         auto route = strava::routes::retrieve(auth, routes.front().id);
 
-        EXPECT(route.id != 0);
+        EXPECT(route.id != int{});
     }
 };
 

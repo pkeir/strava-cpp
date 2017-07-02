@@ -40,8 +40,8 @@ const lest::test specification[] =
         auto races = strava::races::list(auth);
         auto first = strava::races::retrieve(auth, races.front().id);
 
-        EXPECT(first.id != 0);
-        EXPECT(first.resource_state != 0);
+        EXPECT(first.id != int{});
+        EXPECT(first.resource_state != int{});
     }
 };
 

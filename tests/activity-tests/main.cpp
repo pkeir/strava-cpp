@@ -31,9 +31,9 @@ const lest::test specification[] =
         auto activities = strava::activity::list(auth);
         auto activity = activities.front();
 
-        EXPECT(activity.resource_state != 0);
-        EXPECT(activity.type != "");
-        EXPECT(activity.id != 0);
+        EXPECT(activity.resource_state != int{});
+        EXPECT(activity.type != std::string{});
+        EXPECT(activity.id != int{});
     },
 
     CASE("activity comment test")
@@ -44,12 +44,12 @@ const lest::test specification[] =
         auto first = comments.front();
         
         EXPECT(first.id != 0);
-        EXPECT(first.resource_state != 0);
-        EXPECT(first.resource_state != 0);
+        EXPECT(first.resource_state != int{});
+        EXPECT(first.resource_state != int{});
         EXPECT(first.text.length() > 0);
 
-        EXPECT(first.athlete.id != 0);
-        EXPECT(first.athlete.resource_state != 0);
+        EXPECT(first.athlete.id != int{});
+        EXPECT(first.athlete.resource_state != int{};
 
         EXPECT(first.created_at.time_string.length() > 0);
         EXPECT(first.created_at.time_epoch > 0);

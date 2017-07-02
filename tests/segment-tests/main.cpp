@@ -59,7 +59,7 @@ const lest::test specification[] =
         auto segments = strava::segments::explore(auth, area);
         auto segment = strava::segments::retrieve(auth, segments.front().id);
 
-        EXPECT(segment.map.resource_state != 0);
+        EXPECT(segment.map.resource_state != int{});
         EXPECT(!segment.map.id.empty());
         EXPECT(!segment.map.polyline.empty());
     },
