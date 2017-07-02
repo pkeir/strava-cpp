@@ -17,6 +17,33 @@ const lest::test specification[] =
 
         EXPECT(!me.firstname.empty());
         EXPECT(!me.lastname.empty());
+    },
+
+    CASE("athlete location test")
+    {
+        auto me = strava::athlete::current(auth);
+
+        EXPECT(!me.country.empty());
+        EXPECT(!me.state.empty());
+    },
+
+    CASE("athlete image test")
+    {
+        auto me = strava::athlete::current(auth);
+
+        EXPECT(!me.profile_medium.empty());
+        EXPECT(!me.profile.empty());
+    },
+
+    CASE("athlete date test")
+    {
+        auto me = strava::athlete::current(auth);
+
+        EXPECT(!me.created_at.time_string.empty());
+        EXPECT(me.created_at.time_epoch > 0);
+
+        EXPECT(!me.updated_at.time_string.empty());
+        EXPECT(me.updated_at.time_epoch > 0);
     }
 };
 

@@ -14,8 +14,45 @@ const lest::test specification[] =
     CASE("activities length test")
     {
         auto activities = strava::activity::list(auth);
-
         EXPECT(activities.size() > 0);
+    },
+
+    CASE("comments length test")
+    {
+        auto activities = strava::activity::list(auth);
+        auto activity = activities.front();
+        auto comments = strava::activity::list_comments(auth, activity.id);
+
+        EXPECT(comments.size() > 0);
+    },
+
+    CASE("activity test")
+    {
+        auto activities = strava::activity::list(auth);
+        auto activity = activities.front();
+
+        EXPECT(activity.resource_state != 0);
+        EXPECT(activity.type != "");
+        EXPECT(activity.id != 0);
+    },
+
+    CASE("activity comment test")
+    {
+        auto activities = strava::activity::list(auth);
+        auto activity = activities.front();
+        auto comments = strava::activity::list_comments(auth, activity.id);
+        auto first = comments.front();
+        
+        EXPECT(first.id != 0);
+        EXPECT(first.resource_state != 0);
+        EXPECT(first.resource_state != 0);
+        EXPECT(first.text.length() > 0);
+
+        EXPECT(first.athlete.id != 0);
+        EXPECT(first.athlete.resource_state != 0);
+
+        EXPECT(first.created_at.time_string.length() > 0);
+        EXPECT(first.created_at.time_epoch > 0);
     }
 };
 

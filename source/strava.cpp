@@ -702,7 +702,7 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::summary::segment& out
     out.elevation_low = cast<float>(json, "elevation_low");
 
     auto start_elements = json->getArray("start_latlng");
-    auto end_elements = json->getArray("start_latlng");
+    auto end_elements = json->getArray("end_latlng");
 
     if (!start_elements.isNull())
     {

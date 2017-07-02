@@ -11,18 +11,29 @@ strava::oauth auth = {
 
 const lest::test specification[] =
 {
+    CASE("gear length test")
+    {
+        auto me = strava::athlete::current(auth);
+        EXPECT(me.shoes.size() > 0);
+    },
+
     CASE("gear name test")
     {
         auto me = strava::athlete::current(auth);
+        auto shoes = me.shoes.front();
 
-        EXPECT(me.shoes.size() > 0);
+        EXPECT(shoes.id.size() > 0);
+        EXPECT(shoes.name.size() > 0);
+    },
 
-        if(me.shoes.size() > 0)
-        {
-            auto my_shoes = strava::gear::retrieve(auth, me.shoes[0].id);
+    CASE("gear struct test")
+    {
+        auto me = strava::athlete::current(auth);
+        auto shoes = strava::gear::retrieve(auth, me.shoes.front().id);
 
-            EXPECT(my_shoes.name.size() > 0);
-        }
+        EXPECT(shoes.description.size() > 0);
+        EXPECT(shoes.brand_name.size() > 0);
+        EXPECT(shoes.model_name.size() > 0);
     }
 };
 

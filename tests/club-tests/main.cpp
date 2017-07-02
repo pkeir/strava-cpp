@@ -14,8 +14,44 @@ const lest::test specification[] =
     CASE("club length test")
     {
         auto clubs = strava::clubs::list_athlete_clubs(auth);
+        EXPECT(clubs.size() > 0);
+    },
 
-        EXPECT(clubs.size() >= 0);
+    CASE("club meta test")
+    {
+        auto clubs = strava::clubs::list_athlete_clubs(auth);
+        auto club = clubs.front();
+
+        EXPECT(club.id != 0);
+        EXPECT(club.resource_state != 0);
+    },
+
+    CASE("club name test")
+    {
+        auto clubs = strava::clubs::list_athlete_clubs(auth);
+        auto club = clubs.front();
+
+        EXPECT(club.name.length() > 0);
+    },
+
+    CASE("club member test")
+    {
+        auto clubs = strava::clubs::list_athlete_clubs(auth);
+        auto club = clubs.front();
+
+        EXPECT(club.member_count > 0);
+    },
+
+    CASE("club image test")
+    {
+        auto clubs = strava::clubs::list_athlete_clubs(auth);
+        auto club = clubs.front();
+
+        EXPECT(!club.profile_medium.empty());
+        EXPECT(!club.profile.empty());
+
+        EXPECT(!club.cover_photo_small.empty());
+        EXPECT(!club.cover_photo.empty());
     }
 };
 
