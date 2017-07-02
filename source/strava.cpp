@@ -41,21 +41,12 @@ const auto routes_url = "/api/v3/routes"s;
 const auto clubs_url = "/api/v3/clubs"s;
 const auto gear_url = "/api/v3/gear"s;
 
-//
-// Client struct which keeps
-// a Poco https session and the context
-// for SSL https server/client
-//
 struct poco_client
 {
     Poco::SharedPtr<Poco::Net::HTTPSClientSession> client;
     Poco::AutoPtr<Poco::Net::Context> context;
 } client;
 
-
-//
-//
-//
 struct http_request
 {
     std::string method, url, access_token;
@@ -64,30 +55,17 @@ struct http_request
     strava::pagination page_options;
 };
 
-
-//
-// Constructor for setting the default values
-// allowing overwriting when wanting pagination
-// functionality
-//
 strava::pagination::pagination(int64_t page, int64_t per_page) :
     per_page(per_page),
     page(page)
 {
 }
 
-//
-// Tells if the user passed in pagination parameters
-//
 bool strava::pagination::enabled()
 {
     return page != 0;
 }
 
-//
-// Error constructor takes a vector of error codes from Strava API
-// and the error message as well.
-//
 strava::error::error(const std::string& msg, const std::vector<error_code>& codes) :
     std::runtime_error(msg),
     error_codes(codes),
@@ -95,40 +73,28 @@ strava::error::error(const std::string& msg, const std::vector<error_code>& code
 {
 }
 
-//
-// Returns the message given by the Strava API.
-//
 const char* strava::error::what() const throw()
 {
     return message.c_str();
 }
 
-//
-// Returns the error codes given by the Strava API.
-//
 const std::vector<strava::error::error_code>& strava::error::codes()
 {
     return error_codes;
 }
 
-//
-// Constructor for time object from ISO 8601 standard.
-//
 strava::datetime::datetime(std::string timestr)
 {
     std::tm datetime;
     std::istringstream input(timestr);
     input.imbue(std::locale(setlocale(LC_ALL, nullptr)));
-    input >> std::get_time(&datetime, "%Y-%m-%dT%H:%M:%SZ");
+    input >> std::get_time(&datetime, "%Y-%m-%dT%H:%M:%SZ"); // ISO 8601
 
     auto failed = input.fail();
     time_string = failed ? "" : timestr;
     time_epoch = failed ? 0 : mktime(&datetime);
 }
 
-//
-// Constructor for time object from std::time_t
-//
 strava::datetime::datetime(std::time_t num)
 {
     const auto format = "%Y-%m-%dT%H:%M:%S";
@@ -138,31 +104,6 @@ strava::datetime::datetime(std::time_t num)
     strftime(buffer, size, format, localtime(&num));
     time_string = buffer;
     time_epoch = num;
-}
-
-//
-//
-//
-void lazy_start_session()
-{
-    using namespace Poco::Net;
-
-    if (client.context.isNull())
-    {
-        client.context = new Context(Context::CLIENT_USE, "");
-    }
-
-    if (client.client.isNull() && !client.context.isNull())
-    {
-        Poco::URI uri("https://www.strava.com");
-
-        client.client = new HTTPSClientSession(uri.getHost(), uri.getPort(), client.context);
-        client.client->setPort(443);
-        client.client->setTimeout(Poco::Timespan(10L, 0L));
-
-        SSLManager::InvalidCertificateHandlerPtr handler(new AcceptCertificateHandler(false));
-        SSLManager::instance().initializeClient(0, handler, client.context);
-    }
 }
 
 template<typename T>
@@ -192,7 +133,22 @@ Poco::Dynamic::Var send(http_request& info)
         uri.addQueryParameter(data.first, data.second);
     }
 
-    lazy_start_session();
+    if (client.context.isNull())
+    {
+        client.context = new Poco::Net::Context(Poco::Net::Context::CLIENT_USE, "");
+    }
+
+    if (client.client.isNull() && !client.context.isNull())
+    {
+        Poco::URI uri("https://www.strava.com");
+
+        client.client = new Poco::Net::HTTPSClientSession(uri.getHost(), uri.getPort(), client.context);
+        client.client->setPort(443);
+        client.client->setTimeout(Poco::Timespan(10L, 0L));
+
+        Poco::Net::SSLManager::InvalidCertificateHandlerPtr handler(new Poco::Net::AcceptCertificateHandler(false));
+        Poco::Net::SSLManager::instance().initializeClient(0, handler, client.context);
+    }
 
     try
     {
@@ -241,16 +197,16 @@ Poco::Dynamic::Var send(http_request& info)
 template<typename T>
 T cast(Poco::JSON::Object::Ptr json, std::string key)
 {
-    auto value = json->get(key);
+    auto json_value = json->get(key);
+    auto value = T{};
 
-    if (value.isEmpty())
+    if (json_value.isEmpty())
     {
-        return T{};
+        return value;
     }
 
-    auto v = T{};
-    value.convert(v);
-    return v;
+    json_value.convert(value);
+    return value;
 }
 
 template<typename T>
@@ -279,7 +235,7 @@ std::vector<T> json_to_vector(Poco::JSON::Array::Ptr list, F functor)
 
 Poco::Dynamic::Var check(Poco::Dynamic::Var response)
 {
-    if (response.type() == typeid(Poco::JSON::Object::Ptr))
+    if (response.type() == typeid(json_object))
     {
         auto json = response.extract<json_object>();
         auto error_array = json->getArray("errors");
@@ -305,13 +261,6 @@ Poco::Dynamic::Var check(Poco::Dynamic::Var response)
 
     return response;
 }
-
-//
-//
-//
-//
-//
-//
 
 void parse_from_json(Poco::JSON::Object::Ptr json, strava::map_polyline& out)
 {
@@ -904,7 +853,6 @@ void parse_from_json(json_object json, strava::summary::club_event& out)
     out.is_private = cast<bool>(json, "private");
     out.joined = cast<bool>(json, "joined");
 }
-
 
 void parse_from_json(json_object json, strava::detailed::club_event& out)
 {

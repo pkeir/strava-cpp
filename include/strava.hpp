@@ -997,7 +997,9 @@ namespace strava
             //
             // Retrieves a club event via id
             //
-            summary::club_event retrieve(const oauth& auth, std::int64_t group_event_id);
+            // const oauth& auth - Authorization info
+            //
+            summary::club_event retrieve(const oauth& auth, std::int64_t club_event_id);
 
             //
             // Lists all events tied to a club.
@@ -1007,16 +1009,25 @@ namespace strava
             //
             // Joins the current athlete to an event
             //
+            // const oauth& auth - Authorization info
+            // int64_t id - The event_id id
+            //
             bool join_event(const oauth& auth, std::int64_t event_id);
 
             //
             // Makes the current athlete leave an event
             //
+            // const oauth& auth - Authorization info
+            // int64_t id - The club id
+            //
             bool leave_event(const oauth& auth, std::int64_t event_id);
 
             //
             // Deletes an event 
-            // 
+            //
+            // const oauth& auth - Authorization info
+            // int64_t id - The club id
+            //
             void delete_event(const oauth& auth, std::int64_t event_id);
 
             //
@@ -1027,6 +1038,9 @@ namespace strava
 
         //
         // Retrieves a club via id.
+        //
+        // const oauth& auth - Authorization info
+        // int64_t id - The club id
         //
         detailed::club retrieve(const oauth& auth, std::int64_t id);
 
@@ -1044,27 +1058,46 @@ namespace strava
         //
         // Lists announcement in a given club
         //
+        //
+        // const oauth& auth - Authorization info
+        // int64_t club_id - The club id
+        //
         std::vector<club_announcement> list_announcements(const oauth& auth, std::int64_t club_id);
 
         // 
         // Lists clubs for the current athlete
+        //
+        // const oauth& auth - Authorization info
         //
         std::vector<summary::club> list_athlete_clubs(const oauth& auth);
 
         //
         // Lists members in a club
         //
-        std::vector<summary::athlete> list_club_members(const oauth& auth, std::int64_t club_id, pagination pagination);
+        // const oauth& auth - Authorization info
+        // int64_t club_id - The club id
+        // pagination page_opt - Pagination info (disabled by default)
+        //
+        std::vector<summary::athlete> list_club_members(const oauth& auth, std::int64_t club_id, pagination page_opt = {});
 
         // 
         // Lists admins in a club
         //
-        std::vector<summary::athlete> list_club_admin(const oauth& auth, std::int64_t club_id, pagination pagination);
+        // const oauth& auth - Authorization info
+        // int64_t club_id - The club id
+        // pagination page_opt - Pagination info (disabled by default)
+        //
+        std::vector<summary::athlete> list_club_admin(const oauth& auth, std::int64_t club_id, pagination page_opt = {});
 
         //
         // Lists activities in a club
         //
-        std::vector<summary::activity> list_club_activities(const oauth& auth, std::int64_t club_id, datetime before, pagination pagination);
+        // const oauth& auth - Authorization info
+        // int64_t club_id - The club id
+        // datetime before - Before optional query
+        // pagination page_opt - Pagination info (disabled by default)
+        //
+        std::vector<summary::activity> list_club_activities(const oauth& auth, std::int64_t club_id, datetime before = {}, pagination page_opt = {});
 
         // When leaving a group this struct is returned
         struct leave_response
@@ -1082,10 +1115,16 @@ namespace strava
         //
         // Makes the current athlete join a club
         //
+        // const oauth& auth - Authorization info
+        // int64_t club_id - The club id
+        //
         join_response join_club(const oauth& auth, std::int64_t club_id);
 
         // 
         // Makes the current athlete leave a club
+        //
+        // const oauth& auth - Authorization info
+        // int64_t club_id - The club id
         //
         leave_response leave_club(const oauth& auth, std::int64_t club_id);
     }
