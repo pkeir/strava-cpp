@@ -29,7 +29,7 @@ const lest::test specification[] =
         EXPECT(!route.description.empty());
     },
 
-    CASE("route test")
+    CASE("route id test")
     {
         auto me = strava::athlete::current(auth);
         auto routes = strava::routes::list(auth, me.id);

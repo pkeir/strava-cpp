@@ -10,19 +10,41 @@ strava::oauth auth =
     "005ed679943cd3eee63861f595863cda58591b41"
 };
 
-strava::segments::bounds area = 
-{
-    37.821362, -122.505373,
-    37.842038, -122.465977
-};
-
 const lest::test specification[] =
 {
-    CASE("effort test")
+    CASE("efforts length test")
     {
-        auto segments = strava::segments::explore(auth, area);
+        auto me = strava::athlete::current(auth);
+        auto routes = strava::routes::list(auth, me.id);
+        auto route = strava::routes::retrieve(auth, routes.front().id);
 
-        EXPECT(segments.size() > 0);
+        EXPECT(route.segments.size() > 0);
+    },
+
+    CASE("efforts name/resource_state test")
+    {
+        auto me = strava::athlete::current(auth);
+        auto routes = strava::routes::list(auth, me.id);
+        auto route = strava::routes::retrieve(auth, routes.front().id);
+        auto effort = route.segments.front();
+
+        EXPECT(effort.id != 0);
+        EXPECT(effort.resource_state != 0);
+    },
+
+    CASE("efforts misc test")
+    {
+        auto me = strava::athlete::current(auth);
+        auto routes = strava::routes::list(auth, me.id);
+        auto route = strava::routes::retrieve(auth, routes.front().id);
+        auto effort = strava::segment_efforts::retrieve(auth, route.segments.front().id);
+
+        EXPECT(effort.distance != float{});
+        EXPECT(!effort.name.empty());
+
+        EXPECT(effort.activity.id != int{});
+        EXPECT(effort.segment.id != int{});
+        EXPECT(effort.athlete.id != int{});
     }
 };
 
