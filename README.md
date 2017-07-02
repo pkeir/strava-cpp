@@ -10,13 +10,11 @@ C++ API bindings to V3 of the Strava API. This API supports reading and updating
 #include <strava.hpp>
 #include <iostream>
 
-using namespace strava;
-
-int main(int argc, char* argv[])
+int main(int argc, const char* argv[])
 {
     auto id = 0;        // <client_id>
     auto secret = "";   // <client_secret>
-    auto web_url = request_access(id, scope_view_private_write);
+    auto web_url = strava::request_access(id, scope_view_private_write);
 
     // Open url to authenticate and get code
     std::string code;
@@ -24,13 +22,12 @@ int main(int argc, char* argv[])
     std::cin >> code;
     
     // Acquire access token to access data
-    auto access_token = exchange_token(id, secret, code);
-    auto auth_info = oauth{ id, secret, access_token };
-    auto myself = athlete::current(auth_info);
+    auto access_token = strava::exchange_token(id, secret, code);
+    auto auth_info = strava::oauth{ id, secret, access_token };
+    auto myself = strava::athlete::current(auth_info);
 
     std::cout << myself.firstname << std::endl;
     std::cout << myself.lastname << std::endl;
-    std::cout << myself.country << std::endl;
 }
 ```
 
@@ -45,7 +42,7 @@ The API provides access to the most prominant areas of the dataset. If you are j
 * Routes
 * Running Races
 * Segments
-* Segment Efforts
+* Efforts
 
 ## Not Supported
 
@@ -53,7 +50,7 @@ The following sections of the API are reserved for a later date.
 
 * Streams (Unable to get test set)
 * Uploads (Revolves around bespoke file types)
-* Webhook Events (Need Strava inc permissions)
+* Webhook Events (Need Strava corporate permissions)
 
 ## Dependencies
 
@@ -61,18 +58,22 @@ You can build via CMake or use the prebuilt binaries available in each release. 
 
 * [Poco](https://github.com/pocoproject/poco)
 * [Lest](https://github.com/martinmoene/lest)  
-* OpenSSL
+* [OpenSSL](https://www.openssl.org/)
 
 HTTPS is a hard requirement for requests to Strava so the OpenSSL dependency is not optional. You can install it pretty easily though on MacOS and Linux. On Windows you can install via these [installers](http://slproweb.com/products/Win32OpenSSL.html).
 
-**Linux & MacOS**
+**Linux**
 ```
 sudo apt-get install libssl-dev
+```
+
+**MacOS**
+```
 brew install openssl
 ```
 
 ## License
 
-TBD
+To be decided
 
 
