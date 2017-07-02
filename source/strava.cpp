@@ -884,7 +884,7 @@ void parse_from_json(json_object json, strava::summary::club_event& out)
 
     auto occurrences = json->getArray("upcoming_occurrences");
 
-    for (int i = 0; i < out.upcoming_occurrences.size(); i++)
+    for (auto i = 0; i < out.upcoming_occurrences.size(); i++)
     {
         if (i < occurrences->size())
         {

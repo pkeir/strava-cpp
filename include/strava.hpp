@@ -170,19 +170,22 @@ namespace strava
 
     //
     // Namespace of constants specified by the Strava API.
+    // See: https://strava.github.io/api/v3/running_races/ distances 
     //
     namespace constants
     {
-        // See https://strava.github.io/api/v3/running_races/ distances section
+        // Kilometers
         const auto km_100 = 100000.0;
         const auto km_50 = 50000.0;
         const auto km_10 = 10000.0;
         const auto km_5 = 5000.0;
 
+        // Miles
         const auto mi_10 = 16093.4;
         const auto mi_5 = 8046.70;
         const auto mi_1 = 1609.34;
 
+        // Fixed measurements
         const auto half_marathon = 21097.0;
         const auto marathon = 42195.0;
     }
@@ -247,9 +250,9 @@ namespace strava
     }
 
     //
-    // You get three types of representation with strava, a meta repr a summary repr and
-    // a detailed repr. Here they are split int64_to seperate namespaces
-    // for clarity.
+    // You get three types of representation with strava, a meta representation 
+    // a summary representation and a detailed representation. Here they are 
+    // split into seperate namespaces for clarity.
     //
     namespace summary
     {
@@ -273,6 +276,7 @@ namespace strava
             datetime updated_at;
         };
 
+        // Activity summary info
         struct activity : public meta::activity
         {
             std::int64_t achievement_count;
@@ -351,6 +355,7 @@ namespace strava
             bool featured;
         };
 
+        // Club event summary info
         struct club_event
         {
             std::int64_t id;
@@ -486,9 +491,7 @@ namespace strava
         };
     }
 
-    //
-    // Activity Comment Struct
-    //
+    // Activity comment info
     struct comment
     {
         std::int64_t id;
@@ -500,9 +503,8 @@ namespace strava
         datetime created_at;
     };
 
-    //
-    // Lap Effort Struct
-    //
+
+    // Lap effort info
     struct lap_effort
     {
         std::int64_t id;
@@ -531,9 +533,7 @@ namespace strava
         float max_heartrate;
     };
 
-    //
-    // Photo Struct
-    //
+    // Photo info 
     struct photo
     {
         std::int64_t id;
@@ -551,9 +551,7 @@ namespace strava
         std::array<float, 2> location;
     };
 
-    //
-    // Split Standard Zone
-    //
+    // Split standard zone
     struct split_standard
     {
         std::int64_t elapsed_time;
@@ -564,17 +562,12 @@ namespace strava
         float distance;
     };
 
-    //
     // Split Metric Zone
-    //
     struct split_metric : public split_standard
     {
     };
 
-
-    //
-    // Distribution Struct
-    //
+    // Distribution bucket data
     struct distribution_bucket
     {
         std::int64_t max;
@@ -582,9 +575,7 @@ namespace strava
         std::int64_t time;
     };
 
-    //
-    // Zone struct
-    //
+    // Zone data
     struct zone
     {
         std::int64_t score;
@@ -603,9 +594,9 @@ namespace strava
     };
 
     //
-    // You get three types of representation with strava, a meta representation
+    // You get three types of representation with strava, a meta representation 
     // a summary representation and a detailed representation. Here they are 
-    // split int64_to seperate namespaces for clarity.
+    // split into seperate namespaces for clarity.
     //
     namespace detailed
     {
@@ -655,6 +646,7 @@ namespace strava
             bool owner;
         };
 
+        // Club event detailed info
         struct club_event : public summary::club_event
         {
             permissions viewer_permissions;
@@ -723,8 +715,7 @@ namespace strava
         // Lists friends for the current athlete. Pagination is supported.
         //
         // const oauth& auth - Authorization info
-        // int64_t page - The page to display (disabled by default)
-        // int64_t per_page - The number of entries per page
+        // pagination page_opt - Pagination info (disabled by default)
         //
         std::vector<summary::athlete> list_athlete_friends(const oauth& auth, pagination page_opt = {});
 
@@ -733,8 +724,7 @@ namespace strava
         //
         // const oauth& auth - Authorization info
         // meta::athlete& athlete - The athlete to get friends from
-        // int64_t page - The page to display (disabled by default)
-        // int64_t per_page - The number of entries per page
+        // pagination page_opt - Pagination info (disabled by default)
         //
         std::vector<summary::athlete> list_athlete_friends(const oauth& auth, meta::athlete& athlete, pagination page_opt = {});
 
@@ -742,8 +732,8 @@ namespace strava
         // Lists followers for the current athlete. Pagination is supported.
         //
         // const oauth& auth - Authorization info
-        // int64_t page - The page to display (disabled by default)
-        // int64_t per_page - The number of entries per page
+        // meta::athlete& athlete - The athlete to get friends from
+        // pagination page_opt - Pagination info (disabled by default)
         //
         std::vector<summary::athlete> list_athlete_followers(const oauth& auth, meta::athlete& athlete, pagination page_opt = {});
 
@@ -752,8 +742,7 @@ namespace strava
         //
         // const oauth& auth - Authorization info
         // meta::athlete& athlete - The athlete to get followers from
-        // int64_t page - The page to display (disabled by default)
-        // int64_t per_page - The number of entries per page
+        // pagination - Pagination info (disabled by default)
         //
         std::vector<summary::athlete> list_athlete_followers(const oauth& auth, pagination page_opt = {});
 
@@ -763,8 +752,7 @@ namespace strava
         //
         // const oauth& auth - Authorization info
         // meta::athlete& athlete - The athlete to find shared followers for
-        // int64_t page - The page to display (disabled by default)
-        // int64_t per_page - The number of entries per page
+        // pagination page_opt - Pagination info (disabled by default)
         //  
         std::vector<summary::athlete> list_both_following(const oauth& auth, meta::athlete& athlete, pagination page_opt = {});
 
@@ -779,7 +767,7 @@ namespace strava
         // Gets an athlete by id.
         //
         // const oauth& auth - Authorization info
-        // int64_t id - The athlete to get
+        // int64_t id - The athlete id
         //
         summary::athlete retrieve(const oauth& auth, int64_t id);
 
@@ -841,7 +829,7 @@ namespace strava
         struct stats
         {
             // Two types of entries one with an achievement count,
-            // and one without. These are split int64_to two structs
+            // and one without. These are split into two structs
             // total and detailed_total.
             struct total
             {
@@ -877,24 +865,25 @@ namespace strava
         };
 
         //
-        // Gets an zones for the current athlete.
+        // Gets zones for the current athlete.
         //
         // const oauth& auth - Authorization info
         //
         zones get_zones(const oauth& auth);
 
         //
-        // Gets an stats for the current athlete.
+        // Gets stats for the current athlete.
         //
         // const oauth& auth - Authorization info
         //
         stats get_stats(const oauth& auth, int64_t id);
 
         //
-        // Gets an koms for the given athlete.
+        // Gets koms for the given athlete.
         //
         // const oauth& auth - Authorization info
         // int64_t id - The athlete to get
+        // pagination page_opt - Pagination info (disabled by default)
         //
         std::vector<strava::detailed::segment_effort> get_koms(const oauth& auth, int64_t id, pagination page_opt = {});
     }
@@ -905,7 +894,7 @@ namespace strava
     namespace activity
     {
         //
-        // Lists comments attacked to an activity.
+        // Lists comments attached to an activity.
         //
         std::vector<comment> list_comments(const oauth& auth, std::int64_t id, pagination paging = {});
 
