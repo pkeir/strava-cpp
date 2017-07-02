@@ -270,7 +270,7 @@ std::vector<T> json_to_vector(Poco::JSON::Array::Ptr list, F functor)
     for (auto& e : *list)
     {
         T data;
-        functor(e.extract<Poco::JSON::Object::Ptr>(), data);
+        functor(e.extract<json_object>(), data);
         elements.push_back(data);
     }
 
@@ -281,7 +281,7 @@ Poco::Dynamic::Var check(Poco::Dynamic::Var response)
 {
     if (response.type() == typeid(Poco::JSON::Object::Ptr))
     {
-        auto json = response.extract<Poco::JSON::Object::Ptr>();
+        auto json = response.extract<json_object>();
         auto error_array = json->getArray("errors");
 
         if (!error_array.isNull())
@@ -291,7 +291,7 @@ Poco::Dynamic::Var check(Poco::Dynamic::Var response)
 
             for (auto& e : *error_array)
             {
-                auto eo = e.extract<Poco::JSON::Object::Ptr>();
+                auto eo = e.extract<json_object>();
                 error_codes.push_back({
                     eo->get("resource").toString(),
                     eo->get("field").toString(),
@@ -425,8 +425,8 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::summary::activity& ou
     }
 
     parse_from_json(json, (strava::meta::activity&)out);
-    parse_from_json(json, out.athlete);
-    parse_from_json(json, out.map);
+    parse_from_json(json->getObject("athlete"), out.athlete);
+    parse_from_json(json->getObject("map"), out.map);
 
     auto start_latlng = json->getArray("start_latlng");
     auto end_latlng = json->getArray("end_latlng");
@@ -558,7 +558,7 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& at
         for (auto& c : *clubs)
         {
             strava::summary::club club;
-            parse_from_json(c.extract<Poco::JSON::Object::Ptr>(), club);
+            parse_from_json(c.extract<json_object>(), club);
             athlete.clubs.push_back(club);
         }
     }
@@ -569,7 +569,7 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& at
         for (auto& s : *shoes)
         {
             strava::summary::gear shoe;
-            parse_from_json(s.extract<Poco::JSON::Object::Ptr>(), shoe);
+            parse_from_json(s.extract<json_object>(), shoe);
             athlete.shoes.push_back(shoe);
         }
     }
@@ -580,7 +580,7 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::detailed::athlete& at
         for (auto& b : *bikes)
         {
             strava::summary::gear bike;
-            parse_from_json(b.extract<Poco::JSON::Object::Ptr>(), bike);
+            parse_from_json(b.extract<json_object>(), bike);
             athlete.bikes.push_back(bike);
         }
     }
@@ -729,7 +729,7 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::detailed::segment& ou
     }
 
     parse_from_json(json, (strava::summary::segment&)out);
-    parse_from_json(json, out.map);
+    parse_from_json(json->getObject("map"), out.map);
 
     out.total_elevation_gain = cast<float>(json, "total_elevation_gain");
 
@@ -768,9 +768,9 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::summary::segment_effo
     out.id = cast<std::int64_t>(json, "id");
     out.name = cast<std::string>(json, "name");
 
-    parse_from_json(json, out.activity);
-    parse_from_json(json, out.athlete);
-    parse_from_json(json, out.segment);
+    parse_from_json(json->getObject("activity"), out.activity);
+    parse_from_json(json->getObject("athlete"), out.athlete);
+    parse_from_json(json->getObject("segment"), out.segment);
 
     out.resource_state = cast<int64_t>(json, "resource_state");
     out.max_heartrate = cast<int64_t>(json, "max_heartrate");
@@ -815,7 +815,7 @@ void parse_from_json(json_object json, strava::clubs::club_announcement& out)
     out.resource_state = cast<std::int64_t>(json, "resource_state");
     out.club_id = cast<std::int64_t>(json, "club_id");
 
-    parse_from_json(json, out.athlete);
+    parse_from_json(json->getObject("athlete"), out.athlete);
 
     out.created_at = strava::datetime(cast<std::string>(json, "created_at"));
     out.message = cast<std::string>(json, "message");
@@ -878,9 +878,9 @@ void parse_from_json(json_object json, strava::summary::club_event& out)
     out.address = cast<std::string>(json, "address");
     out.zone = cast<std::string>(json, "zone");
 
-    parse_from_json(json, out.organizing_athlete);
-    parse_from_json(json, out.route);
-    parse_from_json(json, out.club);
+    parse_from_json(json->getObject("organizing_athlete"), out.organizing_athlete);
+    parse_from_json(json->getObject("route"), out.route);
+    parse_from_json(json->getObject("club"), out.club);
 
     auto occurrences = json->getArray("upcoming_occurrences");
 
@@ -916,7 +916,7 @@ void parse_from_json(json_object json, strava::detailed::club_event& out)
     auto days = json->getArray("days_of_week");
 
     parse_from_json(json, (strava::summary::club_event&)out);
-    parse_from_json(json, out.viewer_permissions);
+    parse_from_json(json->getObject("viewer_permissions"), out.viewer_permissions);
 
     out.start_datetime = strava::datetime(cast<std::string>(json, "start_datetime"));
     out.weekly_interval = cast<std::int64_t>(json, "weekly_interval");
@@ -979,7 +979,7 @@ void parse_from_json(json_object json, strava::summary::route& route)
     }
 
     parse_from_json(json, (strava::meta::route&)route);
-    parse_from_json(json, route.athlete);
+    parse_from_json(json->getObject("athlete"), route.athlete);
 
     route.description = cast<std::string>(json, "description");
     route.sub_type = cast<std::string>(json, "sub_type");
@@ -1136,8 +1136,8 @@ void parse_from_json(json_object json, strava::lap_effort& out)
     out.average_heartrate = cast<float>(json, "average_heartrate");
     out.max_heartrate = cast<float>(json, "max_heartrate");
 
-    parse_from_json(json, out.activity);
-    parse_from_json(json, out.athlete);
+    parse_from_json(json->getObject("activity"), out.activity);
+    parse_from_json(json->getObject("athlete"), out.athlete);
 }
 
 void parse_from_json(Poco::JSON::Object::Ptr json, strava::detailed::activity& out)
@@ -1148,7 +1148,7 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::detailed::activity& o
     }
 
     parse_from_json(json, (strava::summary::activity&)out);
-    parse_from_json(json, out.gear);
+    parse_from_json(json->getObject("gear"), out.gear);
 
     out.calories = cast<float>(json, "calories");
     out.description = cast<std::string>(json, "description");
@@ -1158,35 +1158,35 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::detailed::activity& o
     for (auto& se : *json->getArray("segment_efforts"))
     {
         strava::summary::segment_effort value;
-        parse_from_json(json, value);
+        parse_from_json(se.extract<json_object>(), value);
         out.segment_efforts.push_back(value);
     }
 
     for (auto& se : *json->getArray("best_efforts"))
     {
         strava::summary::segment_effort value;
-        parse_from_json(json, value);
+        parse_from_json(se.extract<json_object>(), value);
         out.best_efforts.push_back(value);
     }
 
     for (auto& se : *json->getArray("splits_standard"))
     {
         strava::split_standard value;
-        parse_from_json(json, value);
+        parse_from_json(se.extract<json_object>(), value);
         out.splits_standard.push_back(value);
     }
 
     for (auto& se : *json->getArray("splits_metric"))
     {
         strava::split_metric value;
-        parse_from_json(json, value);
+        parse_from_json(se.extract<json_object>(), value);
         out.splits_metric.push_back(value);
     }
 
     for (auto& se : *json->getArray("laps"))
     {
         strava::lap_effort value;
-        parse_from_json(json, value);
+        parse_from_json(se.extract<json_object>(), value);
         out.laps.push_back(value);
     }
 }
@@ -1226,7 +1226,7 @@ void parse_from_json(json_object json, strava::zone& out)
     for (auto& b : *buckets)
     {
         strava::distribution_bucket value;
-        parse_from_json(json, value);
+        parse_from_json(b.extract<json_object>(), value);
         out.distribution_buckets.push_back(value);
     }
 
@@ -1281,7 +1281,7 @@ std::string strava::exchange_token(int64_t client_id, const std::string& client_
     };
 
     auto resp = check(send(request));
-    auto json = resp.extract<Poco::JSON::Object::Ptr>();
+    auto json = resp.extract<json_object>();
 
     return json->get("access_token").toString();
 }
@@ -1297,7 +1297,7 @@ std::string strava::deauthorization(const strava::oauth& auth)
     };
 
     auto resp = check(send(request));
-    auto json = resp.extract<Poco::JSON::Object::Ptr>();
+    auto json = resp.extract<json_object>();
 
     return json->get("access_token").toString();
 }

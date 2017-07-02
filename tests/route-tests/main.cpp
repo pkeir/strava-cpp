@@ -17,6 +17,25 @@ const lest::test specification[] =
         auto routes = strava::routes::list(auth, me.id);
 
         EXPECT(routes.size() > 0);
+    },
+
+    CASE("route name/desc test")
+    {
+        auto me = strava::athlete::current(auth);
+        auto routes = strava::routes::list(auth, me.id);
+        auto route = strava::routes::retrieve(auth, routes.front().id);
+     
+        EXPECT(!route.name.empty());
+        EXPECT(!route.description.empty());
+    },
+
+    CASE("route test")
+    {
+        auto me = strava::athlete::current(auth);
+        auto routes = strava::routes::list(auth, me.id);
+        auto route = strava::routes::retrieve(auth, routes.front().id);
+
+        EXPECT(route.id != 0);
     }
 };
 

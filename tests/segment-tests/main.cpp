@@ -54,6 +54,16 @@ const lest::test specification[] =
         EXPECT(segment.end_latlng[1] != float{});
     },
 
+    CASE("segment map test")
+    {
+        auto segments = strava::segments::explore(auth, area);
+        auto segment = strava::segments::retrieve(auth, segments.front().id);
+
+        EXPECT(segment.map.resource_state != 0);
+        EXPECT(!segment.map.id.empty());
+        EXPECT(!segment.map.polyline.empty());
+    },
+
     CASE("segment distance test")
     {
         auto segments = strava::segments::explore(auth, area);
