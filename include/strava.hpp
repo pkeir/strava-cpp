@@ -998,11 +998,16 @@ namespace strava
             // Retrieves a club event via id
             //
             // const oauth& auth - Authorization info
+            // std::int64_t id - The club event id
             //
-            summary::club_event retrieve(const oauth& auth, std::int64_t club_event_id);
+            summary::club_event retrieve(const oauth& auth, std::int64_t id);
 
             //
             // Lists all events tied to a club.
+            //
+            // const oauth& auth - Authorization info
+            // std::int64_t id - The club id
+            // bool upcoming - Show upcoming event
             //
             std::vector<summary::club_event> list(const oauth& auth, std::int64_t club_id, bool upcoming = false);
 
@@ -1010,7 +1015,7 @@ namespace strava
             // Joins the current athlete to an event
             //
             // const oauth& auth - Authorization info
-            // int64_t id - The event_id id
+            // int64_t id - The event id
             //
             bool join_event(const oauth& auth, std::int64_t event_id);
 
@@ -1018,12 +1023,12 @@ namespace strava
             // Makes the current athlete leave an event
             //
             // const oauth& auth - Authorization info
-            // int64_t id - The club id
+            // int64_t id - The event id
             //
             bool leave_event(const oauth& auth, std::int64_t event_id);
 
             //
-            // Deletes an event 
+            // Deletes an event (must be admin)
             //
             // const oauth& auth - Authorization info
             // int64_t id - The club id
@@ -1032,8 +1037,11 @@ namespace strava
 
             //
             // Lists athletes who have joined the event
+            // const oauth& auth - Authorization info
+            // int64_t id - The event id
+            // pagination page_opt - Pagination info (disabled by default)
             //
-            std::vector<summary::athlete> list_joined_athletes(const oauth& auth, std::int64_t event_id, pagination pagination);
+            std::vector<summary::athlete> list_joined_athletes(const oauth& auth, std::int64_t event_id, pagination page_opt = {});
         }
 
         //
@@ -1263,36 +1271,67 @@ namespace strava
         // retrieved via routes which can be listed
         // via athlete id.
         //
+        // const oauth& auth - Authorization info
+        // int64_t id - The segment to get
+        //
         detailed::segment retrieve(const oauth& auth, int64_t id);
 
         //
         // Listed starred segments for the given athlete
         //
-        std::vector<summary::segment> list_starred(const oauth& auth, int64_t athlete_id, pagination page_option = {});
+        // const oauth& auth - Authorization info
+        // int64_t id - The athlete id
+        // pagination page_opt - Pagination info (disabled by default)
+        //
+        std::vector<summary::segment> list_starred(const oauth& auth, int64_t athlete_id, pagination page_opt = {});
 
         //
         // Listed starred segments for the current athlete
         //
-        std::vector<summary::segment> list_starred(const oauth& auth, pagination page_option = {});
+        // const oauth& auth - Authorization info
+        // pagination page_opt - Pagination info (disabled by default)
+        //
+        std::vector<summary::segment> list_starred(const oauth& auth, pagination page_opt = {});
 
         //
         // Stars a segment for the current athlete
+        //
+        // const oauth& auth - Authorization info
+        // int64_t id - The segment id
+        // bool starred - The new starred value
         //
         detailed::segment star(const oauth& auth, int64_t id, bool starred);
 
         //
         // Lists segment efforts.
         //
-        std::vector<summary::segment_effort> efforts(const oauth& auth, int64_t id, int64_t athlete = 0, datetime_range range = {}, pagination page_option = {});
+        // const oauth& auth - Authorization info
+        // int64_t id - The segment id
+        // int64_t athlete - The athlete id
+        // datetime_range - optional date range for query
+        // pagination page_opt - Pagination info (disabled by default)
+        //
+        std::vector<summary::segment_effort> efforts(const oauth& auth, int64_t id, int64_t athlete = 0, datetime_range range = {}, pagination page_opt = {});
 
         //
         // Gets leaderboard for a given segment
         //
-        leaderboard get_leaderboard(const oauth& auth, int64_t id, leaderboard_params params = {}, pagination page_option = {});
+        // const oauth& auth - Authorization info
+        // int64_t id - The segment id
+        // leaderboard_params params- Optional query parameters
+        // pagination page_opt - Pagination info (disabled by default)
+        //
+        leaderboard get_leaderboard(const oauth& auth, int64_t id, leaderboard_params params = {}, pagination page_opt = {});
 
         //
         // Finds segments in a given latlng bounding box.
         //
-        std::vector<summary::segment> explore(const oauth& auth, bounds bound, std::string activity_type = "", int64_t min_cat = 0, int64_t max_cat = 0);
+        // const oauth& auth - Authorization info
+        // bounds bound - Area to search for segments
+        // std::string activity_type - Optional query for certain activities.
+        // int64_t min_cat - Optional minimum climb filter
+        // int64_t max_cat - Optional maximum climb filter
+        //
+        std::vector<summary::segment> explore(const oauth& auth, bounds bound, std::string activity_type = {}, int64_t min_cat = {}, int64_t max_cat = {});
     }
 }
