@@ -896,50 +896,90 @@ namespace strava
         //
         // Lists comments attached to an activity.
         //
-        std::vector<comment> list_comments(const oauth& auth, std::int64_t id, pagination paging = {});
+        // const oauth& auth - Authorization info
+        // std::int64_t id - Activity id
+        // pagination page_opt - Pagination info (disabled by default)
+        //
+        std::vector<comment> list_comments(const oauth& auth, std::int64_t id, pagination page_opt = {});
 
         //
         // Lists kudos attached to an activity
         //
-        std::vector<summary::activity> list_kudos(const oauth& auth, std::int64_t id, pagination paging = {});
+        // const oauth& auth - Authorization info
+        // std::int64_t id - Activity id
+        // pagination page_opt - Pagination info (disabled by default)
+        //
+        std::vector<summary::activity> list_kudos(const oauth& auth, std::int64_t id, pagination page_opt = {});
 
         // 
         // List photos associated with an activity
         // 
+        // const oauth& auth - Authorization info
+        // std::int64_t id - Activity id
+        // bool photo_source - Return all photos
+        // std::int64_t size - Requested size of the activity’s photos
+        //
+        //
         std::vector<photo> list_photos(const oauth& auth, std::int64_t id, bool photo_source, std::int64_t size);
 
         //
         // Retrieves an activity by id
+        //
+        // const oauth& auth - Authorization info
+        // std::int64_t id - Activity id
         //
         detailed::activity retrieve(const oauth& auth, std::int64_t id);
 
         //
         // Updates an activity by id
         //
+        // const oauth& auth - Authorization info
+        // std::int64_t id - Activity id
+        // std::map<std::string, std::string> - Map of updates e.g {"name", "AwesomeActivity"}
+        //
         detailed::activity update(const oauth& auth, std::int64_t id, std::map<std::string, std::string> updates);
 
         //
         // Lists activities for the current user.
         // 
-        std::vector<summary::activity> list(const oauth& auth, datetime before = {}, datetime after = {}, pagination pagination = {});
+        // const oauth& auth - Authorization info
+        // std::int64_t id - Activity id
+        // datetime before - Optional before query parameter
+        // datetime after - Optional after query parameter
+        // pagination page_opt - Pagination info (disabled by default)
+        //
+        std::vector<summary::activity> list(const oauth& auth, datetime before = {}, datetime after = {}, pagination page_opt = {});
 
         //
         // Lists related activities for the current user
         //
+        // const oauth& auth - Authorization info
+        // std::int64_t id - Activity id
+        // pagination page_opt - Pagination info (disabled by default)
+        // 
         std::vector<summary::activity> list_related(const oauth& auth, std::int64_t id, pagination pagination = {});
 
         //
         // Lists friends activities for the current user
+        //
+        // const oauth& auth - Authorization info
+        // pagination page_opt - Pagination info (disabled by default)
         //
         std::vector<summary::activity> list_friends(const oauth& auth, pagination pagination = {});
 
         //
         // Lists zones for an activity
         //
+        // const oauth& auth - Authorization info
+        // std::int64_t id - Activity id
+        //
         std::vector<zone> list_zones(const oauth& auth, std::int64_t id);
 
         //
         // Lists laps for an activity
+        //
+        // const oauth& auth - Authorization info
+        // std::int64_t id - Activity id
         //
         std::vector<lap_effort> list_laps(const oauth& auth, std::int64_t id);
     }
@@ -990,9 +1030,7 @@ namespace strava
         //
         detailed::club retrieve(const oauth& auth, std::int64_t id);
 
-        //
         // Announcement struct which mirrors json response.
-        //
         struct club_announcement
         {
             std::int64_t id;
@@ -1028,19 +1066,14 @@ namespace strava
         //
         std::vector<summary::activity> list_club_activities(const oauth& auth, std::int64_t club_id, datetime before, pagination pagination);
 
-        //
         // When leaving a group this struct is returned
-        //
         struct leave_response
         {
             bool success;
             bool active;
         };
 
-        //
-        // When joining a club the structure returned looks
-        // like this.
-        //
+        // When joining a club the structure returned looks like this.
         struct join_response : public leave_response
         {
             std::string membership;
@@ -1136,16 +1169,10 @@ namespace strava
     //
     namespace segments
     {
-        //
-        // Leaderboard struct returned from the
-        // the leaderboard segment endpoint.
-        //
+        // Leaderboard struct returned from the leaderboard segment endpoint.
         struct leaderboard
         {
-            //
-            // Individual entries in this table
-            // mirror this structure.
-            //
+            // Individual entries in this table mirror this structure.
             struct entry
             {
                 int64_t athlete_id;
@@ -1171,18 +1198,14 @@ namespace strava
             std::vector<entry> entries;
         };
 
-        //
         // LatLng quad for exploring for segments
-        //
         struct bounds
         {
             double ne_lat, ne_lng;
             double sw_lat, sw_lng;
         };
 
-        //
         // Params for querying the leaderboard endpoint.
-        //
         struct leaderboard_params
         {
             int64_t club_id;
