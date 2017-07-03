@@ -1651,9 +1651,31 @@ std::vector<strava::summary::segment_effort> strava::segments::efforts(const oau
     return json_to_vector<summary::segment_effort>(json, parser);
 }
 
-strava::segments::leaderboard strava::segments::get_leaderboard(const oauth& auth, int64_t id, leaderboard_params params, pagination paging)
+auto params_to_map(strava::segments::leaderboard_params& params)
 {
     auto data = std::map<std::string, std::string>{};
+
+    if (params.club_id != 0)
+        data["club_id"] = std::to_string(params.club_id);
+    if (params.context_entries != 0)
+        data["context_entries"] = std::to_string(params.context_entries);
+    if (!params.age_group.empty())
+        data["age_group"] = params.age_group;
+    if (!params.gender.empty())
+        data["gender"] = params.gender;
+    if (!params.weight_class.empty())
+        data["weight_class"] = params.weight_class;
+    if (!params.date_range.empty())
+        data["date_range"] = params.date_range;
+    if (params.following)
+        data["following"] = "true";
+
+    return data;
+}
+
+strava::segments::leaderboard strava::segments::get_leaderboard(const oauth& auth, int64_t id, leaderboard_params params, pagination paging)
+{
+    auto data = params_to_map(params);
     auto request = http_request
     {
         Poco::Net::HTTPRequest::HTTP_GET,
@@ -1682,6 +1704,21 @@ std::vector<strava::summary::segment> strava::segments::explore(const oauth& aut
     ss << bound.sw_lng;
 
     data["bounds"] = ss.str();
+
+    if (activity_type != "")
+    {
+        data["activity_type"] = activity_type;
+    }
+
+    if (min_cat != 0)
+    {
+        data["min_cat"] = std::to_string(min_cat);
+    }
+
+    if (max_cat != 0)
+    {
+        data["max_cat"] = std::to_string(max_cat);
+    }
 
     auto request = http_request
     {
@@ -1720,11 +1757,7 @@ strava::summary::club_event strava::clubs::events::retrieve(const oauth& auth, s
 std::vector<strava::summary::club_event> strava::clubs::events::list(const oauth& auth, std::int64_t club_id, bool upcoming)
 {
     auto data = std::map<std::string, std::string>{};
-
-    if (upcoming)
-    {
-        data["upcoming"] = "true";
-    }
+    data["upcoming"] = upcoming ? "true" : "false";
 
     auto request = http_request
     {
@@ -1879,7 +1912,7 @@ std::vector<strava::summary::athlete> strava::clubs::list_club_admin(const oauth
         Poco::Net::HTTPRequest::HTTP_GET,
         join("/api/v3/clubs/", club_id, "/admins"),
         auth.access_token,
-        {},{}, pagination
+        {}, {}, pagination
     };
 
     auto parser = [](auto& s, auto& c) { parse_from_json(s, c); };
@@ -1891,12 +1924,19 @@ std::vector<strava::summary::athlete> strava::clubs::list_club_admin(const oauth
 
 std::vector<strava::summary::activity> strava::clubs::list_club_activities(const oauth& auth, std::int64_t club_id, datetime before, pagination pagination)
 {
+    auto data = std::map<std::string, std::string>{};
+
+    if (before.time_epoch != 0)
+    {
+        data["before"] = std::to_string(before.time_epoch);
+    }
+
     auto request = http_request
     {
         Poco::Net::HTTPRequest::HTTP_GET,
         join("/api/v3/clubs/", club_id, "/activities"),
         auth.access_token,
-        {},{}, pagination
+        {}, data, pagination
     };
 
     auto parser = [](auto& s, auto& c) { parse_from_json(s, c); };
@@ -1978,6 +2018,14 @@ std::vector<strava::summary::activity> strava::activity::list_kudos(const oauth&
 
 std::vector<strava::photo> strava::activity::list_photos(const oauth& auth, std::int64_t id, bool photo_source, std::int64_t size)
 {
+    auto data = std::map<std::string, std::string>{};
+    data["photo_source"] = photo_source ? "true" : "false";
+
+    if (size != 0)
+    {
+        data["size"] = std::to_string(size);
+    }
+
     auto request = http_request
     {
         Poco::Net::HTTPRequest::HTTP_GET,
@@ -2011,14 +2059,44 @@ strava::detailed::activity strava::activity::retrieve(const oauth& auth, std::in
     return value;
 }
 
+strava::detailed::activity strava::activity::update(const oauth& auth, std::int64_t id, std::map<std::string, std::string> updates)
+{
+    auto request = http_request
+    {
+        Poco::Net::HTTPRequest::HTTP_PUT,
+        join("/api/v3/activities/", id),
+        auth.access_token,
+        updates, {}
+    };
+
+    auto resp = check(send(request));
+    auto json = resp.extract<json_object>();
+
+    detailed::activity value;
+    parse_from_json(json, value);
+    return value;
+}
+
 std::vector<strava::summary::activity> strava::activity::list(const oauth& auth, datetime before, datetime after, pagination pagination)
 {
+    auto data = std::map<std::string, std::string>{};
+
+    if (before.time_epoch != 0)
+    {
+        data["before"] = std::to_string(before.time_epoch);
+    }
+
+    if (after.time_epoch != 0)
+    {
+        data["after"] = std::to_string(after.time_epoch);
+    }
+
     auto request = http_request
     {
         Poco::Net::HTTPRequest::HTTP_GET,
         "/api/v3/athlete/activities",
         auth.access_token,
-        {},{}, pagination
+        {}, data, pagination
     };
 
     auto parser = [](auto& s, auto& c) { parse_from_json(s, c); };

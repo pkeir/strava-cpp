@@ -916,11 +916,11 @@ namespace strava
         // 
         // const oauth& auth - Authorization info
         // std::int64_t id - Activity id
-        // bool photo_source - Return all photos
+        // bool photo_source - Return all photos (use true)
         // std::int64_t size - Requested size of the activity’s photos
         //
         //
-        std::vector<photo> list_photos(const oauth& auth, std::int64_t id, bool photo_source, std::int64_t size);
+        std::vector<photo> list_photos(const oauth& auth, std::int64_t id, bool photo_source = true, std::int64_t size = {});
 
         //
         // Retrieves an activity by id
@@ -957,7 +957,7 @@ namespace strava
         // std::int64_t id - Activity id
         // pagination page_opt - Pagination info (disabled by default)
         // 
-        std::vector<summary::activity> list_related(const oauth& auth, std::int64_t id, pagination pagination = {});
+        std::vector<summary::activity> list_related(const oauth& auth, std::int64_t id, pagination page_opt = {});
 
         //
         // Lists friends activities for the current user
@@ -965,7 +965,7 @@ namespace strava
         // const oauth& auth - Authorization info
         // pagination page_opt - Pagination info (disabled by default)
         //
-        std::vector<summary::activity> list_friends(const oauth& auth, pagination pagination = {});
+        std::vector<summary::activity> list_friends(const oauth& auth, pagination page_opt = {});
 
         //
         // Lists zones for an activity
@@ -1311,7 +1311,7 @@ namespace strava
         // datetime_range - optional date range for query
         // pagination page_opt - Pagination info (disabled by default)
         //
-        std::vector<summary::segment_effort> efforts(const oauth& auth, int64_t id, int64_t athlete = 0, datetime_range range = {}, pagination page_opt = {});
+        std::vector<summary::segment_effort> efforts(const oauth& auth, int64_t id, int64_t athlete, datetime_range range = {}, pagination page_opt = {});
 
         //
         // Gets leaderboard for a given segment

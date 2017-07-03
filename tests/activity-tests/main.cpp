@@ -49,7 +49,7 @@ const lest::test specification[] =
         EXPECT(first.text.length() > 0);
 
         EXPECT(first.athlete.id != int{});
-        EXPECT(first.athlete.resource_state != int{};
+        EXPECT(first.athlete.resource_state != int{});
 
         EXPECT(first.created_at.time_string.length() > 0);
         EXPECT(first.created_at.time_epoch > 0);
