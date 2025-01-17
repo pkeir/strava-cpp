@@ -29,6 +29,7 @@
 #include <array>
 #include <ctime>
 #include <map>
+#include <cstdint>
 
 //
 // Entire API is found in the strava namespace,
