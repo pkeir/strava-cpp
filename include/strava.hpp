@@ -1,26 +1,25 @@
 
-
-// Placeholder license (MIT) cough cough cough...
+// MIT License
 //
-//  Copyright(c) 2017 Paul Keir, William Taylor
+// Copyright (c) 2017-2024 Paul Keir, William Taylor
 //
-//  Permission is hereby granted, free of charge, to any person obtaining a copy
-//  of this software and associated documentation files(the "Software"), to deal
-//  in the Software without restriction, including without limitation the rights
-//  to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-//  copies of the Software, and to permit persons to whom the Software is
-//  furnished to do so, subject to the following conditions :
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
-//  The above copyright notice and this permission notice shall be included in all
-//  copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
-//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-//  SOFTWARE.
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+// IN THE SOFTWARE.
 
 #pragma once
 
@@ -753,7 +752,7 @@ namespace strava
         // const oauth& auth - Authorization info
         // meta::athlete& athlete - The athlete to find shared followers for
         // pagination page_opt - Pagination info (disabled by default)
-        //  
+        //
         std::vector<summary::athlete> list_both_following(const oauth& auth, meta::athlete& athlete, pagination page_opt = {});
 
         //
@@ -776,7 +775,8 @@ namespace strava
         //
         // const oauth& auth - Authorization info
         // meta::athlete athlete - The athlete to update
-        // std::map<std::string, std::string> - Map of updates e.g {"weight", "50.0"}
+        // std::map<std::string, std::string> - Map of updates e.g {"weight",
+        // "50.0"}
         //
         detailed::athlete update(const oauth& auth, meta::athlete athlete, std::map<std::string, std::string> updates);
 
@@ -813,7 +813,7 @@ namespace strava
 
         //
         // Zones is a combination of both heart_rate
-        // zones and power zones. (Power zones is a 
+        // zones and power zones. (Power zones is a
         // premium feature).
         //
         struct zones
@@ -935,13 +935,14 @@ namespace strava
         //
         // const oauth& auth - Authorization info
         // std::int64_t id - Activity id
-        // std::map<std::string, std::string> - Map of updates e.g {"name", "AwesomeActivity"}
+        // std::map<std::string, std::string> - Map of updates e.g {"name",
+        // "AwesomeActivity"}
         //
         detailed::activity update(const oauth& auth, std::int64_t id, std::map<std::string, std::string> updates);
 
         //
         // Lists activities for the current user.
-        // 
+        //
         // const oauth& auth - Authorization info
         // std::int64_t id - Activity id
         // datetime before - Optional before query parameter
@@ -1072,7 +1073,7 @@ namespace strava
         //
         std::vector<club_announcement> list_announcements(const oauth& auth, std::int64_t club_id);
 
-        // 
+        //
         // Lists clubs for the current athlete
         //
         // const oauth& auth - Authorization info
@@ -1088,7 +1089,7 @@ namespace strava
         //
         std::vector<summary::athlete> list_club_members(const oauth& auth, std::int64_t club_id, pagination page_opt = {});
 
-        // 
+        //
         // Lists admins in a club
         //
         // const oauth& auth - Authorization info
@@ -1128,7 +1129,7 @@ namespace strava
         //
         join_response join_club(const oauth& auth, std::int64_t club_id);
 
-        // 
+        //
         // Makes the current athlete leave a club
         //
         // const oauth& auth - Authorization info

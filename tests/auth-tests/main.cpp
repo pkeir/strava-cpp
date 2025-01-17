@@ -8,7 +8,7 @@ const lest::test specification[] =
     CASE("request_access function test (public)")
     {
         auto url = strava::request_access(0, strava::scope_public);
-        
+
         EXPECT(url.find("https://") != std::string::npos);
         EXPECT(url.find("public") != std::string::npos);
         EXPECT(url.empty() == false);
@@ -17,7 +17,7 @@ const lest::test specification[] =
     CASE("request_access function test (write)")
     {
         auto url = strava::request_access(0, strava::scope_write);
-        
+
         EXPECT(url.find("https://") != std::string::npos);
         EXPECT(url.find("write") != std::string::npos);
         EXPECT(url.empty() == false);

@@ -1133,7 +1133,7 @@ void parse_from_json(Poco::JSON::Object::Ptr json, strava::detailed::activity& o
             out.segment_efforts.push_back(value);
         }
     }
-    
+
     if (!best_efforts.isNull())
     {
         for (auto& se : *best_efforts)

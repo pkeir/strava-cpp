@@ -42,7 +42,7 @@ const lest::test specification[] =
         auto activity = activities.front();
         auto comments = strava::activity::list_comments(auth, activity.id);
         auto first = comments.front();
-        
+
         EXPECT(first.id != 0);
         EXPECT(first.resource_state != int{});
         EXPECT(first.resource_state != int{});
