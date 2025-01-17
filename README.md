@@ -14,7 +14,8 @@ int main(int argc, const char* argv[])
 {
     auto id = 0;        // <client_id>
     auto secret = "";   // <client_secret>
-    auto web_url = strava::request_access(id, scope_view_private_write);
+    auto scope = strava::oauth_scope::scope_view_private_write;
+    auto web_url = strava::request_access(id, scope);
 
     // Open url to authenticate and get code
     std::string code;
