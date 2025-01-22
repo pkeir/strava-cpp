@@ -1,7 +1,7 @@
 include (ExternalProject)
 
 ExternalProject_Add(LEST
-    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/lest 
+    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/lest
     GIT_REPOSITORY "https://github.com/martinmoene/lest"
     GIT_TAG "master"
     INSTALL_COMMAND ""

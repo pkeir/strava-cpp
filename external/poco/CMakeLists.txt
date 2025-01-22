@@ -3,7 +3,7 @@ include (ExternalProject)
 ExternalProject_Add(POCO
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/poco 
     GIT_REPOSITORY "https://github.com/pocoproject/poco"
-    GIT_TAG "master"
+    GIT_TAG "main"
     INSTALL_COMMAND ""
     UPDATE_COMMAND ""
     CMAKE_ARGS -DENABLE_NETSSL=ON
@@ -24,7 +24,7 @@ else()
   set(POCO_LIB_DIR "${binary_dir}/lib" CACHE INTERNAL "")
   set(prefix "lib")
   set(suffix ".so")
-  set(POCO_LIBS 
+  set(POCO_LIBS
     ${prefix}PocoNetSSL${suffix}
     ${prefix}PocoNet${suffix}
     ${prefix}PocoUtil${suffix}
