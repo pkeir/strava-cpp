@@ -1,7 +1,7 @@
 include (ExternalProject)
 
 ExternalProject_Add(POCO
-    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/poco 
+    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/poco
     GIT_REPOSITORY "https://github.com/pocoproject/poco"
     GIT_TAG "main"
     INSTALL_COMMAND ""

@@ -1,5 +1,5 @@
 # Minimum version
-cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
 
 # Set project name
 project (Strava)
