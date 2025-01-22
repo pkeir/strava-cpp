@@ -9,11 +9,12 @@ C++ API bindings to V3 of the Strava API. This API supports reading and updating
 ```cpp
 #include <strava.hpp>
 #include <iostream>
+#include <cstdlib>
 
 int main(int argc, const char* argv[])
 {
-    auto id = 0;        // <client_id>
-    auto secret = "";   // <client_secret>
+    auto id = std::atoi(std::getenv("STRAVA_CLIENT_ID"));
+    auto secret = std::getenv("STRAVA_CLIENT_SECRET");
     auto scope = strava::oauth_scope::scope_view_private_write;
     auto web_url = strava::request_access(id, scope);
 
