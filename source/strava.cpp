@@ -12,8 +12,9 @@
 #include <Poco/SharedPtr.h>
 #include <Poco/StreamCopier.h>
 #include <Poco/JSON/Parser.h>
-#include <Poco/Dynamic/Var.h>
+#include <Poco/JSON/Object.h>
 #include <Poco/JSON/JSON.h>
+#include <Poco/Dynamic/Var.h>
 #include <Poco/URI.h>
 
 #include <strava.hpp>
