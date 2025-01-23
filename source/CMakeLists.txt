@@ -12,20 +12,30 @@ link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 link_directories(${POCO_LIB_DIR})
 
 set(STRAVA_SRC strava.cpp ../include/strava.hpp)
+set(POCO_LIBS
+    Poco::NetSSL
+    Poco::Net
+    Poco::Util
+    Poco::JSON
+    Poco::XML
+    Poco::Foundation
+    CACHE INTERNAL ""
+)
 
 add_library(STRAVA ${STRAVA_SRC})
-add_dependencies(STRAVA POCO)
+#add_dependencies(STRAVA POCO)
+add_dependencies(STRAVA ${POCO_LIBS})
 
-set(STRAVA_LIB 
-    STRAVA 
-    ${OPENSSL_LIBRARIES} 
-    ${OPENSSL_SSL_LIBRARY} 
-    ${OPENSSL_CRYPTO_LIBRARY} 
+set(STRAVA_LIB
+    STRAVA
+    ${OPENSSL_LIBRARIES}
+    ${OPENSSL_SSL_LIBRARY}
+    ${OPENSSL_CRYPTO_LIBRARY}
     ${POCO_LIBS}
     CACHE INTERNAL ""
 )
 
-set(STRAVA_INC 
+set(STRAVA_INC
     ../include
     ${LEST_INCLUDE}
     ${OPENSSL_INCLUDE_DIR}

@@ -6,6 +6,7 @@ project (Strava)
 
 # Dependencies
 find_package(OpenSSL REQUIRED)
+find_package(Poco REQUIRED COMPONENTS Net NetSSL Util JSON XML Foundation)
 
 # Setting output dirs
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -27,7 +28,7 @@ option(ENABLE_TESTS "Enable Tests" ON)
 
 # Sub directories
 add_subdirectory(external/lest)
-add_subdirectory(external/poco)
+#add_subdirectory(external/poco)
 add_subdirectory(source)
 
 # Add Tests
