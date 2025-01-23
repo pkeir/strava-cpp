@@ -1,7 +1,7 @@
 
 #include <strava.hpp>
 #include <iostream>
-#include <lest.hpp>
+#include <gtest/gtest.h>
 
 strava::oauth auth = {
     18035,
@@ -9,45 +9,42 @@ strava::oauth auth = {
     "005ed679943cd3eee63861f595863cda58591b41"
 };
 
-const lest::test specification[] =
+TEST(AthleteTest, Name)
 {
-    CASE("athlete name test")
-    {
-        auto me = strava::athlete::current(auth);
+    auto me = strava::athlete::current(auth);
 
-        EXPECT(!me.firstname.empty());
-        EXPECT(!me.lastname.empty());
-    },
+    EXPECT_TRUE(!me.firstname.empty());
+    EXPECT_TRUE(!me.lastname.empty());
+}
 
-    CASE("athlete location test")
-    {
-        auto me = strava::athlete::current(auth);
+TEST(AthleteTest, Location)
+{
+    auto me = strava::athlete::current(auth);
 
-        EXPECT(!me.country.empty());
-        EXPECT(!me.state.empty());
-    },
+    EXPECT_TRUE(!me.country.empty());
+    EXPECT_TRUE(!me.state.empty());
+}
 
-    CASE("athlete image test")
-    {
-        auto me = strava::athlete::current(auth);
+TEST(AthleteTest, Image)
+{
+    auto me = strava::athlete::current(auth);
 
-        EXPECT(!me.profile_medium.empty());
-        EXPECT(!me.profile.empty());
-    },
+    EXPECT_TRUE(!me.profile_medium.empty());
+    EXPECT_TRUE(!me.profile.empty());
+}
 
-    CASE("athlete date test")
-    {
-        auto me = strava::athlete::current(auth);
+TEST(AthleteTest, Date)
+{
+    auto me = strava::athlete::current(auth);
 
-        EXPECT(!me.created_at.time_string.empty());
-        EXPECT(me.created_at.time_epoch > 0);
+    EXPECT_TRUE(!me.created_at.time_string.empty());
+    EXPECT_TRUE(me.created_at.time_epoch > 0);
 
-        EXPECT(!me.updated_at.time_string.empty());
-        EXPECT(me.updated_at.time_epoch > 0);
-    }
-};
+    EXPECT_TRUE(!me.updated_at.time_string.empty());
+    EXPECT_TRUE(me.updated_at.time_epoch > 0);
+}
 
 int main(int argc, char * argv[])
 {
-    return lest::run(specification, argc, argv);
+    return RUN_ALL_TESTS();
 }

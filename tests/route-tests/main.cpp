@@ -1,7 +1,7 @@
 
 #include <strava.hpp>
 #include <iostream>
-#include <lest.hpp>
+#include <gtest/gtest.h>
 
 strava::oauth auth = {
     18035,
@@ -9,37 +9,34 @@ strava::oauth auth = {
     "005ed679943cd3eee63861f595863cda58591b41"
 };
 
-const lest::test specification[] =
+TEST(RouteTest, Length)
 {
-    CASE("routes length test")
-    {
-        auto me = strava::athlete::current(auth);
-        auto routes = strava::routes::list(auth, me.id);
+    auto me = strava::athlete::current(auth);
+    auto routes = strava::routes::list(auth, me.id);
 
-        EXPECT(routes.size() > 0);
-    },
+    EXPECT_TRUE(routes.size() > 0);
+}
 
-    CASE("route name/desc test")
-    {
-        auto me = strava::athlete::current(auth);
-        auto routes = strava::routes::list(auth, me.id);
-        auto route = strava::routes::retrieve(auth, routes.front().id);
+TEST(RouteTest, NameDesc)
+{
+    auto me = strava::athlete::current(auth);
+    auto routes = strava::routes::list(auth, me.id);
+    auto route = strava::routes::retrieve(auth, routes.front().id);
 
-        EXPECT(!route.name.empty());
-        EXPECT(!route.description.empty());
-    },
+    EXPECT_TRUE(!route.name.empty());
+    EXPECT_TRUE(!route.description.empty());
+}
 
-    CASE("route id test")
-    {
-        auto me = strava::athlete::current(auth);
-        auto routes = strava::routes::list(auth, me.id);
-        auto route = strava::routes::retrieve(auth, routes.front().id);
+TEST(RouteTest, ID)
+{
+    auto me = strava::athlete::current(auth);
+    auto routes = strava::routes::list(auth, me.id);
+    auto route = strava::routes::retrieve(auth, routes.front().id);
 
-        EXPECT(route.id != int{});
-    }
-};
+    EXPECT_TRUE(route.id != int{});
+}
 
 int main(int argc, char * argv[])
 {
-    return lest::run(specification, argc, argv);
+    return RUN_ALL_TESTS();
 }

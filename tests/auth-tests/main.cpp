@@ -1,39 +1,36 @@
 
 #include <strava.hpp>
-#include <lest.hpp>
 #include <string>
+#include <gtest/gtest.h>
 
-const lest::test specification[] =
+TEST(AuthTest, FunctionPublic)
 {
-    CASE("request_access function test (public)")
-    {
-        auto url = strava::request_access(0, strava::scope_public);
+    auto url = strava::request_access(0, strava::scope_public);
 
-        EXPECT(url.find("https://") != std::string::npos);
-        EXPECT(url.find("public") != std::string::npos);
-        EXPECT(url.empty() == false);
-    },
+    EXPECT_TRUE(url.find("https://") != std::string::npos);
+    EXPECT_TRUE(url.find("public") != std::string::npos);
+    EXPECT_TRUE(url.empty() == false);
+}
 
-    CASE("request_access function test (write)")
-    {
-        auto url = strava::request_access(0, strava::scope_write);
+TEST(AuthTest, FunctionWrite)
+{
+    auto url = strava::request_access(0, strava::scope_write);
 
-        EXPECT(url.find("https://") != std::string::npos);
-        EXPECT(url.find("write") != std::string::npos);
-        EXPECT(url.empty() == false);
-    },
+    EXPECT_TRUE(url.find("https://") != std::string::npos);
+    EXPECT_TRUE(url.find("write") != std::string::npos);
+    EXPECT_TRUE(url.empty() == false);
+}
 
-    CASE("struct oauth layout test")
-    {
-        auto auth = strava::oauth { 0, "client_secret", "access_token" };
+TEST(AuthTest, Layout)
+{
+    auto auth = strava::oauth { 0, "client_secret", "access_token" };
 
-        EXPECT(auth.client_id == 0);
-        EXPECT(auth.client_secret == "client_secret");
-        EXPECT(auth.access_token == "access_token");
-    }
-};
+    EXPECT_TRUE(auth.client_id == 0);
+    EXPECT_TRUE(auth.client_secret == "client_secret");
+    EXPECT_TRUE(auth.access_token == "access_token");
+}
 
 int main(int argc, char * argv[])
 {
-    return lest::run(specification, argc, argv);
+    return RUN_ALL_TESTS();
 }

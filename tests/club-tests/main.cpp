@@ -1,7 +1,7 @@
 
 #include <strava.hpp>
 #include <iostream>
-#include <lest.hpp>
+#include <gtest/gtest.h>
 
 strava::oauth auth = {
     18035,
@@ -9,53 +9,50 @@ strava::oauth auth = {
     "005ed679943cd3eee63861f595863cda58591b41"
 };
 
-const lest::test specification[] =
+TEST(ClubTest, Length)
 {
-    CASE("club length test")
-    {
-        auto clubs = strava::clubs::list_athlete_clubs(auth);
-        EXPECT(clubs.size() > 0);
-    },
+    auto clubs = strava::clubs::list_athlete_clubs(auth);
+    EXPECT_TRUE(clubs.size() > 0);
+}
 
-    CASE("club meta test")
-    {
-        auto clubs = strava::clubs::list_athlete_clubs(auth);
-        auto club = clubs.front();
+TEST(ClubTest, Meta)
+{
+    auto clubs = strava::clubs::list_athlete_clubs(auth);
+    auto club = clubs.front();
 
-        EXPECT(club.id != 0);
-        EXPECT(club.resource_state != 0);
-    },
+    EXPECT_TRUE(club.id != 0);
+    EXPECT_TRUE(club.resource_state != 0);
+}
 
-    CASE("club name test")
-    {
-        auto clubs = strava::clubs::list_athlete_clubs(auth);
-        auto club = clubs.front();
+TEST(ClubTest, Name)
+{
+    auto clubs = strava::clubs::list_athlete_clubs(auth);
+    auto club = clubs.front();
 
-        EXPECT(club.name.length() > 0);
-    },
+    EXPECT_TRUE(club.name.length() > 0);
+}
 
-    CASE("club member test")
-    {
-        auto clubs = strava::clubs::list_athlete_clubs(auth);
-        auto club = clubs.front();
+TEST(ClubTest, Member)
+{
+    auto clubs = strava::clubs::list_athlete_clubs(auth);
+    auto club = clubs.front();
 
-        EXPECT(club.member_count > 0);
-    },
+    EXPECT_TRUE(club.member_count > 0);
+}
 
-    CASE("club image test")
-    {
-        auto clubs = strava::clubs::list_athlete_clubs(auth);
-        auto club = clubs.front();
+TEST(ClubTest, Image)
+{
+    auto clubs = strava::clubs::list_athlete_clubs(auth);
+    auto club = clubs.front();
 
-        EXPECT(!club.profile_medium.empty());
-        EXPECT(!club.profile.empty());
+    EXPECT_TRUE(!club.profile_medium.empty());
+    EXPECT_TRUE(!club.profile.empty());
 
-        EXPECT(!club.cover_photo_small.empty());
-        EXPECT(!club.cover_photo.empty());
-    }
-};
+    EXPECT_TRUE(!club.cover_photo_small.empty());
+    EXPECT_TRUE(!club.cover_photo.empty());
+}
 
 int main(int argc, char * argv[])
 {
-    return lest::run(specification, argc, argv);
+    return RUN_ALL_TESTS();
 }

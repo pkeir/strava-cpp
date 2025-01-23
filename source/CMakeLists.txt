@@ -21,10 +21,11 @@ set(POCO_LIBS
     Poco::Foundation
     CACHE INTERNAL ""
 )
+set (GTEST_LIBS GTest::Main GTest::GTest CACHE INTERNAL "")
 
 add_library(STRAVA ${STRAVA_SRC})
 #add_dependencies(STRAVA POCO)
-add_dependencies(STRAVA ${POCO_LIBS})
+add_dependencies(STRAVA ${POCO_LIBS} ${GTEST_LIBS})
 
 set(STRAVA_LIB
     STRAVA
@@ -32,6 +33,7 @@ set(STRAVA_LIB
     ${OPENSSL_SSL_LIBRARY}
     ${OPENSSL_CRYPTO_LIBRARY}
     ${POCO_LIBS}
+    ${GTEST_LIBS}
     CACHE INTERNAL ""
 )
 

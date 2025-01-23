@@ -1,7 +1,7 @@
 
 #include <strava.hpp>
 #include <iostream>
-#include <lest.hpp>
+#include <gtest/gtest.h>
 
 strava::oauth auth = {
     18035,
@@ -9,43 +9,40 @@ strava::oauth auth = {
     "005ed679943cd3eee63861f595863cda58591b41"
 };
 
-const lest::test specification[] =
+TEST(RacesTest, Length)
 {
-    CASE("races length test")
-    {
-        auto races = strava::races::list(auth);
-        EXPECT(races.size() > 0);
-    },
+    auto races = strava::races::list(auth);
+    EXPECT_TRUE(races.size() > 0);
+}
 
-    CASE("race name & url test")
-    {
-        auto races = strava::races::list(auth);
-        auto first = strava::races::retrieve(auth, races.front().id);
+TEST(RacesTest, NameURL)
+{
+    auto races = strava::races::list(auth);
+    auto first = strava::races::retrieve(auth, races.front().id);
 
-        EXPECT(!first.name.empty());
-        EXPECT(!first.url.empty());
-    },
+    EXPECT_TRUE(!first.name.empty());
+    EXPECT_TRUE(!first.url.empty());
+}
 
-    CASE("race location test")
-    {
-        auto races = strava::races::list(auth);
-        auto first = races.front();
+TEST(RacesTest, Location)
+{
+    auto races = strava::races::list(auth);
+    auto first = races.front();
 
-        EXPECT(!first.country.empty());
-        EXPECT(!first.city.empty());
-    },
+    EXPECT_TRUE(!first.country.empty());
+    EXPECT_TRUE(!first.city.empty());
+}
 
-    CASE("race metadata test")
-    {
-        auto races = strava::races::list(auth);
-        auto first = strava::races::retrieve(auth, races.front().id);
+TEST(RacesTest, MetaData)
+{
+    auto races = strava::races::list(auth);
+    auto first = strava::races::retrieve(auth, races.front().id);
 
-        EXPECT(first.id != int{});
-        EXPECT(first.resource_state != int{});
-    }
-};
+    EXPECT_TRUE(first.id != int{});
+    EXPECT_TRUE(first.resource_state != int{});
+}
 
 int main(int argc, char * argv[])
 {
-    return lest::run(specification, argc, argv);
+    return RUN_ALL_TESTS();
 }

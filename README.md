@@ -35,7 +35,7 @@ int main(int argc, const char* argv[])
 
 ## Features
 
-The API provides access to the most prominant areas of the dataset. If you are just wanting info from the API or want to update some values, this API will meet your requirements.
+The API provides access to the most prominent areas of the dataset. If you are just wanting info from the API or want to update some values, this API will meet your requirements.
 
 * Authentication
 * Athletes

@@ -1,54 +1,51 @@
 
 #include <strava.hpp>
 #include <iostream>
-#include <lest.hpp>
+#include <gtest/gtest.h>
 
-strava::oauth auth = 
+strava::oauth auth =
 {
     18035,
     "8a08050aaf532074ab06bdacf3297b3ecc86d640",
     "005ed679943cd3eee63861f595863cda58591b41"
 };
 
-const lest::test specification[] =
+TEST(EffortsTest, Length)
 {
-    CASE("efforts length test")
-    {
-        auto me = strava::athlete::current(auth);
-        auto routes = strava::routes::list(auth, me.id);
-        auto route = strava::routes::retrieve(auth, routes.front().id);
+    auto me = strava::athlete::current(auth);
+    auto routes = strava::routes::list(auth, me.id);
+    auto route = strava::routes::retrieve(auth, routes.front().id);
 
-        EXPECT(route.segments.size() > 0);
-    },
+    EXPECT_TRUE(route.segments.size() > 0);
+}
 
-    CASE("efforts name/resource_state test")
-    {
-        auto me = strava::athlete::current(auth);
-        auto routes = strava::routes::list(auth, me.id);
-        auto route = strava::routes::retrieve(auth, routes.front().id);
-        auto effort = route.segments.front();
+TEST(EffortsTest, NameResourceState)
+{
+    auto me = strava::athlete::current(auth);
+    auto routes = strava::routes::list(auth, me.id);
+    auto route = strava::routes::retrieve(auth, routes.front().id);
+    auto effort = route.segments.front();
 
-        EXPECT(effort.id != int{});
-        EXPECT(effort.resource_state != int{});
-    },
+    EXPECT_TRUE(effort.id != int{});
+    EXPECT_TRUE(effort.resource_state != int{});
+}
 
-    CASE("efforts misc test")
-    {
-        auto me = strava::athlete::current(auth);
-        auto routes = strava::routes::list(auth, me.id);
-        auto route = strava::routes::retrieve(auth, routes.front().id);
-        auto effort = strava::segment_efforts::retrieve(auth, route.segments.front().id);
+TEST(EffortsTest, Misc)
+{
+    auto me = strava::athlete::current(auth);
+    auto routes = strava::routes::list(auth, me.id);
+    auto route = strava::routes::retrieve(auth, routes.front().id);
+    auto effort = strava::segment_efforts::retrieve(auth, route.segments.front().id);
 
-        EXPECT(effort.distance != float{});
-        EXPECT(!effort.name.empty());
+    EXPECT_TRUE(effort.distance != float{});
+    EXPECT_TRUE(!effort.name.empty());
 
-        EXPECT(effort.activity.id != int{});
-        EXPECT(effort.segment.id != int{});
-        EXPECT(effort.athlete.id != int{});
-    }
-};
+    EXPECT_TRUE(effort.activity.id != int{});
+    EXPECT_TRUE(effort.segment.id != int{});
+    EXPECT_TRUE(effort.athlete.id != int{});
+}
 
 int main(int argc, char * argv[])
 {
-    return lest::run(specification, argc, argv);
+    return RUN_ALL_TESTS();
 }

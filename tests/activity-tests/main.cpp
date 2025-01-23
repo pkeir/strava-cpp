@@ -1,7 +1,7 @@
 
 #include <strava.hpp>
 #include <iostream>
-#include <lest.hpp>
+#include "gtest/gtest.h"
 
 strava::oauth auth = {
     18035,
@@ -9,54 +9,51 @@ strava::oauth auth = {
     "005ed679943cd3eee63861f595863cda58591b41"
 };
 
-const lest::test specification[] =
+TEST(ActivityTest, Length)
 {
-    CASE("activities length test")
-    {
-        auto activities = strava::activity::list(auth);
-        EXPECT(activities.size() > 0);
-    },
+    auto activities = strava::activity::list(auth);
+    EXPECT_TRUE(activities.size() > 0);
+}
 
-    CASE("comments length test")
-    {
-        auto activities = strava::activity::list(auth);
-        auto activity = activities.front();
-        auto comments = strava::activity::list_comments(auth, activity.id);
+TEST(ActivityTest, CommentLength)
+{
+    auto activities = strava::activity::list(auth);
+    auto activity = activities.front();
+    auto comments = strava::activity::list_comments(auth, activity.id);
 
-        EXPECT(comments.size() > 0);
-    },
+    EXPECT_TRUE(comments.size() > 0);
+}
 
-    CASE("activity test")
-    {
-        auto activities = strava::activity::list(auth);
-        auto activity = activities.front();
+TEST(ActivityTest, Activity)
+{
+    auto activities = strava::activity::list(auth);
+    auto activity = activities.front();
 
-        EXPECT(activity.resource_state != int{});
-        EXPECT(activity.type != std::string{});
-        EXPECT(activity.id != int{});
-    },
+    EXPECT_TRUE(activity.resource_state != int{});
+    EXPECT_TRUE(activity.type != std::string{});
+    EXPECT_TRUE(activity.id != int{});
+}
 
-    CASE("activity comment test")
-    {
-        auto activities = strava::activity::list(auth);
-        auto activity = activities.front();
-        auto comments = strava::activity::list_comments(auth, activity.id);
-        auto first = comments.front();
+TEST(ActivityTest, Comment)
+{
+    auto activities = strava::activity::list(auth);
+    auto activity = activities.front();
+    auto comments = strava::activity::list_comments(auth, activity.id);
+    auto first = comments.front();
 
-        EXPECT(first.id != 0);
-        EXPECT(first.resource_state != int{});
-        EXPECT(first.resource_state != int{});
-        EXPECT(first.text.length() > 0);
+    EXPECT_TRUE(first.id != 0);
+    EXPECT_TRUE(first.resource_state != int{});
+    EXPECT_TRUE(first.resource_state != int{});
+    EXPECT_TRUE(first.text.length() > 0);
 
-        EXPECT(first.athlete.id != int{});
-        EXPECT(first.athlete.resource_state != int{});
+    EXPECT_TRUE(first.athlete.id != int{});
+    EXPECT_TRUE(first.athlete.resource_state != int{});
 
-        EXPECT(first.created_at.time_string.length() > 0);
-        EXPECT(first.created_at.time_epoch > 0);
-    }
-};
+    EXPECT_TRUE(first.created_at.time_string.length() > 0);
+    EXPECT_TRUE(first.created_at.time_epoch > 0);
+}
 
 int main(int argc, char * argv[])
 {
-    return lest::run(specification, argc, argv);
+    return RUN_ALL_TESTS();
 }
