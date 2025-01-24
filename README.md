@@ -56,17 +56,17 @@ The following sections of the API are reserved for a later date.
 
 ## Dependencies
 
-You can build via CMake or use the prebuilt binaries available in each release. The library relies on Poco for HTTPS support, Lest for unit testing and OpenSSL as it is required when building Poco with HTTPS support.
+You can build via CMake or use the prebuilt binaries available in each release. The library relies on Poco for HTTPS support; GTest for unit testing; and OpenSSL as it is required when building Poco with HTTPS support.
 
 * [Poco](https://github.com/pocoproject/poco)
-* [Lest](https://github.com/martinmoene/lest)
+* [GoogleTest](https://github.com/google/googletest)
 * [OpenSSL](https://www.openssl.org/)
 
 HTTPS is a hard requirement for requests to Strava so the OpenSSL dependency is not optional. You can install it pretty easily though on MacOS and Linux. On Windows you can install via these [installers](http://slproweb.com/products/Win32OpenSSL.html).
 
 **Linux**
 ```
-sudo apt-get install libssl-dev libpoco-dev
+sudo apt-get install libssl-dev libpoco-dev libgtest-dev
 ```
 
 **MacOS**

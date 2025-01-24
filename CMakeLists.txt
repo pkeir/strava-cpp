@@ -28,8 +28,6 @@ option(ENABLE_SAMPLES "Enable Samples" ON)
 option(ENABLE_TESTS "Enable Tests" ON)
 
 # Sub directories
-#add_subdirectory(external/lest)
-#add_subdirectory(external/poco)
 add_subdirectory(source)
 
 # Add Tests
