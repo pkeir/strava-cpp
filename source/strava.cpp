@@ -1254,17 +1254,26 @@ std::string strava::request_access(int64_t client_id, oauth_scope scope)
 
     switch (scope)
     {
-    case strava::oauth_scope::scope_public:
-        url_builder << "public";
+    case strava::oauth_scope::read:
+        url_builder << "read";
         break;
-    case strava::oauth_scope::scope_write:
-        url_builder << "write";
+    case strava::oauth_scope::read_all:
+        url_builder << "read_all";
         break;
-    case strava::oauth_scope::scope_view_write:
-        url_builder << "view_write";
+    case strava::oauth_scope::profile_read_all:
+        url_builder << "profile:read_all";
         break;
-    case strava::oauth_scope::scope_view_private_write:
-        url_builder << "view_private,write";
+    case strava::oauth_scope::profile_write:
+        url_builder << "profile:write";
+        break;
+    case strava::oauth_scope::activity_read:
+        url_builder << "activity:read";
+        break;
+    case strava::oauth_scope::activity_read_all:
+        url_builder << "activity:read_all";
+        break;
+    case strava::oauth_scope::activity_write:
+        url_builder << "activity:write";
         break;
     default:
         break;

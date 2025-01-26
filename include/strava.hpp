@@ -127,10 +127,13 @@ namespace strava
     //
     enum oauth_scope
     {
-        scope_public,
-        scope_write,
-        scope_view_write,
-        scope_view_private_write
+        read,
+        read_all,
+        profile_read_all,
+        profile_write,
+        activity_read,
+        activity_read_all,
+        activity_write
     };
 
     //

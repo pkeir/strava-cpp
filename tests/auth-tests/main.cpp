@@ -5,7 +5,8 @@
 
 TEST(AuthTest, FunctionPublic)
 {
-    auto url = strava::request_access(0, strava::scope_public);
+//    auto url = strava::request_access(0, strava::scope_public);
+    auto url = strava::request_access(0, strava::oauth_scope::read);
 
     EXPECT_TRUE(url.find("https://") != std::string::npos);
     EXPECT_TRUE(url.find("public") != std::string::npos);
@@ -14,7 +15,8 @@ TEST(AuthTest, FunctionPublic)
 
 TEST(AuthTest, FunctionWrite)
 {
-    auto url = strava::request_access(0, strava::scope_write);
+//    auto url = strava::request_access(0, strava::scope_write);
+    auto url = strava::request_access(0, strava::oauth_scope::profile_write);
 
     EXPECT_TRUE(url.find("https://") != std::string::npos);
     EXPECT_TRUE(url.find("write") != std::string::npos);
