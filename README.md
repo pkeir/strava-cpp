@@ -4,7 +4,7 @@
 
 C++ API bindings to V3 of the Strava API. This API supports reading and updating of the Strava Dataset however file uploads and webhook events are not yet supported.
 
-## Example 
+## Example
 
 ```cpp
 #include <strava.hpp>
