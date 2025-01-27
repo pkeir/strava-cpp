@@ -1,14 +1,8 @@
 
 #include <strava.hpp>
-#include <iostream>
 #include <gtest/gtest.h>
 
-strava::oauth auth =
-{
-    18035,
-    "8a08050aaf532074ab06bdacf3297b3ecc86d640",
-    "005ed679943cd3eee63861f595863cda58591b41"
-};
+strava::oauth auth = { };
 
 strava::segments::bounds area =
 {
