@@ -1284,18 +1284,19 @@ std::string strava::request_access(int64_t client_id, oauth_scope scope)
 
 std::string strava::exchange_token(int64_t client_id, const std::string& client_secret, const std::string& token)
 {
-    auto form = std::map<std::string, std::string>
+    auto data = std::map<std::string, std::string>
     {
         { "client_id", std::to_string(client_id) },
         { "client_secret", client_secret },
-        { "code", token }
+        { "code", token },
+        { "grant_type", "authorization_code" }
     };
 
     auto request = http_request
     {
         Poco::Net::HTTPRequest::HTTP_POST,
         "/oauth/token",
-        "", form, {}
+        "", {}, data
     };
 
     auto resp = check(send(request));
