@@ -829,7 +829,7 @@ void parse_from_json(json_object json, strava::summary::club_event& out)
     auto occurrences = json->getArray("upcoming_occurrences");
 
     if(!occurrences.isNull())
-    { 
+    {
         for (auto i = 0; i < out.upcoming_occurrences.size(); i++)
         {
             if (i < occurrences->size())
@@ -911,9 +911,9 @@ void parse_from_json(json_object json, strava::detailed::race& out)
 
     parse_from_json(json, (strava::summary::race&)out);
 
-   
+
     out.website_url = cast<std::string>(json, "website_url");
-   
+
     auto route_ids = json->getArray("route_ids");
 
     if (!route_ids.isNull())
@@ -1004,7 +1004,7 @@ void parse_from_json(json_object json, strava::segments::leaderboard& out)
     {
         return;
     }
-  
+
     out = {};
     out.entry_count = cast<int64_t>(json, "entry_count");
 

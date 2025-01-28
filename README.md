@@ -11,6 +11,8 @@ C++ API bindings to V3 of the Strava API. This API supports reading and updating
 #include <iostream>
 #include <cstdlib>
 
+// g++ -std=c++17 -I include example.cpp -L build -lSTRAVA -lPocoFoundation -lPocoNet -lPocoNetSSL -lPocoJSON
+
 int main(int argc, const char* argv[])
 {
     auto id = std::atoi(std::getenv("STRAVA_CLIENT_ID"));
